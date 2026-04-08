@@ -82,6 +82,73 @@
         .map-legend { display: flex; gap: 16px; padding: 8px 16px; font-size: 10px; color: #8b949e; flex-wrap: wrap; }
         .map-legend-item { display: flex; align-items: center; gap: 4px; }
         .map-legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+        /* Interactive KPI cards */
+        .kpi[data-drill] { cursor: pointer; transition: all 0.2s ease; position: relative; }
+        .kpi[data-drill]:hover { border-color: #58a6ff; background: #1c2128; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(88,166,255,0.15); }
+        .kpi[data-drill]::after { content: '→'; position: absolute; top: 8px; right: 10px; color: #30363d; font-size: 14px; transition: color 0.2s; }
+        .kpi[data-drill]:hover::after { color: #58a6ff; }
+
+        /* Clickable panel headers */
+        .panel-header[data-drill] { cursor: pointer; transition: background 0.2s; }
+        .panel-header[data-drill]:hover { background: #1c2128; }
+        .panel-header[data-drill] h3::after { content: ' ↗'; color: #30363d; font-size: 11px; transition: color 0.2s; }
+        .panel-header[data-drill]:hover h3::after { color: #58a6ff; }
+
+        /* Expandable table rows */
+        tr.expandable { cursor: pointer; }
+        tr.expandable:hover td { background: #1c2128; }
+        tr.expandable td:first-child::before { content: '▸ '; color: #30363d; font-size: 10px; }
+        tr.expandable.expanded td:first-child::before { content: '▾ '; color: #58a6ff; }
+        tr.row-detail { display: none; }
+        tr.row-detail.show { display: table-row; }
+        tr.row-detail td { background: #0d1117; padding: 12px 16px; border-left: 3px solid #1f6feb; }
+        .detail-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; font-size: 11px; }
+        .detail-grid .detail-item { padding: 6px 8px; background: #161b22; border-radius: 4px; }
+        .detail-grid .detail-label { color: #8b949e; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; }
+        .detail-grid .detail-value { color: #f0f6fc; font-weight: 600; margin-top: 2px; }
+
+        /* Detail modal / slideout */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; display: none; backdrop-filter: blur(2px); }
+        .modal-overlay.show { display: flex; align-items: flex-start; justify-content: center; padding-top: 60px; }
+        .modal-panel { background: #161b22; border: 1px solid #30363d; border-radius: 12px; width: 700px; max-width: 90vw; max-height: 80vh; overflow-y: auto; box-shadow: 0 16px 48px rgba(0,0,0,0.5); animation: modalIn 0.2s ease-out; }
+        @keyframes modalIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #21262d; }
+        .modal-header h2 { font-size: 16px; color: #f0f6fc; }
+        .modal-close { background: none; border: 1px solid #30363d; color: #8b949e; width: 28px; height: 28px; border-radius: 6px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+        .modal-close:hover { border-color: #f85149; color: #f85149; background: #f8514910; }
+        .modal-body { padding: 16px 20px; }
+        .modal-section { margin-bottom: 16px; }
+        .modal-section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #8b949e; margin-bottom: 8px; font-weight: 600; }
+        .modal-field { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #21262d20; font-size: 12px; }
+        .modal-field .mf-label { color: #8b949e; }
+        .modal-field .mf-value { color: #f0f6fc; font-weight: 500; }
+        .modal-actions { display: flex; gap: 8px; padding: 12px 20px; border-top: 1px solid #21262d; }
+        .modal-btn { padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; border: 1px solid #30363d; background: #21262d; color: #c9d1d9; transition: all 0.15s; }
+        .modal-btn:hover { border-color: #58a6ff; color: #58a6ff; }
+        .modal-btn.primary { background: #1f6feb; border-color: #1f6feb; color: #fff; }
+        .modal-btn.primary:hover { background: #388bfd; }
+
+        /* Breadcrumb navigation */
+        .breadcrumb { display: none; padding: 6px 24px; background: #0d1117; border-bottom: 1px solid #21262d; font-size: 12px; color: #8b949e; }
+        .breadcrumb.show { display: flex; align-items: center; gap: 6px; }
+        .breadcrumb a { color: #58a6ff; cursor: pointer; text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb .sep { color: #30363d; }
+
+        /* Clickable table rows highlight */
+        tr.clickable-row { cursor: pointer; transition: background 0.15s; }
+        tr.clickable-row:hover td { background: #1f6feb15; }
+
+        /* Timeline in modal */
+        .timeline { position: relative; padding-left: 20px; }
+        .timeline::before { content: ''; position: absolute; left: 6px; top: 0; bottom: 0; width: 2px; background: #21262d; }
+        .timeline-item { position: relative; padding: 8px 0; }
+        .timeline-item::before { content: ''; position: absolute; left: -17px; top: 12px; width: 8px; height: 8px; border-radius: 50%; border: 2px solid #1f6feb; background: #0d1117; }
+        .timeline-item.completed::before { background: #3fb950; border-color: #3fb950; }
+        .timeline-item.active::before { background: #f0883e; border-color: #f0883e; }
+        .timeline-time { font-size: 10px; color: #8b949e; }
+        .timeline-text { font-size: 12px; color: #c9d1d9; }
     </style>
 </head>
 <body>
@@ -105,6 +172,20 @@
         <button onclick="showSection('notifications')">Notifications</button>
         <button onclick="showSection('weather')">Weather</button>
         <button onclick="showSection('health')">Service Health</button>
+    </div>
+
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <!-- Detail Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal-panel">
+            <div class="modal-header">
+                <h2 id="modal-title">Details</h2>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+            <div class="modal-actions" id="modal-actions"></div>
+        </div>
     </div>
 
     <div class="dashboard">
@@ -136,45 +217,45 @@
 
             <div class="grid-2">
                 <div class="panel">
-                    <div class="panel-header"><h3>Active Outages</h3><span class="badge badge-red" id="active-outage-count">0</span></div>
+                    <div class="panel-header" data-drill="outages" onclick="drillTo('outages','overview')"><h3>Active Outages</h3><span class="badge badge-red" id="active-outage-count">0</span></div>
                     <div class="panel-body" id="overview-outages"><div class="loading">Loading...</div></div>
                 </div>
                 <div class="panel">
-                    <div class="panel-header"><h3>SCADA Alerts</h3><span class="badge badge-yellow" id="scada-alert-count">0</span></div>
+                    <div class="panel-header" data-drill="scada" onclick="drillTo('scada','overview')"><h3>SCADA Alerts</h3><span class="badge badge-yellow" id="scada-alert-count">0</span></div>
                     <div class="panel-body" id="overview-alerts"><div class="loading">Loading...</div></div>
                 </div>
             </div>
             <div class="grid-3">
                 <div class="panel">
-                    <div class="panel-header"><h3>Reliability (IEEE 1366)</h3></div>
+                    <div class="panel-header" data-drill="reliability" onclick="drillTo('reliability','overview')"><h3>Reliability (IEEE 1366)</h3></div>
                     <div class="panel-body" id="overview-reliability"><div class="loading">Loading...</div></div>
                 </div>
                 <div class="panel">
-                    <div class="panel-header"><h3>Load Forecast (System)</h3></div>
+                    <div class="panel-header" data-drill="forecast" onclick="drillTo('forecast','overview')"><h3>Load Forecast (System)</h3></div>
                     <div class="panel-body" id="overview-forecast"><div class="loading">Loading...</div></div>
                 </div>
                 <div class="panel">
-                    <div class="panel-header"><h3>Meter Data Summary</h3></div>
+                    <div class="panel-header" data-drill="metering" onclick="drillTo('metering','overview')"><h3>Meter Data Summary</h3></div>
                     <div class="panel-body" id="overview-meter"><div class="loading">Loading...</div></div>
                 </div>
             </div>
             <div class="grid-2">
                 <div class="panel">
-                    <div class="panel-header"><h3>Crew Dispatch</h3><span class="badge badge-blue" id="overview-crew-badge">0 active</span></div>
+                    <div class="panel-header" data-drill="crew" onclick="drillTo('crew','overview')"><h3>Crew Dispatch</h3><span class="badge badge-blue" id="overview-crew-badge">0 active</span></div>
                     <div class="panel-body" id="overview-crew"><div class="loading">Loading...</div></div>
                 </div>
                 <div class="panel">
-                    <div class="panel-header"><h3>Customer Notifications</h3><span class="badge badge-green" id="overview-notif-badge">0 sent</span></div>
+                    <div class="panel-header" data-drill="notifications" onclick="drillTo('notifications','overview')"><h3>Customer Notifications</h3><span class="badge badge-green" id="overview-notif-badge">0 sent</span></div>
                     <div class="panel-body" id="overview-notifications"><div class="loading">Loading...</div></div>
                 </div>
             </div>
             <div class="grid-2">
                 <div class="panel">
-                    <div class="panel-header"><h3>Weather Correlation</h3><span class="badge badge-blue" id="overview-weather-badge">0 regions</span></div>
+                    <div class="panel-header" data-drill="weather" onclick="drillTo('weather','overview')"><h3>Weather Correlation</h3><span class="badge badge-blue" id="overview-weather-badge">0 regions</span></div>
                     <div class="panel-body" id="overview-weather"><div class="loading">Loading...</div></div>
                 </div>
                 <div class="panel">
-                    <div class="panel-header"><h3>Storm Forecast</h3><span class="badge badge-yellow" id="overview-storm-badge">0 alerts</span></div>
+                    <div class="panel-header" data-drill="weather" onclick="drillTo('weather','overview')"><h3>Storm Forecast</h3><span class="badge badge-yellow" id="overview-storm-badge">0 alerts</span></div>
                     <div class="panel-body" id="overview-storm"><div class="loading">Loading...</div></div>
                 </div>
             </div>
@@ -321,6 +402,17 @@
 <script>
 const API = '/api';
 let currentSection = 'overview';
+let drillStack = []; // navigation history for breadcrumbs
+let cachedOutages = null; // cache for drilldown modals
+let cachedCrews = null;
+let cachedDispatches = null;
+
+const SECTION_LABELS = {
+    overview: 'Overview', scada: 'SCADA Telemetry', outages: 'Outage Management',
+    metering: 'Meter Data (MDMS)', grid: 'Grid Topology', reliability: 'Reliability Indices',
+    forecast: 'Demand Forecast', crew: 'Crew Dispatch', notifications: 'Notifications',
+    weather: 'Weather', health: 'Service Health'
+};
 
 function showSection(name) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -328,11 +420,131 @@ function showSection(name) {
     document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
     event.target.classList.add('active');
     currentSection = name;
+    drillStack = [];
+    updateBreadcrumb();
     fetchData();
 }
 
-function kpi(label, value, sub, cls='') {
-    return `<div class="kpi ${cls}"><div class="label">${label}</div><div class="value">${value}</div><div class="sub">${sub}</div></div>`;
+function drillTo(target, from) {
+    drillStack = [from, target];
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(target).classList.add('active');
+    document.querySelectorAll('.nav button').forEach(b => {
+        b.classList.toggle('active', b.textContent.toLowerCase().includes(target.substring(0,4)));
+    });
+    currentSection = target;
+    updateBreadcrumb();
+    fetchData();
+}
+
+function updateBreadcrumb() {
+    const bc = document.getElementById('breadcrumb');
+    if (drillStack.length < 2) { bc.classList.remove('show'); return; }
+    bc.classList.add('show');
+    bc.innerHTML = drillStack.map((s, i) => {
+        if (i < drillStack.length - 1) {
+            return `<a onclick="showSection('${s}')">${SECTION_LABELS[s] || s}</a><span class="sep">›</span>`;
+        }
+        return `<span style="color:#c9d1d9">${SECTION_LABELS[s] || s}</span>`;
+    }).join('');
+}
+
+// Modal functions
+function showModal(title, bodyHtml, actions) {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-body').innerHTML = bodyHtml;
+    document.getElementById('modal-actions').innerHTML = actions || '';
+    document.getElementById('modal-overlay').classList.add('show');
+    document.addEventListener('keydown', modalEscHandler);
+}
+function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('show');
+    document.removeEventListener('keydown', modalEscHandler);
+}
+function modalEscHandler(e) { if (e.key === 'Escape') closeModal(); }
+
+// Outage detail modal
+function showOutageDetail(outageId) {
+    if (!cachedOutages) return;
+    const o = cachedOutages.find(x => x.id === outageId);
+    if (!o) return;
+    const elapsed = o.startTime ? Math.round((Date.now() - new Date(o.startTime).getTime()) / 60000) : '-';
+    let body = `
+        <div class="modal-section">
+            <div class="modal-section-title">Outage Information</div>
+            <div class="modal-field"><span class="mf-label">Outage ID</span><span class="mf-value">${o.id}</span></div>
+            <div class="modal-field"><span class="mf-label">Location</span><span class="mf-value">${o.location || '-'}</span></div>
+            <div class="modal-field"><span class="mf-label">Status</span><span class="mf-value">${statusBadge(o.status)}</span></div>
+            <div class="modal-field"><span class="mf-label">Priority</span><span class="mf-value">${statusBadge(o.priority)}</span></div>
+            <div class="modal-field"><span class="mf-label">Cause</span><span class="mf-value">${o.cause || '-'}</span></div>
+            <div class="modal-field"><span class="mf-label">Equipment</span><span class="mf-value">${o.equipmentType || '-'} #${o.equipmentId || '-'}</span></div>
+        </div>
+        <div class="modal-section">
+            <div class="modal-section-title">Impact</div>
+            <div class="modal-field"><span class="mf-label">Affected Customers</span><span class="mf-value" style="color:#f85149;font-size:16px">${(o.affectedCustomers||0).toLocaleString()}</span></div>
+            <div class="modal-field"><span class="mf-label">Source</span><span class="mf-value"><span class="badge ${o.source==='SCADA-Auto-Detect'?'badge-blue':'badge-green'}">${o.source||'OMS'}</span></span></div>
+            <div class="modal-field"><span class="mf-label">Crew Assigned</span><span class="mf-value" style="color:${o.crewAssigned?'#3fb950':'#8b949e'}">${o.crewAssigned||'None'}</span></div>
+        </div>
+        <div class="modal-section">
+            <div class="modal-section-title">Timeline</div>
+            <div class="timeline">
+                <div class="timeline-item completed"><div class="timeline-time">${o.startTime ? new Date(o.startTime).toLocaleString() : '-'}</div><div class="timeline-text">Outage detected · ${o.source||'OMS'}</div></div>
+                ${o.crewAssigned ? `<div class="timeline-item ${o.status==='Active'?'active':'completed'}"><div class="timeline-time">${elapsed} min elapsed</div><div class="timeline-text">Crew assigned: ${o.crewAssigned}</div></div>` : ''}
+                ${o.status === 'Resolved' ? `<div class="timeline-item completed"><div class="timeline-time">${o.resolvedTime ? new Date(o.resolvedTime).toLocaleString() : '-'}</div><div class="timeline-text">Service restored</div></div>` : `<div class="timeline-item"><div class="timeline-time">Pending</div><div class="timeline-text">Awaiting restoration</div></div>`}
+            </div>
+        </div>`;
+    const actions = `
+        <button class="modal-btn primary" onclick="drillTo('outages','overview');closeModal()">View All Outages</button>
+        ${o.crewAssigned ? `<button class="modal-btn" onclick="drillTo('crew','overview');closeModal()">View Crew</button>` : ''}
+        <button class="modal-btn" onclick="closeModal()">Close</button>`;
+    showModal(`⚡ Outage ${o.id}`, body, actions);
+}
+
+// Crew detail modal
+function showCrewDetail(crewIdx) {
+    if (!cachedCrews) return;
+    const c = cachedCrews[crewIdx];
+    if (!c) return;
+    const dispatch = cachedDispatches ? cachedDispatches.find(d => d.crewName === c.name) : null;
+    let body = `
+        <div class="modal-section">
+            <div class="modal-section-title">Crew Information</div>
+            <div class="modal-field"><span class="mf-label">Crew ID</span><span class="mf-value">${c.id}</span></div>
+            <div class="modal-field"><span class="mf-label">Name</span><span class="mf-value">${c.name}</span></div>
+            <div class="modal-field"><span class="mf-label">Lead</span><span class="mf-value">${c.lead}</span></div>
+            <div class="modal-field"><span class="mf-label">Members</span><span class="mf-value">${c.members} personnel</span></div>
+            <div class="modal-field"><span class="mf-label">Vehicle</span><span class="mf-value">${c.vehicle}</span></div>
+            <div class="modal-field"><span class="mf-label">Region</span><span class="mf-value">${c.region}</span></div>
+            <div class="modal-field"><span class="mf-label">Status</span><span class="mf-value">${statusBadge(c.status==='Available'?'normal':c.status==='On-Site'?'warning':'active')}</span></div>
+        </div>`;
+    if (dispatch) {
+        body += `
+        <div class="modal-section">
+            <div class="modal-section-title">Active Dispatch</div>
+            <div class="modal-field"><span class="mf-label">Dispatch ID</span><span class="mf-value">${dispatch.dispatchId}</span></div>
+            <div class="modal-field"><span class="mf-label">Outage</span><span class="mf-value"><a style="color:#58a6ff;cursor:pointer" onclick="closeModal();setTimeout(()=>showOutageDetail('${dispatch.outageId}'),200)">${dispatch.outageId}</a></span></div>
+            <div class="modal-field"><span class="mf-label">Priority</span><span class="mf-value">${statusBadge(dispatch.priority)}</span></div>
+            <div class="modal-field"><span class="mf-label">Location</span><span class="mf-value">${dispatch.location}</span></div>
+            <div class="modal-field"><span class="mf-label">ETR</span><span class="mf-value">${dispatch.etr ? new Date(dispatch.etr).toLocaleTimeString() : '-'}</span></div>
+        </div>`;
+    }
+    const actions = `
+        <button class="modal-btn primary" onclick="drillTo('crew','overview');closeModal()">View All Crews</button>
+        <button class="modal-btn" onclick="closeModal()">Close</button>`;
+    showModal(`🔧 ${c.name}`, body, actions);
+}
+
+// Expandable row toggle
+function toggleRowDetail(rowEl) {
+    const detail = rowEl.nextElementSibling;
+    if (!detail || !detail.classList.contains('row-detail')) return;
+    rowEl.classList.toggle('expanded');
+    detail.classList.toggle('show');
+}
+
+function kpi(label, value, sub, cls='', drill='') {
+    const drillAttr = drill ? ` data-drill="${drill}" onclick="drillTo('${drill}','${currentSection}')"` : '';
+    return `<div class="kpi ${cls}"${drillAttr}><div class="label">${label}</div><div class="value">${value}</div><div class="sub">${sub}</div></div>`;
 }
 
 function statusBadge(status) {
@@ -367,22 +579,23 @@ async function fetchOverview() {
         const f = dashboard.forecast || {};
         const m = dashboard.meterData || {};
         el.innerHTML = [
-            kpi('Active Outages', o.activeOutages ?? '-', `${o.totalAffectedCustomers ?? 0} customers affected`, (o.activeOutages||0)>3?'critical':'warning'),
-            kpi('System Load', f.currentLoadMw ? f.currentLoadMw+' MW' : '-', f.currentUtilizationPct ? f.currentUtilizationPct+'% capacity' : '', f.currentUtilizationPct>80?'warning':'good'),
-            kpi('SAIDI Today', r.saidi ?? '-', 'minutes per customer', (r.saidi||0)>5?'critical':'good'),
-            kpi('SAIFI Today', r.saifi ?? '-', 'interruptions per customer', 'info'),
-            kpi('SCADA Sensors', s.sensorCount ?? '-', `${s.warningCount ?? 0} warnings`, (s.warningCount||0)>2?'warning':'good'),
-            kpi('Meter Readings', m.totalReadings ?? '-', `${m.anomalyCount ?? 0} anomalies`, 'info'),
-            kpi('Total Power', s.totalActivePowerMw ? s.totalActivePowerMw+' MW' : '-', 'grid active power', 'info'),
-            kpi('Grid Frequency', s.averageFrequencyHz ? s.averageFrequencyHz+' Hz' : '-', 'system average', 'good')
+            kpi('Active Outages', o.activeOutages ?? '-', `${o.totalAffectedCustomers ?? 0} customers affected`, (o.activeOutages||0)>3?'critical':'warning', 'outages'),
+            kpi('System Load', f.currentLoadMw ? f.currentLoadMw+' MW' : '-', f.currentUtilizationPct ? f.currentUtilizationPct+'% capacity' : '', f.currentUtilizationPct>80?'warning':'good', 'forecast'),
+            kpi('SAIDI Today', r.saidi ?? '-', 'minutes per customer', (r.saidi||0)>5?'critical':'good', 'reliability'),
+            kpi('SAIFI Today', r.saifi ?? '-', 'interruptions per customer', 'info', 'reliability'),
+            kpi('SCADA Sensors', s.sensorCount ?? '-', `${s.warningCount ?? 0} warnings`, (s.warningCount||0)>2?'warning':'good', 'scada'),
+            kpi('Meter Readings', m.totalReadings ?? '-', `${m.anomalyCount ?? 0} anomalies`, 'info', 'metering'),
+            kpi('Total Power', s.totalActivePowerMw ? s.totalActivePowerMw+' MW' : '-', 'grid active power', 'info', 'scada'),
+            kpi('Grid Frequency', s.averageFrequencyHz ? s.averageFrequencyHz+' Hz' : '-', 'system average', 'good', 'scada')
         ].join('');
     }
 
     if (outages) {
+        cachedOutages = outages;
         document.getElementById('active-outage-count').textContent = outages.length;
         document.getElementById('overview-outages').innerHTML = outages.length === 0 ? '<div style="color:#3fb950;padding:12px;">No active outages</div>' :
             `<table><tr><th>ID</th><th>Location</th><th>Priority</th><th>Cause</th><th>Affected</th></tr>${outages.slice(0,10).map(o =>
-                `<tr><td>${o.id}</td><td>${o.location}</td><td>${statusBadge(o.priority)}</td><td style="max-width:150px;overflow:hidden;text-overflow:ellipsis">${o.cause}</td><td>${(o.affectedCustomers||0).toLocaleString()}</td></tr>`
+                `<tr class="clickable-row" onclick="showOutageDetail('${o.id}')"><td>${o.id}</td><td>${o.location}</td><td>${statusBadge(o.priority)}</td><td style="max-width:150px;overflow:hidden;text-overflow:ellipsis">${o.cause}</td><td>${(o.affectedCustomers||0).toLocaleString()}</td></tr>`
             ).join('')}</table>`;
     }
 
@@ -508,7 +721,18 @@ async function fetchScada() {
     if (alerts && Array.isArray(alerts)) {
         document.getElementById('scada-alerts').innerHTML = alerts.length===0 ? '<div style="color:#3fb950">No alerts</div>' :
             `<table><tr><th>Time</th><th>Sensor</th><th>Alert</th><th>Severity</th><th>Message</th></tr>${
-            alerts.map(a => `<tr><td>${new Date(a.Time||a.time).toLocaleTimeString()}</td><td>${a.SensorId||a.sensorId}</td><td>${a.AlertType||a.alertType}</td><td>${statusBadge(a.Severity||a.severity)}</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${a.Message||a.message}</td></tr>`
+            alerts.map(a => `<tr class="expandable" onclick="toggleRowDetail(this)"><td>${new Date(a.Time||a.time).toLocaleTimeString()}</td><td>${a.SensorId||a.sensorId}</td><td>${a.AlertType||a.alertType}</td><td>${statusBadge(a.Severity||a.severity)}</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${a.Message||a.message}</td></tr>
+                <tr class="row-detail"><td colspan="5">
+                    <div class="detail-grid">
+                        <div class="detail-item"><div class="detail-label">Sensor ID</div><div class="detail-value">${a.SensorId||a.sensorId}</div></div>
+                        <div class="detail-item"><div class="detail-label">Alert Type</div><div class="detail-value">${a.AlertType||a.alertType}</div></div>
+                        <div class="detail-item"><div class="detail-label">Severity</div><div class="detail-value">${a.Severity||a.severity}</div></div>
+                        <div class="detail-item"><div class="detail-label">Value</div><div class="detail-value">${(a.Value||a.value||0).toFixed(2)}</div></div>
+                        <div class="detail-item"><div class="detail-label">Threshold</div><div class="detail-value">${(a.Threshold||a.threshold||0).toFixed(2)}</div></div>
+                        <div class="detail-item"><div class="detail-label">Acknowledged</div><div class="detail-value">${(a.Acknowledged||a.acknowledged)?'Yes':'No'}</div></div>
+                    </div>
+                    <div style="margin-top:6px;font-size:12px;color:#c9d1d9;"><strong>Message:</strong> ${a.Message||a.message}</div>
+                </td></tr>`
         ).join('')}</table>`;
     }
 }
@@ -527,15 +751,34 @@ async function fetchOutages() {
             kpi('Resolved', stats.resolvedOutages, 'restored', 'good'),
             kpi('Affected', (stats.totalAffectedCustomers||0).toLocaleString(), 'customers', stats.totalAffectedCustomers>5000?'critical':'warning'),
             kpi('Critical', bp.Critical||0, 'priority', (bp.Critical||0)>0?'critical':'good'),
-            kpi('High', bp.High||0, 'priority', (bp.High||0)>2?'warning':'info')
+            kpi('High', bp.High||0, 'priority', (bp.High||0)>2?'warning':'info'),
+            kpi('Crew Activity', '-', 'dispatched crews', 'info', 'crew'),
+            kpi('Weather Impact', '-', 'weather-related', 'info', 'weather')
         ].join('');
     }
 
     if (outages) {
+        cachedOutages = outages;
         const sorted = outages.sort((a,b) => new Date(b.startTime) - new Date(a.startTime));
         document.getElementById('outage-table').innerHTML = `<table><tr><th>ID</th><th>Location</th><th>Status</th><th>Priority</th><th>Cause</th><th>Equipment</th><th>Affected</th><th>Started</th><th>Crew</th><th>Source</th></tr>${
-            sorted.map(o => `<tr><td>${o.id}</td><td>${o.location}</td><td>${statusBadge(o.status)}</td><td>${statusBadge(o.priority)}</td><td style="max-width:140px;overflow:hidden;text-overflow:ellipsis">${o.cause}</td><td>${o.equipmentType||'-'} #${o.equipmentId||'-'}</td><td>${(o.affectedCustomers||0).toLocaleString()}</td><td>${new Date(o.startTime).toLocaleString()}</td><td>${o.crewAssigned||'-'}</td><td><span class="badge ${o.source==='SCADA-Auto-Detect'?'badge-blue':'badge-green'}">${o.source||'OMS'}</span></td></tr>`
-        ).join('')}</table>`;
+            sorted.map(o => {
+                const elapsed = o.startTime ? Math.round((Date.now() - new Date(o.startTime).getTime()) / 60000) : 0;
+                return `<tr class="expandable" onclick="toggleRowDetail(this)"><td>${o.id}</td><td>${o.location}</td><td>${statusBadge(o.status)}</td><td>${statusBadge(o.priority)}</td><td style="max-width:140px;overflow:hidden;text-overflow:ellipsis">${o.cause}</td><td>${o.equipmentType||'-'} #${o.equipmentId||'-'}</td><td>${(o.affectedCustomers||0).toLocaleString()}</td><td>${new Date(o.startTime).toLocaleString()}</td><td>${o.crewAssigned||'-'}</td><td><span class="badge ${o.source==='SCADA-Auto-Detect'?'badge-blue':'badge-green'}">${o.source||'OMS'}</span></td></tr>
+                <tr class="row-detail"><td colspan="10">
+                    <div class="detail-grid">
+                        <div class="detail-item"><div class="detail-label">Duration</div><div class="detail-value">${elapsed} min</div></div>
+                        <div class="detail-item"><div class="detail-label">Affected Customers</div><div class="detail-value" style="color:#f85149">${(o.affectedCustomers||0).toLocaleString()}</div></div>
+                        <div class="detail-item"><div class="detail-label">Equipment</div><div class="detail-value">${o.equipmentType||'-'} #${o.equipmentId||'-'}</div></div>
+                        <div class="detail-item"><div class="detail-label">Detection Source</div><div class="detail-value">${o.source||'OMS'}</div></div>
+                        <div class="detail-item"><div class="detail-label">Crew Assigned</div><div class="detail-value" style="color:${o.crewAssigned?'#3fb950':'#8b949e'}">${o.crewAssigned||'Unassigned'}</div></div>
+                        <div class="detail-item"><div class="detail-label">Full Cause</div><div class="detail-value">${o.cause||'-'}</div></div>
+                    </div>
+                    <div style="margin-top:10px;display:flex;gap:8px;">
+                        <button class="modal-btn primary" onclick="event.stopPropagation();showOutageDetail('${o.id}')">Full Detail</button>
+                        ${o.crewAssigned ? `<button class="modal-btn" onclick="event.stopPropagation();drillTo('crew','outages')">View Crew</button>` : ''}
+                    </div>
+                </td></tr>`;
+            }).join('')}</table>`;
     }
 }
 
@@ -588,17 +831,19 @@ async function fetchGrid() {
 
     if (topology && Array.isArray(topology)) {
         document.getElementById('grid-topology').innerHTML = topology.map(sub => `
-            <div class="topology-node" style="border-left-color:#f0883e">
+            <div class="topology-node" style="border-left-color:#f0883e" onclick="this.querySelector('.topology-children').style.display=this.querySelector('.topology-children').style.display==='none'?'block':'none'">
                 <strong>🏭 ${sub.name}</strong> <span style="color:#8b949e;font-size:11px">${sub.code} | ${sub.capacity_mw} MW | ${sub.voltage_level_kv} kV | ${sub.city}, ${sub.state}</span>
-                <div class="topology-children">
+                <span style="color:#30363d;font-size:10px;float:right">▾ ${(sub.feeders||[]).length} feeders</span>
+                <div class="topology-children" onclick="event.stopPropagation()">
                     ${(sub.feeders||[]).map(f => `
-                        <div class="topology-node" style="border-left-color:#58a6ff">
+                        <div class="topology-node" style="border-left-color:#58a6ff" onclick="this.querySelector('.topology-children').style.display=this.querySelector('.topology-children').style.display==='none'?'block':'none'">
                             <strong>⚡ ${f.name}</strong> <span style="color:#8b949e;font-size:11px">${f.code} | ${f.voltage_kv} kV | ${f.length_miles} mi | ${f.conductor_type||''}</span>
-                            <div class="topology-children">
+                            <span style="color:#30363d;font-size:10px;float:right">▾ ${(f.transformers||[]).length} xfmrs</span>
+                            <div class="topology-children" onclick="event.stopPropagation()">
                                 ${(f.transformers||[]).map(t => `
-                                    <div class="topology-node" style="border-left-color:#3fb950">
+                                    <div class="topology-node" style="border-left-color:#3fb950" onclick="event.stopPropagation();this.querySelector('.topology-children')&&(this.querySelector('.topology-children').style.display=this.querySelector('.topology-children').style.display==='none'?'block':'none')">
                                         <strong>🔌 ${t.name}</strong> <span style="color:#8b949e;font-size:11px">${t.code} | ${t.capacity_kva} kVA | ${t.phase_config}</span>
-                                        ${(t.servicePoints||[]).length > 0 ? `<div style="margin-top:4px;font-size:11px;color:#8b949e">${(t.servicePoints||[]).map(sp => `📍 ${sp.customer_id} (${sp.meter_id}) - ${sp.service_type}`).join('<br>')}</div>` : ''}
+                                        ${(t.servicePoints||[]).length > 0 ? `<div class="topology-children" style="margin-top:4px;font-size:11px;color:#8b949e">${(t.servicePoints||[]).map(sp => `📍 ${sp.customer_id} (${sp.meter_id}) - ${sp.service_type}`).join('<br>')}</div>` : ''}
                                     </div>
                                 `).join('')}
                             </div>
@@ -694,16 +939,29 @@ async function fetchCrew() {
     }
 
     if (crews && Array.isArray(crews)) {
+        cachedCrews = crews;
         document.getElementById('crew-list').innerHTML = `<table><tr><th>ID</th><th>Name</th><th>Lead</th><th>Members</th><th>Vehicle</th><th>Region</th><th>Status</th><th>Assignment</th></tr>${
-            crews.map(c => `<tr><td>${c.id}</td><td>${c.name}</td><td>${c.lead}</td><td>${c.members}</td><td>${c.vehicle}</td><td>${c.region}</td><td>${statusBadge(c.status==='Available'?'normal':c.status==='On-Site'?'warning':'active')}</td><td>${c.currentAssignment||'-'}</td></tr>`
+            crews.map((c, ci) => `<tr class="expandable" onclick="toggleRowDetail(this)"><td>${c.id}</td><td>${c.name}</td><td>${c.lead}</td><td>${c.members}</td><td>${c.vehicle}</td><td>${c.region}</td><td>${statusBadge(c.status==='Available'?'normal':c.status==='On-Site'?'warning':'active')}</td><td>${c.currentAssignment||'-'}</td></tr>
+                <tr class="row-detail"><td colspan="8">
+                    <div class="detail-grid">
+                        <div class="detail-item"><div class="detail-label">Crew Name</div><div class="detail-value">${c.name}</div></div>
+                        <div class="detail-item"><div class="detail-label">Team Lead</div><div class="detail-value">${c.lead}</div></div>
+                        <div class="detail-item"><div class="detail-label">Team Size</div><div class="detail-value">${c.members} personnel</div></div>
+                        <div class="detail-item"><div class="detail-label">Vehicle</div><div class="detail-value">${c.vehicle}</div></div>
+                        <div class="detail-item"><div class="detail-label">Region</div><div class="detail-value">${c.region}</div></div>
+                        <div class="detail-item"><div class="detail-label">Current Status</div><div class="detail-value">${c.status}</div></div>
+                    </div>
+                    <div style="margin-top:10px"><button class="modal-btn primary" onclick="event.stopPropagation();showCrewDetail(${ci})">Full Detail</button></div>
+                </td></tr>`
         ).join('')}</table>`;
     }
 
     if (dispatches && Array.isArray(dispatches)) {
+        cachedDispatches = dispatches;
         document.getElementById('dispatch-count').textContent = dispatches.length;
         document.getElementById('crew-dispatches').innerHTML = dispatches.length === 0 ? '<div style="color:#3fb950;padding:12px;">No active dispatches</div>' :
             `<table><tr><th>Dispatch</th><th>Outage</th><th>Crew</th><th>Status</th><th>Priority</th><th>Location</th><th>ETR</th></tr>${
-            dispatches.map(d => `<tr><td>${d.dispatchId}</td><td>${d.outageId}</td><td>${d.crewName}</td><td>${statusBadge(d.status==='Dispatched'?'active':d.status==='On-Site'?'warning':'normal')}</td><td>${statusBadge(d.priority)}</td><td>${d.location}</td><td>${new Date(d.etr).toLocaleTimeString()}</td></tr>`
+            dispatches.map(d => `<tr class="clickable-row" onclick="showOutageDetail('${d.outageId}')"><td>${d.dispatchId}</td><td>${d.outageId}</td><td>${d.crewName}</td><td>${statusBadge(d.status==='Dispatched'?'active':d.status==='On-Site'?'warning':'normal')}</td><td>${statusBadge(d.priority)}</td><td>${d.location}</td><td>${new Date(d.etr).toLocaleTimeString()}</td></tr>`
         ).join('')}</table>`;
     }
 
@@ -1111,8 +1369,13 @@ function renderTerritoryMap(weatherData, forecastData, outageData, crewData, dis
         tooltipEl.style.top = (e.clientY - rect.top - 10) + 'px';
     }
 
-    // Region tooltips
+    // Region tooltips + click to drill to weather
     container.querySelectorAll('.map-region').forEach(el => {
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', () => {
+            tooltipEl.style.display = 'none';
+            drillTo('weather', 'overview');
+        });
         el.addEventListener('mouseenter', (e) => {
             const idx = parseInt(el.getAttribute('data-idx'));
             const r = MAP_REGIONS[idx];
@@ -1142,8 +1405,15 @@ function renderTerritoryMap(weatherData, forecastData, outageData, crewData, dis
         el.addEventListener('mouseleave', () => { tooltipEl.style.display = 'none'; });
     });
 
-    // Outage marker tooltips
+    // Outage marker tooltips + click to open detail modal
     container.querySelectorAll('.outage-marker').forEach(el => {
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', () => {
+            tooltipEl.style.display = 'none';
+            const oi = parseInt(el.getAttribute('data-oidx'));
+            const o = outagePositions[oi];
+            if (o && o.id) showOutageDetail(o.id);
+        });
         el.addEventListener('mouseenter', (e) => {
             const oi = parseInt(el.getAttribute('data-oidx'));
             const o = outagePositions[oi];
@@ -1161,8 +1431,14 @@ function renderTerritoryMap(weatherData, forecastData, outageData, crewData, dis
         el.addEventListener('mouseleave', () => { tooltipEl.style.display = 'none'; });
     });
 
-    // Crew marker tooltips
+    // Crew marker tooltips + click to open crew detail modal
     container.querySelectorAll('.crew-marker').forEach(el => {
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', () => {
+            tooltipEl.style.display = 'none';
+            const ci = parseInt(el.getAttribute('data-cidx'));
+            showCrewDetail(ci);
+        });
         el.addEventListener('mouseenter', (e) => {
             const ci = parseInt(el.getAttribute('data-cidx'));
             const crew = crews[ci];
@@ -1243,7 +1519,7 @@ async function fetchWeather() {
     if (correlations && Array.isArray(correlations)) {
         document.getElementById('weather-correlations').innerHTML = correlations.length===0 ? '<div style="color:#8b949e;padding:12px;">No correlations yet</div>' :
             `<table><tr><th>Outage</th><th>Weather Related</th><th>Score</th><th>Primary Factor</th><th>Risk</th></tr>${
-            correlations.slice(-30).reverse().map(c => `<tr><td>${c.outageId}</td><td>${c.weatherRelated?'<span class="status status-active">Yes</span>':'<span class="status status-normal">No</span>'}</td><td>${c.correlationScore}%</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${c.primaryFactor}</td><td>${statusBadge(c.riskLevel==='Critical'?'active':c.riskLevel==='High'?'warning':'normal')}</td></tr>`
+            correlations.slice(-30).reverse().map(c => `<tr class="clickable-row" onclick="showOutageDetail('${c.outageId}')"><td>${c.outageId}</td><td>${c.weatherRelated?'<span class="status status-active">Yes</span>':'<span class="status status-normal">No</span>'}</td><td>${c.correlationScore}%</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${c.primaryFactor}</td><td>${statusBadge(c.riskLevel==='Critical'?'active':c.riskLevel==='High'?'warning':'normal')}</td></tr>`
         ).join('')}</table>`;
     }
 }
