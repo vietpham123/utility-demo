@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: meter-data-service
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:timescaledb}:${DB_PORT:5432}/${DB_NAME:utilitydb}
+    username: ${DB_USER:utilityuser}
+    password: ${DB_PASSWORD:utility2026!}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKER:kafka:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+  data:
+    redis:
+      host: ${REDIS_HOST:redis}
+      port: ${REDIS_PORT:6379}
+
+logging:
+  level:
+    root: INFO
+    com.genericutility.meterdata: DEBUG
+    org.springframework.kafka: WARN
+    org.springframework.jdbc: DEBUG
+
+server:
+  port: 8080

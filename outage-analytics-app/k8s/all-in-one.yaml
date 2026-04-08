@@ -1,0 +1,1019 @@
+# ============================================================
+# INFRASTRUCTURE
+# ============================================================
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: timescaledb-pvc
+  namespace: utility-outage-analytics
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: timescaledb
+  namespace: utility-outage-analytics
+  labels:
+    app: timescaledb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: timescaledb
+  template:
+    metadata:
+      labels:
+        app: timescaledb
+    spec:
+      containers:
+      - name: timescaledb
+        image: timescale/timescaledb:latest-pg15
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          value: utilitydb
+        - name: POSTGRES_USER
+          value: utilityuser
+        - name: POSTGRES_PASSWORD
+          value: utility2026!
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        volumeMounts:
+        - name: db-data
+          mountPath: /var/lib/postgresql/data
+        - name: init-sql
+          mountPath: /docker-entrypoint-initdb.d
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          exec:
+            command: ["pg_isready", "-U", "utilityuser", "-d", "utilitydb"]
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          exec:
+            command: ["pg_isready", "-U", "utilityuser", "-d", "utilitydb"]
+          initialDelaySeconds: 10
+          periodSeconds: 5
+      volumes:
+      - name: db-data
+        persistentVolumeClaim:
+          claimName: timescaledb-pvc
+      - name: init-sql
+        configMap:
+          name: db-init-sql
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: timescaledb
+  namespace: utility-outage-analytics
+spec:
+  selector:
+    app: timescaledb
+  ports:
+  - port: 5432
+    targetPort: 5432
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: utility-outage-analytics
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis:7-alpine
+        ports:
+        - containerPort: 6379
+        command: ["redis-server", "--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru"]
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "192Mi"
+            cpu: "200m"
+        livenessProbe:
+          exec:
+            command: ["redis-cli", "ping"]
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          exec:
+            command: ["redis-cli", "ping"]
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: utility-outage-analytics
+spec:
+  selector:
+    app: redis
+  ports:
+  - port: 6379
+    targetPort: 6379
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka
+  namespace: utility-outage-analytics
+  labels:
+    app: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka
+  template:
+    metadata:
+      labels:
+        app: kafka
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: kafka
+        image: vietregistry.azurecr.io/kafka:latest
+        ports:
+        - containerPort: 9092
+        env:
+        - name: KAFKA_NODE_ID
+          value: "1"
+        - name: KAFKA_PROCESS_ROLES
+          value: "broker,controller"
+        - name: KAFKA_CONTROLLER_QUORUM_VOTERS
+          value: "1@localhost:9093"
+        - name: KAFKA_LISTENERS
+          value: "PLAINTEXT://:9092,CONTROLLER://:9093"
+        - name: KAFKA_ADVERTISED_LISTENERS
+          value: "PLAINTEXT://kafka:9092"
+        - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+          value: "PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT"
+        - name: KAFKA_CONTROLLER_LISTENER_NAMES
+          value: "CONTROLLER"
+        - name: KAFKA_AUTO_CREATE_TOPICS_ENABLE
+          value: "true"
+        - name: KAFKA_NUM_PARTITIONS
+          value: "3"
+        - name: KAFKA_DEFAULT_REPLICATION_FACTOR
+          value: "1"
+        - name: KAFKA_LOG_RETENTION_HOURS
+          value: "24"
+        - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
+          value: "1"
+        - name: CLUSTER_ID
+          value: "MkU3OEVBNTcwNTJENDM2Qk"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "200m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          tcpSocket:
+            port: 9092
+          initialDelaySeconds: 45
+          periodSeconds: 15
+        readinessProbe:
+          tcpSocket:
+            port: 9092
+          initialDelaySeconds: 30
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka
+  namespace: utility-outage-analytics
+spec:
+  selector:
+    app: kafka
+  ports:
+  - name: broker
+    port: 9092
+    targetPort: 9092
+  - name: controller
+    port: 9093
+    targetPort: 9093
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+  namespace: utility-outage-analytics
+  labels:
+    app: rabbitmq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+      - name: rabbitmq
+        image: rabbitmq:3.13-management-alpine
+        ports:
+        - containerPort: 5672
+        - containerPort: 15672
+        env:
+        - name: RABBITMQ_DEFAULT_USER
+          value: "utility"
+        - name: RABBITMQ_DEFAULT_PASS
+          value: "utility2026!"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "384Mi"
+            cpu: "300m"
+        livenessProbe:
+          tcpSocket:
+            port: 5672
+          initialDelaySeconds: 30
+          periodSeconds: 15
+        readinessProbe:
+          tcpSocket:
+            port: 5672
+          initialDelaySeconds: 15
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq
+  namespace: utility-outage-analytics
+spec:
+  selector:
+    app: rabbitmq
+  ports:
+  - name: amqp
+    port: 5672
+    targetPort: 5672
+  - name: management
+    port: 15672
+    targetPort: 15672
+---
+# ============================================================
+# SERVICES
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: outage-service
+  namespace: utility-outage-analytics
+  labels:
+    app: outage-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: outage-service
+  template:
+    metadata:
+      labels:
+        app: outage-service
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: outage-service
+        image: vietregistry.azurecr.io/outage-service:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://utilityuser:utility2026!@timescaledb:5432/utilitydb"
+        - name: KAFKA_BROKERS
+          value: "kafka:9092"
+        - name: REDIS_URL
+          value: "redis://redis:6379"
+        - name: GRID_TOPOLOGY_URL
+          value: "http://grid-topology-service:3000"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /api/outages/health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /api/outages/health
+            port: 3000
+          initialDelaySeconds: 15
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: outage-service
+  namespace: utility-outage-analytics
+spec:
+  selector:
+    app: outage-service
+  ports:
+  - port: 3000
+    targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: usage-service
+  namespace: utility-outage-analytics
+  labels:
+    app: usage-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: usage-service
+  template:
+    metadata:
+      labels:
+        app: usage-service
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: usage-service
+        image: vietregistry.azurecr.io/usage-service:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: KAFKA_BROKERS
+          value: "kafka:9092"
+        - name: REDIS_URL
+          value: "redis://redis:6379"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /api/usage/health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /api/usage/health
+            port: 3000
+          initialDelaySeconds: 15
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: usage-service
+  namespace: utility-outage-analytics
+spec:
+  selector:
+    app: usage-service
+  ports:
+  - port: 3000
+    targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scada-service
+  namespace: utility-outage-analytics
+  labels:
+    app: scada-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scada-service
+  template:
+    metadata:
+      labels:
+        app: scada-service
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: scada-service
+        image: vietregistry.azurecr.io/scada-service:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        - name: ASPNETCORE_URLS
+          value: "http://+:80"
+        - name: ConnectionStrings__TimescaleDb
+          value: "Host=timescaledb;Port=5432;Database=utilitydb;Username=utilityuser;Password=utility2026!"
+        - name: Kafka__BootstrapServers
+          value: "kafka:9092"
+        - name: Redis__ConnectionString
+          value: "redis:6379"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "384Mi"
+            cpu: "300m"
+        livenessProbe:
+          httpGet:
+            path: /api/scada/health
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /api/scada/health
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: scada-service
+  namespace: utility-outage-analytics
+spec:
+  selector:
+    app: scada-service
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meter-data-service
+  namespace: utility-outage-analytics
+  labels:
+    app: meter-data-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: meter-data-service
+  template:
+    metadata:
+      labels:
+        app: meter-data-service
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: meter-data-service
+        image: vietregistry.azurecr.io/meter-data-service:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:postgresql://timescaledb:5432/utilitydb"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "utilityuser"
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: "utility2026!"
+        - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+          value: "kafka:9092"
+        - name: SPRING_DATA_REDIS_HOST
+          value: "redis"
+        - name: SPRING_DATA_REDIS_PORT
+          value: "6379"
+        - name: JAVA_OPTS
+          value: "-Xmx256m -Xms128m"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "150m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /api/meter-data/health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /api/meter-data/health
+            port: 8080
+          initialDelaySeconds: 40
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: meter-data-service
+  namespace: utility-outage-analytics
+spec:
+  selector:
+    app: meter-data-service
+  ports:
+  - port: 8080
+    targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grid-topology-service
+  namespace: utility-outage-analytics
+  labels:
+    app: grid-topology-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grid-topology-service
+  template:
+    metadata:
+      labels:
+        app: grid-topology-service
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: grid-topology-service
+        image: vietregistry.azurecr.io/grid-topology-service:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://utilityuser:utility2026!@timescaledb:5432/utilitydb"
+        - name: REDIS_URL
+          value: "redis://redis:6379"
+        - name: KAFKA_BROKERS
+          value: "kafka:9092"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /api/grid/health
+            port: 3000
+          initialDelaySeconds: 20
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /api/grid/health
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grid-topology-service
+  namespace: utility-outage-analytics
+spec:
+  selector:
+    app: grid-topology-service
+  ports:
+  - port: 3000
+    targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reliability-service
+  namespace: utility-outage-analytics
+  labels:
+    app: reliability-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reliability-service
+  template:
+    metadata:
+      labels:
+        app: reliability-service
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: reliability-service
+        image: vietregistry.azurecr.io/reliability-service:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://utilityuser:utility2026!@timescaledb:5432/utilitydb"
+        - name: KAFKA_BROKERS
+          value: "kafka:9092"
+        - name: REDIS_URL
+          value: "redis://redis:6379"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /api/reliability/health
+            port: 5000
+          initialDelaySeconds: 20
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /api/reliability/health
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reliability-service
+  namespace: utility-outage-analytics
+spec:
+  selector:
+    app: reliability-service
+  ports:
+  - port: 5000
+    targetPort: 5000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demand-forecast-service
+  namespace: utility-outage-analytics
+  labels:
+    app: demand-forecast-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demand-forecast-service
+  template:
+    metadata:
+      labels:
+        app: demand-forecast-service
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: demand-forecast-service
+        image: vietregistry.azurecr.io/demand-forecast-service:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://utilityuser:utility2026!@timescaledb:5432/utilitydb"
+        - name: KAFKA_BROKERS
+          value: "kafka:9092"
+        - name: REDIS_URL
+          value: "redis://redis:6379"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /api/forecast/health
+            port: 3000
+          initialDelaySeconds: 20
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /api/forecast/health
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demand-forecast-service
+  namespace: utility-outage-analytics
+spec:
+  selector:
+    app: demand-forecast-service
+  ports:
+  - port: 3000
+    targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crew-dispatch-service
+  namespace: utility-outage-analytics
+  labels:
+    app: crew-dispatch-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crew-dispatch-service
+  template:
+    metadata:
+      labels:
+        app: crew-dispatch-service
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: crew-dispatch-service
+        image: vietregistry.azurecr.io/crew-dispatch-service:latest
+        ports:
+        - containerPort: 3001
+        env:
+        - name: DB_HOST
+          value: "timescaledb"
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_NAME
+          value: "utilitydb"
+        - name: DB_USER
+          value: "utilityuser"
+        - name: DB_PASSWORD
+          value: "utility2026!"
+        - name: RABBITMQ_URL
+          value: "amqp://utility:utility2026!@rabbitmq:5672"
+        - name: OUTAGE_SERVICE_URL
+          value: "http://outage-service:3000"
+        - name: NOTIFICATION_SERVICE_URL
+          value: "http://notification-service:5001"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /api/crew/health
+            port: 3001
+          initialDelaySeconds: 20
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /api/crew/health
+            port: 3001
+          initialDelaySeconds: 10
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: crew-dispatch-service
+  namespace: utility-outage-analytics
+spec:
+  selector:
+    app: crew-dispatch-service
+  ports:
+  - port: 3001
+    targetPort: 3001
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-service
+  namespace: utility-outage-analytics
+  labels:
+    app: notification-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: notification-service
+        image: vietregistry.azurecr.io/notification-service:latest
+        ports:
+        - containerPort: 5001
+        env:
+        - name: DB_HOST
+          value: "timescaledb"
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_NAME
+          value: "utilitydb"
+        - name: DB_USER
+          value: "utilityuser"
+        - name: DB_PASSWORD
+          value: "utility2026!"
+        - name: RABBITMQ_URL
+          value: "amqp://utility:utility2026!@rabbitmq:5672"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /api/notifications/health
+            port: 5001
+          initialDelaySeconds: 20
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /api/notifications/health
+            port: 5001
+          initialDelaySeconds: 10
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service
+  namespace: utility-outage-analytics
+spec:
+  selector:
+    app: notification-service
+  ports:
+  - port: 5001
+    targetPort: 5001
+---
+# ============================================================
+# GATEWAY & UI
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: analytics-gateway
+  namespace: utility-outage-analytics
+  labels:
+    app: analytics-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: analytics-gateway
+  template:
+    metadata:
+      labels:
+        app: analytics-gateway
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: analytics-gateway
+        image: vietregistry.azurecr.io/analytics-gateway:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: OUTAGE_SERVICE_URL
+          value: "http://outage-service:3000"
+        - name: USAGE_SERVICE_URL
+          value: "http://usage-service:3000"
+        - name: SCADA_SERVICE_URL
+          value: "http://scada-service"
+        - name: METER_SERVICE_URL
+          value: "http://meter-data-service:8080"
+        - name: GRID_SERVICE_URL
+          value: "http://grid-topology-service:3000"
+        - name: RELIABILITY_SERVICE_URL
+          value: "http://reliability-service:5000"
+        - name: FORECAST_SERVICE_URL
+          value: "http://demand-forecast-service:3000"
+        - name: CREW_SERVICE_URL
+          value: "http://crew-dispatch-service:3001"
+        - name: NOTIFICATION_SERVICE_URL
+          value: "http://notification-service:5001"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 15
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: analytics-gateway
+  namespace: utility-outage-analytics
+spec:
+  selector:
+    app: analytics-gateway
+  ports:
+  - port: 80
+    targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: analytics-ui
+  namespace: utility-outage-analytics
+  labels:
+    app: analytics-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: analytics-ui
+  template:
+    metadata:
+      labels:
+        app: analytics-ui
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: analytics-ui
+        image: vietregistry.azurecr.io/analytics-ui:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 3
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: analytics-ui
+  namespace: utility-outage-analytics
+spec:
+  type: LoadBalancer
+  selector:
+    app: analytics-ui
+  ports:
+  - port: 80
+    targetPort: 80

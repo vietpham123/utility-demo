@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenericUtility Analytics Platform</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0e17; color: #e0e6ed; }
+        .header { background: linear-gradient(135deg, #1a1f2e 0%, #0d1117 100%); padding: 16px 24px; border-bottom: 1px solid #21262d; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 20px; color: #58a6ff; }
+        .header h1 span { color: #f0883e; }
+        .live-badge { background: #238636; color: #fff; padding: 4px 12px; border-radius: 12px; font-size: 11px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        .nav { display: flex; gap: 4px; background: #161b22; padding: 8px 24px; border-bottom: 1px solid #21262d; overflow-x: auto; }
+        .nav button { background: none; border: 1px solid #30363d; color: #8b949e; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; white-space: nowrap; }
+        .nav button.active { background: #1f6feb; border-color: #1f6feb; color: #fff; }
+        .nav button:hover:not(.active) { border-color: #58a6ff; color: #c9d1d9; }
+        .dashboard { padding: 16px 24px; max-width: 1600px; margin: 0 auto; }
+        .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; }
+        .kpi { background: #161b22; border: 1px solid #21262d; border-radius: 8px; padding: 14px; }
+        .kpi .label { font-size: 11px; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; }
+        .kpi .value { font-size: 24px; font-weight: 700; color: #f0f6fc; margin: 4px 0; }
+        .kpi .sub { font-size: 11px; color: #8b949e; }
+        .kpi.critical .value { color: #f85149; }
+        .kpi.warning .value { color: #d29922; }
+        .kpi.good .value { color: #3fb950; }
+        .kpi.info .value { color: #58a6ff; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+        @media (max-width: 1000px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+        .panel { background: #161b22; border: 1px solid #21262d; border-radius: 8px; overflow: hidden; }
+        .panel-header { padding: 12px 16px; border-bottom: 1px solid #21262d; display: flex; justify-content: space-between; align-items: center; }
+        .panel-header h3 { font-size: 13px; color: #c9d1d9; }
+        .panel-header .badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; }
+        .badge-red { background: #f8514920; color: #f85149; }
+        .badge-green { background: #3fb95020; color: #3fb950; }
+        .badge-blue { background: #58a6ff20; color: #58a6ff; }
+        .badge-yellow { background: #d2992220; color: #d29922; }
+        .panel-body { padding: 12px 16px; max-height: 350px; overflow-y: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th { text-align: left; padding: 6px 8px; color: #8b949e; border-bottom: 1px solid #21262d; font-weight: 600; position: sticky; top: 0; background: #161b22; }
+        td { padding: 5px 8px; border-bottom: 1px solid #21262d20; color: #c9d1d9; }
+        tr:hover td { background: #1c2128; }
+        .status { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+        .status-active { background: #f8514930; color: #f85149; }
+        .status-resolved { background: #3fb95030; color: #3fb950; }
+        .status-investigating { background: #d2992230; color: #d29922; }
+        .status-warning { background: #d2992230; color: #d29922; }
+        .status-normal { background: #3fb95030; color: #3fb950; }
+        .bar-chart { display: flex; align-items: flex-end; gap: 3px; height: 80px; padding: 8px 0; }
+        .bar { background: #1f6feb; border-radius: 2px 2px 0 0; min-width: 8px; flex: 1; transition: height 0.3s; position: relative; }
+        .bar:hover { background: #58a6ff; }
+        .bar-label { font-size: 9px; color: #8b949e; text-align: center; margin-top: 4px; }
+        .forecast-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #21262d20; }
+        .forecast-bar { flex: 1; height: 16px; background: #21262d; border-radius: 3px; overflow: hidden; position: relative; }
+        .forecast-bar .fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
+        .fill-green { background: linear-gradient(90deg, #238636, #3fb950); }
+        .fill-yellow { background: linear-gradient(90deg, #9e6a03, #d29922); }
+        .fill-red { background: linear-gradient(90deg, #da3633, #f85149); }
+        .section { display: none; }
+        .section.active { display: block; }
+        .topology-node { padding: 8px 12px; margin: 4px 0; background: #1c2128; border-radius: 6px; border-left: 3px solid #1f6feb; cursor: pointer; }
+        .topology-node:hover { background: #22272e; }
+        .topology-children { margin-left: 20px; }
+        .mini-chart { display: flex; align-items: flex-end; gap: 1px; height: 30px; }
+        .mini-bar { background: #1f6feb80; width: 3px; border-radius: 1px 1px 0 0; }
+        .loading { color: #8b949e; font-style: italic; padding: 20px; text-align: center; }
+        .new-row { animation: glow 1.5s ease-out; }
+        @keyframes glow { from { background: #1f6feb30; } to { background: transparent; } }
+        .error-msg { color: #f85149; font-size: 12px; padding: 12px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⚡ <span>GenericUtility</span> Analytics Platform</h1>
+        <div style="display:flex;align-items:center;gap:12px;">
+            <span class="live-badge">● Live Data</span>
+            <span id="clock" style="font-size:12px;color:#8b949e;"></span>
+        </div>
+    </div>
+
+    <div class="nav">
+        <button class="active" onclick="showSection('overview')">Overview</button>
+        <button onclick="showSection('scada')">SCADA Telemetry</button>
+        <button onclick="showSection('outages')">Outage Management</button>
+        <button onclick="showSection('metering')">Meter Data (MDMS)</button>
+        <button onclick="showSection('grid')">Grid Topology</button>
+        <button onclick="showSection('reliability')">Reliability Indices</button>
+        <button onclick="showSection('forecast')">Demand Forecast</button>
+        <button onclick="showSection('crew')">Crew Dispatch</button>
+        <button onclick="showSection('notifications')">Notifications</button>
+        <button onclick="showSection('health')">Service Health</button>
+    </div>
+
+    <div class="dashboard">
+        <!-- OVERVIEW -->
+        <div id="overview" class="section active">
+            <div class="kpi-row" id="overview-kpis"></div>
+            <div class="grid-2">
+                <div class="panel">
+                    <div class="panel-header"><h3>Active Outages</h3><span class="badge badge-red" id="active-outage-count">0</span></div>
+                    <div class="panel-body" id="overview-outages"><div class="loading">Loading...</div></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header"><h3>SCADA Alerts</h3><span class="badge badge-yellow" id="scada-alert-count">0</span></div>
+                    <div class="panel-body" id="overview-alerts"><div class="loading">Loading...</div></div>
+                </div>
+            </div>
+            <div class="grid-3">
+                <div class="panel">
+                    <div class="panel-header"><h3>Reliability (IEEE 1366)</h3></div>
+                    <div class="panel-body" id="overview-reliability"><div class="loading">Loading...</div></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header"><h3>Load Forecast (System)</h3></div>
+                    <div class="panel-body" id="overview-forecast"><div class="loading">Loading...</div></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header"><h3>Meter Data Summary</h3></div>
+                    <div class="panel-body" id="overview-meter"><div class="loading">Loading...</div></div>
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="panel">
+                    <div class="panel-header"><h3>Crew Dispatch</h3><span class="badge badge-blue" id="overview-crew-badge">0 active</span></div>
+                    <div class="panel-body" id="overview-crew"><div class="loading">Loading...</div></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header"><h3>Customer Notifications</h3><span class="badge badge-green" id="overview-notif-badge">0 sent</span></div>
+                    <div class="panel-body" id="overview-notifications"><div class="loading">Loading...</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCADA -->
+        <div id="scada" class="section">
+            <div class="kpi-row" id="scada-kpis"></div>
+            <div class="grid-2">
+                <div class="panel">
+                    <div class="panel-header"><h3>Latest Sensor Readings</h3></div>
+                    <div class="panel-body" id="scada-readings"><div class="loading">Loading...</div></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header"><h3>Active Alerts</h3></div>
+                    <div class="panel-body" id="scada-alerts"><div class="loading">Loading...</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OUTAGES -->
+        <div id="outages" class="section">
+            <div class="kpi-row" id="outage-kpis"></div>
+            <div class="panel">
+                <div class="panel-header"><h3>All Outages</h3></div>
+                <div class="panel-body" style="max-height:500px" id="outage-table"><div class="loading">Loading...</div></div>
+            </div>
+        </div>
+
+        <!-- METERING -->
+        <div id="metering" class="section">
+            <div class="kpi-row" id="meter-kpis"></div>
+            <div class="grid-2">
+                <div class="panel">
+                    <div class="panel-header"><h3>Recent Meter Readings</h3></div>
+                    <div class="panel-body" style="max-height:400px" id="meter-readings"><div class="loading">Loading...</div></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header"><h3>Anomalies / VEE Flags</h3></div>
+                    <div class="panel-body" style="max-height:400px" id="meter-anomalies"><div class="loading">Loading...</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRID -->
+        <div id="grid" class="section">
+            <div class="kpi-row" id="grid-kpis"></div>
+            <div class="panel">
+                <div class="panel-header"><h3>Grid Topology</h3></div>
+                <div class="panel-body" style="max-height:600px" id="grid-topology"><div class="loading">Loading...</div></div>
+            </div>
+        </div>
+
+        <!-- RELIABILITY -->
+        <div id="reliability" class="section">
+            <div class="kpi-row" id="rel-kpis"></div>
+            <div class="panel">
+                <div class="panel-header"><h3>30-Day Reliability History</h3></div>
+                <div class="panel-body" style="max-height:500px" id="rel-history"><div class="loading">Loading...</div></div>
+            </div>
+        </div>
+
+        <!-- FORECAST -->
+        <div id="forecast" class="section">
+            <div class="kpi-row" id="forecast-kpis"></div>
+            <div class="panel">
+                <div class="panel-header"><h3>24-Hour Load Forecast by Area</h3></div>
+                <div class="panel-body" style="max-height:500px" id="forecast-detail"><div class="loading">Loading...</div></div>
+            </div>
+        </div>
+
+        <!-- CREW DISPATCH -->
+        <div id="crew" class="section">
+            <div class="kpi-row" id="crew-kpis"></div>
+            <div class="grid-2">
+                <div class="panel">
+                    <div class="panel-header"><h3>Crew Status</h3></div>
+                    <div class="panel-body" style="max-height:350px" id="crew-list"><div class="loading">Loading...</div></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header"><h3>Active Dispatches</h3><span class="badge badge-yellow" id="dispatch-count">0</span></div>
+                    <div class="panel-body" style="max-height:350px" id="crew-dispatches"><div class="loading">Loading...</div></div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header"><h3>Dispatch History</h3></div>
+                <div class="panel-body" style="max-height:400px" id="crew-history"><div class="loading">Loading...</div></div>
+            </div>
+        </div>
+
+        <!-- NOTIFICATIONS -->
+        <div id="notifications" class="section">
+            <div class="kpi-row" id="notif-kpis"></div>
+            <div class="grid-2">
+                <div class="panel">
+                    <div class="panel-header"><h3>Delivery Stats by Channel</h3></div>
+                    <div class="panel-body" id="notif-channels"><div class="loading">Loading...</div></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header"><h3>By Event Type</h3></div>
+                    <div class="panel-body" id="notif-types"><div class="loading">Loading...</div></div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header"><h3>Recent Notifications</h3></div>
+                <div class="panel-body" style="max-height:400px" id="notif-log"><div class="loading">Loading...</div></div>
+            </div>
+        </div>
+
+        <!-- HEALTH -->
+        <div id="health" class="section">
+            <div class="panel">
+                <div class="panel-header"><h3>Service Health Status</h3></div>
+                <div class="panel-body" id="health-status"><div class="loading">Loading...</div></div>
+            </div>
+        </div>
+    </div>
+
+<script>
+const API = '/api';
+let currentSection = 'overview';
+
+function showSection(name) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(name).classList.add('active');
+    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    currentSection = name;
+    fetchData();
+}
+
+function kpi(label, value, sub, cls='') {
+    return `<div class="kpi ${cls}"><div class="label">${label}</div><div class="value">${value}</div><div class="sub">${sub}</div></div>`;
+}
+
+function statusBadge(status) {
+    const s = (status||'').toLowerCase().replace(/\s/g,'-');
+    return `<span class="status status-${s}">${status}</span>`;
+}
+
+async function fetchJSON(url) {
+    try { const r = await fetch(url); if (!r.ok) throw new Error(r.status); return await r.json(); }
+    catch(e) { return null; }
+}
+
+async function fetchOverview() {
+    const [dashboard, outages, alerts] = await Promise.all([
+        fetchJSON(`${API}/dashboard`),
+        fetchJSON(`${API}/outages/active`),
+        fetchJSON(`${API}/scada/alerts`)
+    ]);
+
+    const el = document.getElementById('overview-kpis');
+    if (dashboard) {
+        const o = dashboard.outages || {};
+        const s = dashboard.scada || {};
+        const r = dashboard.reliability || {};
+        const f = dashboard.forecast || {};
+        const m = dashboard.meterData || {};
+        el.innerHTML = [
+            kpi('Active Outages', o.activeOutages ?? '-', `${o.totalAffectedCustomers ?? 0} customers affected`, (o.activeOutages||0)>3?'critical':'warning'),
+            kpi('System Load', f.currentLoadMw ? f.currentLoadMw+' MW' : '-', f.currentUtilizationPct ? f.currentUtilizationPct+'% capacity' : '', f.currentUtilizationPct>80?'warning':'good'),
+            kpi('SAIDI Today', r.saidi ?? '-', 'minutes per customer', (r.saidi||0)>5?'critical':'good'),
+            kpi('SAIFI Today', r.saifi ?? '-', 'interruptions per customer', 'info'),
+            kpi('SCADA Sensors', s.sensorCount ?? '-', `${s.warningCount ?? 0} warnings`, (s.warningCount||0)>2?'warning':'good'),
+            kpi('Meter Readings', m.totalReadings ?? '-', `${m.anomalyCount ?? 0} anomalies`, 'info'),
+            kpi('Total Power', s.totalActivePowerMw ? s.totalActivePowerMw+' MW' : '-', 'grid active power', 'info'),
+            kpi('Grid Frequency', s.averageFrequencyHz ? s.averageFrequencyHz+' Hz' : '-', 'system average', 'good')
+        ].join('');
+    }
+
+    if (outages) {
+        document.getElementById('active-outage-count').textContent = outages.length;
+        document.getElementById('overview-outages').innerHTML = outages.length === 0 ? '<div style="color:#3fb950;padding:12px;">No active outages</div>' :
+            `<table><tr><th>ID</th><th>Location</th><th>Priority</th><th>Cause</th><th>Affected</th></tr>${outages.slice(0,10).map(o =>
+                `<tr><td>${o.id}</td><td>${o.location}</td><td>${statusBadge(o.priority)}</td><td style="max-width:150px;overflow:hidden;text-overflow:ellipsis">${o.cause}</td><td>${(o.affectedCustomers||0).toLocaleString()}</td></tr>`
+            ).join('')}</table>`;
+    }
+
+    if (alerts) {
+        const active = (Array.isArray(alerts) ? alerts : []).filter(a => !(a.Acknowledged || a.acknowledged));
+        document.getElementById('scada-alert-count').textContent = active.length;
+        document.getElementById('overview-alerts').innerHTML = active.length === 0 ? '<div style="color:#3fb950;padding:12px;">No active alerts</div>' :
+            `<table><tr><th>Sensor</th><th>Type</th><th>Severity</th><th>Value</th></tr>${active.slice(0,10).map(a =>
+                `<tr><td>${a.SensorId||a.sensorId}</td><td>${a.AlertType||a.alertType}</td><td>${statusBadge(a.Severity||a.severity)}</td><td>${(a.Value||a.value||0).toFixed(2)}</td></tr>`
+            ).join('')}</table>`;
+    }
+
+    // Reliability panel
+    if (dashboard && dashboard.reliability) {
+        const r = dashboard.reliability;
+        document.getElementById('overview-reliability').innerHTML = `
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                ${kpi('SAIDI', (r.saidi||0).toFixed(2), 'min/customer', (r.saidi||0)>5?'critical':'good')}
+                ${kpi('SAIFI', (r.saifi||0).toFixed(2), 'int/customer', 'info')}
+                ${kpi('CAIDI', (r.caidi||0).toFixed(2), 'min/interruption', 'info')}
+                ${kpi('MAIFI', (r.maifi||0).toFixed(4), 'momentary', 'info')}
+            </div>`;
+    }
+
+    // Forecast panel
+    if (dashboard && dashboard.forecast) {
+        const f = dashboard.forecast;
+        document.getElementById('overview-forecast').innerHTML = `
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                ${kpi('Current Load', f.currentLoadMw?f.currentLoadMw+' MW':'-', 'system total', 'info')}
+                ${kpi('Peak Forecast', f.peakForecastMw?f.peakForecastMw+' MW':'-', f.peakHour!=null?'at hour '+f.peakHour:'', f.peakForecastMw>(f.systemCapacityMw*0.85)?'warning':'good')}
+                ${kpi('Capacity', (f.systemCapacityMw||1350)+' MW', 'system capacity', 'info')}
+                ${kpi('Utilization', f.currentUtilizationPct?f.currentUtilizationPct+'%':'-', 'current', f.currentUtilizationPct>80?'warning':'good')}
+            </div>`;
+    }
+
+    // Meter panel
+    if (dashboard && dashboard.meterData) {
+        const m = dashboard.meterData;
+        document.getElementById('overview-meter').innerHTML = `
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                ${kpi('Readings', m.totalReadings||0, 'total processed', 'info')}
+                ${kpi('Validated', m.validatedCount||0, 'VEE passed', 'good')}
+                ${kpi('Suspect', m.suspectCount||0, 'flagged', (m.suspectCount||0)>5?'warning':'info')}
+                ${kpi('Anomalies', m.anomalyCount||0, 'detected', (m.anomalyCount||0)>3?'critical':'info')}
+            </div>`;
+    }
+
+    // Crew dispatch overview
+    if (dashboard && dashboard.crewDispatch) {
+        const cd = dashboard.crewDispatch;
+        document.getElementById('overview-crew-badge').textContent = `${cd.activeDispatches||0} active`;
+        document.getElementById('overview-crew').innerHTML = `
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                ${kpi('Crews', cd.totalCrews||0, `${cd.availableCrews||0} available`, 'info')}
+                ${kpi('Dispatched', cd.dispatchedCrews||0, 'en route', (cd.dispatchedCrews||0)>0?'warning':'good')}
+                ${kpi('On-Site', cd.onSiteCrews||0, 'working', (cd.onSiteCrews||0)>0?'warning':'good')}
+                ${kpi('Avg Response', (cd.avgResponseTimeMinutes||0)+' min', 'travel time', 'info')}
+            </div>`;
+    }
+
+    // Notifications overview
+    if (dashboard && dashboard.notifications) {
+        const n = dashboard.notifications;
+        const total = n.totalNotifications||0;
+        document.getElementById('overview-notif-badge').textContent = `${total} sent`;
+        const ds = n.deliveryStats||{};
+        document.getElementById('overview-notifications').innerHTML = `
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                ${kpi('Total Sent', total, 'all channels', 'info')}
+                ${kpi('SMS', (ds.sms?.delivered||0), `${ds.sms?.failed||0} failed`, 'info')}
+                ${kpi('Email', (ds.email?.delivered||0), `${ds.email?.failed||0} failed`, 'info')}
+                ${kpi('Push', (ds.push?.delivered||0), `${ds.push?.failed||0} failed`, 'info')}
+            </div>`;
+    }
+}
+
+async function fetchScada() {
+    const [summary, readings, alerts] = await Promise.all([
+        fetchJSON(`${API}/scada/summary`),
+        fetchJSON(`${API}/scada/readings/latest`),
+        fetchJSON(`${API}/scada/alerts?limit=30`)
+    ]);
+
+    if (summary) {
+        document.getElementById('scada-kpis').innerHTML = [
+            kpi('Sensors', summary.sensorCount, 'monitored', 'info'),
+            kpi('Avg Voltage', summary.averageVoltageKv+' kV', 'across grid', 'good'),
+            kpi('Frequency', summary.averageFrequencyHz+' Hz', 'system avg', Math.abs(summary.averageFrequencyHz-60)>0.05?'warning':'good'),
+            kpi('Power Factor', summary.averagePowerFactor, 'average', summary.averagePowerFactor<0.9?'warning':'good'),
+            kpi('Active Power', summary.totalActivePowerMw+' MW', 'total', 'info'),
+            kpi('Warnings', summary.warningCount, 'current', summary.warningCount>0?'warning':'good')
+        ].join('');
+    }
+
+    if (readings && Array.isArray(readings)) {
+        document.getElementById('scada-readings').innerHTML = `<table><tr><th>Sensor</th><th>Type</th><th>Voltage (kV)</th><th>Current (A)</th><th>Freq (Hz)</th><th>PF</th><th>Temp (°C)</th><th>Power (kW)</th><th>Status</th></tr>${
+            readings.map(r => `<tr><td>${r.SensorId||r.sensorId}</td><td>${r.EquipmentType||r.equipmentType}</td><td>${(r.VoltageKv||r.voltageKv||0).toFixed(2)}</td><td>${(r.CurrentA||r.currentA||0).toFixed(1)}</td><td>${(r.FrequencyHz||r.frequencyHz||0).toFixed(3)}</td><td>${(r.PowerFactor||r.powerFactor||0).toFixed(3)}</td><td>${(r.TemperatureC||r.temperatureC||0).toFixed(1)}</td><td>${(r.ActivePowerKw||r.activePowerKw||0).toFixed(0)}</td><td>${statusBadge((r.Status||r.status||'Normal').toLowerCase())}</td></tr>`
+        ).join('')}</table>`;
+    }
+
+    if (alerts && Array.isArray(alerts)) {
+        document.getElementById('scada-alerts').innerHTML = alerts.length===0 ? '<div style="color:#3fb950">No alerts</div>' :
+            `<table><tr><th>Time</th><th>Sensor</th><th>Alert</th><th>Severity</th><th>Message</th></tr>${
+            alerts.map(a => `<tr><td>${new Date(a.Time||a.time).toLocaleTimeString()}</td><td>${a.SensorId||a.sensorId}</td><td>${a.AlertType||a.alertType}</td><td>${statusBadge(a.Severity||a.severity)}</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${a.Message||a.message}</td></tr>`
+        ).join('')}</table>`;
+    }
+}
+
+async function fetchOutages() {
+    const [outages, stats] = await Promise.all([
+        fetchJSON(`${API}/outages`),
+        fetchJSON(`${API}/outages/stats/summary`)
+    ]);
+
+    if (stats) {
+        const bp = stats.byPriority || {};
+        document.getElementById('outage-kpis').innerHTML = [
+            kpi('Total', stats.totalOutages, 'all time', 'info'),
+            kpi('Active', stats.activeOutages, 'in progress', stats.activeOutages>5?'critical':'warning'),
+            kpi('Resolved', stats.resolvedOutages, 'restored', 'good'),
+            kpi('Affected', (stats.totalAffectedCustomers||0).toLocaleString(), 'customers', stats.totalAffectedCustomers>5000?'critical':'warning'),
+            kpi('Critical', bp.Critical||0, 'priority', (bp.Critical||0)>0?'critical':'good'),
+            kpi('High', bp.High||0, 'priority', (bp.High||0)>2?'warning':'info')
+        ].join('');
+    }
+
+    if (outages) {
+        const sorted = outages.sort((a,b) => new Date(b.startTime) - new Date(a.startTime));
+        document.getElementById('outage-table').innerHTML = `<table><tr><th>ID</th><th>Location</th><th>Status</th><th>Priority</th><th>Cause</th><th>Equipment</th><th>Affected</th><th>Started</th><th>Crew</th><th>Source</th></tr>${
+            sorted.map(o => `<tr><td>${o.id}</td><td>${o.location}</td><td>${statusBadge(o.status)}</td><td>${statusBadge(o.priority)}</td><td style="max-width:140px;overflow:hidden;text-overflow:ellipsis">${o.cause}</td><td>${o.equipmentType||'-'} #${o.equipmentId||'-'}</td><td>${(o.affectedCustomers||0).toLocaleString()}</td><td>${new Date(o.startTime).toLocaleString()}</td><td>${o.crewAssigned||'-'}</td><td><span class="badge ${o.source==='SCADA-Auto-Detect'?'badge-blue':'badge-green'}">${o.source||'OMS'}</span></td></tr>`
+        ).join('')}</table>`;
+    }
+}
+
+async function fetchMetering() {
+    const [summary, readings, anomalies] = await Promise.all([
+        fetchJSON(`${API}/meter-data/summary`),
+        fetchJSON(`${API}/meter-data/readings?limit=50`),
+        fetchJSON(`${API}/meter-data/anomalies?limit=30`)
+    ]);
+
+    if (summary) {
+        document.getElementById('meter-kpis').innerHTML = [
+            kpi('Total Readings', summary.totalReadings||0, 'in window', 'info'),
+            kpi('Total kWh', (summary.totalKwh||0).toLocaleString(), 'consumed', 'info'),
+            kpi('Avg kWh', summary.avgKwhPerReading||0, 'per reading', 'info'),
+            kpi('Validated', summary.validatedCount||0, 'VEE passed', 'good'),
+            kpi('Suspect', summary.suspectCount||0, 'flagged', (summary.suspectCount||0)>5?'warning':'info'),
+            kpi('Anomalies', summary.anomalyCount||0, 'detected', (summary.anomalyCount||0)>3?'critical':'info')
+        ].join('');
+    }
+
+    if (readings && Array.isArray(readings)) {
+        document.getElementById('meter-readings').innerHTML = `<table><tr><th>Time</th><th>Meter</th><th>Customer</th><th>kWh</th><th>kW</th><th>Voltage</th><th>PF</th><th>Quality</th></tr>${
+            readings.slice(0,50).map(r => `<tr><td>${new Date(r.time).toLocaleTimeString()}</td><td>${r.meterId}</td><td>${r.customerId}</td><td>${r.readingKwh}</td><td>${r.demandKw}</td><td>${(r.voltageV||0).toFixed(1)}V</td><td>${(r.powerFactor||0).toFixed(3)}</td><td>${statusBadge((r.qualityFlag||'Valid').toLowerCase()==='valid'?'normal':r.qualityFlag)}</td></tr>`
+        ).join('')}</table>`;
+    }
+
+    if (anomalies && Array.isArray(anomalies)) {
+        document.getElementById('meter-anomalies').innerHTML = anomalies.length===0?'<div style="color:#3fb950">No anomalies</div>':
+            `<table><tr><th>Time</th><th>Meter</th><th>Type</th><th>Severity</th><th>Message</th></tr>${
+            anomalies.map(a => `<tr><td>${new Date(a.time).toLocaleTimeString()}</td><td>${a.meterId}</td><td>${a.anomalyType}</td><td>${statusBadge(a.severity)}</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${a.message}</td></tr>`
+        ).join('')}</table>`;
+    }
+}
+
+async function fetchGrid() {
+    const [stats, topology] = await Promise.all([
+        fetchJSON(`${API}/grid/stats`),
+        fetchJSON(`${API}/grid/topology`)
+    ]);
+
+    if (stats) {
+        document.getElementById('grid-kpis').innerHTML = [
+            kpi('Substations', stats.substations?.count||0, `${stats.substations?.totalCapacityMW||0} MW capacity`, 'info'),
+            kpi('Feeders', stats.feeders?.count||0, `${stats.feeders?.totalMiles||0} miles`, 'info'),
+            kpi('Transformers', stats.transformers?.count||0, `${stats.transformers?.totalCapacityKVA||0} kVA`, 'info'),
+            kpi('Service Points', stats.servicePoints?.count||0, 'customer connections', 'info')
+        ].join('');
+    }
+
+    if (topology && Array.isArray(topology)) {
+        document.getElementById('grid-topology').innerHTML = topology.map(sub => `
+            <div class="topology-node" style="border-left-color:#f0883e">
+                <strong>🏭 ${sub.name}</strong> <span style="color:#8b949e;font-size:11px">${sub.code} | ${sub.capacity_mw} MW | ${sub.voltage_level_kv} kV | ${sub.city}, ${sub.state}</span>
+                <div class="topology-children">
+                    ${(sub.feeders||[]).map(f => `
+                        <div class="topology-node" style="border-left-color:#58a6ff">
+                            <strong>⚡ ${f.name}</strong> <span style="color:#8b949e;font-size:11px">${f.code} | ${f.voltage_kv} kV | ${f.length_miles} mi | ${f.conductor_type||''}</span>
+                            <div class="topology-children">
+                                ${(f.transformers||[]).map(t => `
+                                    <div class="topology-node" style="border-left-color:#3fb950">
+                                        <strong>🔌 ${t.name}</strong> <span style="color:#8b949e;font-size:11px">${t.code} | ${t.capacity_kva} kVA | ${t.phase_config}</span>
+                                        ${(t.servicePoints||[]).length > 0 ? `<div style="margin-top:4px;font-size:11px;color:#8b949e">${(t.servicePoints||[]).map(sp => `📍 ${sp.customer_id} (${sp.meter_id}) - ${sp.service_type}`).join('<br>')}</div>` : ''}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+    }
+}
+
+async function fetchReliability() {
+    const [indices, history] = await Promise.all([
+        fetchJSON(`${API}/reliability/indices`),
+        fetchJSON(`${API}/reliability/history?days=30`)
+    ]);
+
+    if (indices) {
+        document.getElementById('rel-kpis').innerHTML = [
+            kpi('SAIDI', (indices.saidi||0).toFixed(2), 'System Avg Interruption Duration', (indices.saidi||0)>5?'critical':'good'),
+            kpi('SAIFI', (indices.saifi||0).toFixed(2), 'System Avg Interruption Frequency', 'info'),
+            kpi('CAIDI', (indices.caidi||0).toFixed(2), 'Customer Avg Interruption Duration', 'info'),
+            kpi('MAIFI', (indices.maifi||0).toFixed(4), 'Momentary Avg Int Frequency', 'info'),
+            kpi('Interruptions', indices.total_interruptions_today||0, 'today', (indices.total_interruptions_today||0)>5?'warning':'good'),
+            kpi('Cust-Minutes', Math.round(indices.total_customer_minutes_today||0), 'today', 'info')
+        ].join('');
+    }
+
+    if (history && Array.isArray(history)) {
+        document.getElementById('rel-history').innerHTML = `<table><tr><th>Date</th><th>SAIDI</th><th>SAIFI</th><th>CAIDI</th><th>MAIFI</th><th>Interruptions</th><th>Cust-Minutes</th></tr>${
+            history.map(h => `<tr><td>${h.date}</td><td>${(h.saidi||0).toFixed(2)}</td><td>${(h.saifi||0).toFixed(2)}</td><td>${(h.caidi||0).toFixed(2)}</td><td>${(h.maifi||0).toFixed(4)}</td><td>${h.total_interruptions||0}</td><td>${Math.round(h.total_customer_minutes||0)}</td></tr>`
+        ).join('')}</table>`;
+    }
+}
+
+async function fetchForecast() {
+    const [summary, forecasts, peaks] = await Promise.all([
+        fetchJSON(`${API}/forecast/summary`),
+        fetchJSON(`${API}/forecast/current`),
+        fetchJSON(`${API}/forecast/peak-demand`)
+    ]);
+
+    if (summary) {
+        document.getElementById('forecast-kpis').innerHTML = [
+            kpi('Current Load', summary.currentLoadMw?summary.currentLoadMw+' MW':'-', 'system', 'info'),
+            kpi('Peak Forecast', summary.peakForecastMw?summary.peakForecastMw+' MW':'-', summary.peakHour!=null?'at hour '+summary.peakHour:'', summary.peakForecastMw>(summary.systemCapacityMw*0.85)?'warning':'good'),
+            kpi('Utilization', summary.currentUtilizationPct?summary.currentUtilizationPct+'%':'-', 'current', summary.currentUtilizationPct>80?'warning':'good'),
+            kpi('Capacity', (summary.systemCapacityMw||1350)+' MW', 'total system', 'info')
+        ].join('');
+    }
+
+    if (forecasts && Array.isArray(forecasts) && peaks) {
+        const areas = [...new Set(forecasts.map(f => f.areaId))];
+        document.getElementById('forecast-detail').innerHTML = areas.map(areaId => {
+            const areaForecasts = forecasts.filter(f => f.areaId === areaId).sort((a,b) => a.hour - b.hour);
+            const peak = peaks.find(p => p.areaId === areaId);
+            const cap = peak ? peak.peakCapacityMw : 1000;
+            return `
+                <div style="margin-bottom:16px;">
+                    <div style="font-weight:600;margin-bottom:6px;">${areaForecasts[0]?.areaName||areaId} ${peak?`<span style="font-size:11px;color:#8b949e">Peak: ${peak.peakForecastMw} MW at ${peak.peakHour}:00</span>`:''}</div>
+                    <div class="bar-chart">
+                        ${areaForecasts.map(f => {
+                            const pct = Math.min((f.forecastMw / cap) * 100, 100);
+                            const color = pct > 85 ? '#f85149' : pct > 70 ? '#d29922' : '#1f6feb';
+                            return `<div class="bar" style="height:${pct}%;background:${color}" title="Hour ${f.hour}: ${f.forecastMw} MW (${f.utilizationPct}%)"></div>`;
+                        }).join('')}
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-size:9px;color:#8b949e;"><span>0:00</span><span>6:00</span><span>12:00</span><span>18:00</span><span>23:00</span></div>
+                </div>`;
+        }).join('');
+    }
+}
+
+async function fetchCrew() {
+    const [stats, crews, dispatches, history] = await Promise.all([
+        fetchJSON(`${API}/crew/stats`),
+        fetchJSON(`${API}/crew/crews`),
+        fetchJSON(`${API}/crew/dispatches/active`),
+        fetchJSON(`${API}/crew/dispatches?limit=30`)
+    ]);
+
+    if (stats) {
+        document.getElementById('crew-kpis').innerHTML = [
+            kpi('Total Crews', stats.totalCrews||0, 'workforce', 'info'),
+            kpi('Available', stats.availableCrews||0, 'ready to dispatch', stats.availableCrews<3?'warning':'good'),
+            kpi('Dispatched', stats.dispatchedCrews||0, 'en route', 'warning'),
+            kpi('On-Site', stats.onSiteCrews||0, 'working', (stats.onSiteCrews||0)>0?'warning':'info'),
+            kpi('Total Dispatches', stats.totalDispatches||0, 'all time', 'info'),
+            kpi('Avg Response', (stats.avgResponseTimeMinutes||0)+' min', 'travel time', 'info'),
+            kpi('Avg Restoration', (stats.avgRestorationTimeMinutes||0)+' min', 'total time', 'info'),
+            kpi('Completed', stats.completedDispatches||0, 'restorations', 'good')
+        ].join('');
+    }
+
+    if (crews && Array.isArray(crews)) {
+        document.getElementById('crew-list').innerHTML = `<table><tr><th>ID</th><th>Name</th><th>Lead</th><th>Members</th><th>Vehicle</th><th>Region</th><th>Status</th><th>Assignment</th></tr>${
+            crews.map(c => `<tr><td>${c.id}</td><td>${c.name}</td><td>${c.lead}</td><td>${c.members}</td><td>${c.vehicle}</td><td>${c.region}</td><td>${statusBadge(c.status==='Available'?'normal':c.status==='On-Site'?'warning':'active')}</td><td>${c.currentAssignment||'-'}</td></tr>`
+        ).join('')}</table>`;
+    }
+
+    if (dispatches && Array.isArray(dispatches)) {
+        document.getElementById('dispatch-count').textContent = dispatches.length;
+        document.getElementById('crew-dispatches').innerHTML = dispatches.length === 0 ? '<div style="color:#3fb950;padding:12px;">No active dispatches</div>' :
+            `<table><tr><th>Dispatch</th><th>Outage</th><th>Crew</th><th>Status</th><th>Priority</th><th>Location</th><th>ETR</th></tr>${
+            dispatches.map(d => `<tr><td>${d.dispatchId}</td><td>${d.outageId}</td><td>${d.crewName}</td><td>${statusBadge(d.status==='Dispatched'?'active':d.status==='On-Site'?'warning':'normal')}</td><td>${statusBadge(d.priority)}</td><td>${d.location}</td><td>${new Date(d.etr).toLocaleTimeString()}</td></tr>`
+        ).join('')}</table>`;
+    }
+
+    if (history && Array.isArray(history)) {
+        document.getElementById('crew-history').innerHTML = `<table><tr><th>Dispatch</th><th>Outage</th><th>Crew</th><th>Status</th><th>Priority</th><th>Location</th><th>Dispatched</th><th>Arrived</th><th>Completed</th></tr>${
+            history.map(d => `<tr><td>${d.dispatchId}</td><td>${d.outageId}</td><td>${d.crewName}</td><td>${statusBadge(d.status==='Completed'?'resolved':d.status==='On-Site'?'warning':'active')}</td><td>${statusBadge(d.priority)}</td><td>${d.location}</td><td>${new Date(d.dispatchedAt).toLocaleTimeString()}</td><td>${d.arrivedAt?new Date(d.arrivedAt).toLocaleTimeString():'-'}</td><td>${d.completedAt?new Date(d.completedAt).toLocaleTimeString():'-'}</td></tr>`
+        ).join('')}</table>`;
+    }
+}
+
+async function fetchNotifications() {
+    const [stats, log] = await Promise.all([
+        fetchJSON(`${API}/notifications/stats`),
+        fetchJSON(`${API}/notifications/log?limit=50`)
+    ]);
+
+    if (stats) {
+        document.getElementById('notif-kpis').innerHTML = [
+            kpi('Total Sent', stats.totalNotifications||0, 'all channels', 'info'),
+            kpi('Customers', stats.customersReachable||0, 'opted in', 'good'),
+            kpi('Avg Channels', stats.avgChannelsPerCustomer||0, 'per customer', 'info'),
+            kpi('SMS Delivered', (stats.deliveryStats?.sms?.delivered||0), `${stats.deliveryStats?.sms?.failed||0} failed`, 'info'),
+            kpi('Email Delivered', (stats.deliveryStats?.email?.delivered||0), `${stats.deliveryStats?.email?.failed||0} failed`, 'info'),
+            kpi('Push Delivered', (stats.deliveryStats?.push?.delivered||0), `${stats.deliveryStats?.push?.failed||0} failed`, 'info')
+        ].join('');
+
+        // Channel stats panel
+        const ds = stats.deliveryStats||{};
+        document.getElementById('notif-channels').innerHTML = `<table><tr><th>Channel</th><th>Sent</th><th>Delivered</th><th>Failed</th><th>Rate</th></tr>${
+            ['sms','email','push','ivr'].map(ch => {
+                const c = ds[ch]||{sent:0,delivered:0,failed:0};
+                const rate = c.sent>0 ? Math.round(c.delivered/c.sent*100) : 0;
+                return `<tr><td style="text-transform:uppercase">${ch}</td><td>${c.sent}</td><td>${c.delivered}</td><td style="color:${c.failed>0?'#f85149':'inherit'}">${c.failed}</td><td>${rate}%</td></tr>`;
+            }).join('')}</table>`;
+
+        // Event type breakdown
+        const bt = stats.byEventType||{};
+        document.getElementById('notif-types').innerHTML = `<table><tr><th>Event Type</th><th>Count</th></tr>${
+            Object.entries(bt).map(([k,v]) => `<tr><td>${k.replace(/_/g,' ')}</td><td>${v}</td></tr>`).join('')}</table>`;
+    }
+
+    if (log && Array.isArray(log)) {
+        document.getElementById('notif-log').innerHTML = log.length===0 ? '<div style="color:#8b949e;padding:12px;">No notifications yet</div>' :
+            `<table><tr><th>ID</th><th>Customer</th><th>Event</th><th>Channel</th><th>Status</th><th>Time</th></tr>${
+            log.map(n => `<tr><td style="font-size:10px">${n.notificationId}</td><td>${n.customerId}</td><td>${(n.eventType||'').replace(/_/g,' ')}</td><td style="text-transform:uppercase">${n.channel}</td><td>${statusBadge(n.status==='sent'?'normal':'warning')}</td><td>${new Date(n.createdAt).toLocaleTimeString()}</td></tr>`
+        ).join('')}</table>`;
+    }
+}
+
+async function fetchHealth() {
+    const data = await fetchJSON(`${API}/health`);
+    if (data) {
+        document.getElementById('health-status').innerHTML = `
+            <div style="margin-bottom:12px;">Overall: ${statusBadge(data.status)}</div>
+            <table><tr><th>Service</th><th>Status</th><th>Details</th></tr>${
+            (data.services||[]).map(s => `<tr><td>${s.name}</td><td>${statusBadge(s.status)}</td><td style="font-size:11px;color:#8b949e">${s.error||JSON.stringify(s.details||{}).substring(0,80)}</td></tr>`
+        ).join('')}</table>`;
+    }
+}
+
+async function fetchData() {
+    document.getElementById('clock').textContent = new Date().toLocaleTimeString();
+    switch(currentSection) {
+        case 'overview': await fetchOverview(); break;
+        case 'scada': await fetchScada(); break;
+        case 'outages': await fetchOutages(); break;
+        case 'metering': await fetchMetering(); break;
+        case 'grid': await fetchGrid(); break;
+        case 'reliability': await fetchReliability(); break;
+        case 'forecast': await fetchForecast(); break;
+        case 'crew': await fetchCrew(); break;
+        case 'notifications': await fetchNotifications(); break;
+        case 'health': await fetchHealth(); break;
+    }
+}
+
+// Initial load + auto-refresh
+fetchData();
+setInterval(fetchData, 15000);
+setInterval(() => { document.getElementById('clock').textContent = new Date().toLocaleTimeString(); }, 1000);
+</script>
+</body>
+</html>

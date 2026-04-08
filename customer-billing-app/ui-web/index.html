@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenericUtility - Customer Billing Portal</title>
+    <style>
+        :root {
+            --primary: #0057B8;
+            --primary-dark: #003d82;
+            --accent: #00A3E0;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --bg: #f4f6f9;
+            --card: #ffffff;
+            --text: #333333;
+            --text-light: #6c757d;
+            --border: #dee2e6;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); }
+        .header { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.15); }
+        .header-top { display: flex; justify-content: space-between; align-items: center; padding: 12px 32px; }
+        .logo { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+        .logo span { color: var(--accent); }
+        .header-info { display: flex; gap: 24px; font-size: 13px; opacity: 0.9; }
+        .stat { text-align: center; }
+        .stat-value { font-size: 20px; font-weight: 700; }
+        .stat-label { opacity: 0.8; }
+        .refresh-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; opacity: 0.7; }
+        .refresh-dot { width: 6px; height: 6px; background: #2ed573; border-radius: 50%; animation: blink 2s ease-in-out infinite; }
+        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .nav { display: flex; gap: 0; padding: 0 32px; background: rgba(0,0,0,0.15); }
+        .nav-btn { background: none; border: none; color: rgba(255,255,255,0.7); padding: 12px 24px; font-size: 14px; font-weight: 500; cursor: pointer; border-bottom: 3px solid transparent; transition: 0.2s; }
+        .nav-btn:hover { color: white; background: rgba(255,255,255,0.05); }
+        .nav-btn.active { color: white; border-bottom-color: var(--accent); background: rgba(255,255,255,0.1); }
+        .main { max-width: 1440px; margin: 0 auto; padding: 24px 32px; }
+        .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .summary-card { background: var(--card); border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); border-left: 4px solid var(--primary); }
+        .summary-card.accent { border-left-color: var(--accent); }
+        .summary-card.success { border-left-color: var(--success); }
+        .summary-card.warning { border-left-color: var(--warning); }
+        .summary-card.danger { border-left-color: var(--danger); }
+        .card-label { font-size: 12px; text-transform: uppercase; color: var(--text-light); letter-spacing: 0.5px; margin-bottom: 4px; }
+        .card-value { font-size: 28px; font-weight: 700; }
+        .card-sub { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .section { background: var(--card); border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 24px; overflow: hidden; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; border-bottom: 1px solid var(--border); }
+        .section-title { font-size: 16px; font-weight: 600; }
+        .search-input { padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; width: 240px; outline: none; transition: 0.2s; }
+        .search-input:focus { border-color: var(--accent); }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { text-align: left; padding: 12px 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-light); background: #f8f9fb; font-weight: 600; border-bottom: 1px solid var(--border); }
+        .data-table td { padding: 12px 16px; font-size: 13px; border-bottom: 1px solid #f0f0f0; }
+        .data-table tr:hover td { background: #f8f9fb; cursor: pointer; }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+        .badge-paid { background: #d4edda; color: #155724; }
+        .badge-unpaid { background: #fff3cd; color: #856404; }
+        .badge-overdue { background: #f8d7da; color: #721c24; }
+        .badge-partial { background: #d1ecf1; color: #0c5460; }
+        .badge-pending { background: #e2e3e5; color: #383d41; }
+        .badge-completed { background: #d4edda; color: #155724; }
+        .badge-failed { background: #f8d7da; color: #721c24; }
+        .badge-residential { background: #e8f4f8; color: #1a6985; }
+        .badge-commercial { background: #f0e6ff; color: #5a2d82; }
+        .badge-industrial { background: #fff0e6; color: #854d0e; }
+        .detail-panel { display: none; position: fixed; top: 0; right: 0; width: 440px; height: 100vh; background: white; box-shadow: -4px 0 20px rgba(0,0,0,0.15); z-index: 200; overflow-y: auto; }
+        .detail-panel.open { display: block; }
+        .detail-header { background: var(--primary); color: white; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
+        .detail-close { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+        .detail-body { padding: 24px; }
+        .detail-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+        .detail-label { color: var(--text-light); font-size: 13px; }
+        .detail-value { font-weight: 500; font-size: 14px; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 150; }
+        .overlay.open { display: block; }
+        .loading { text-align: center; padding: 40px; color: var(--text-light); }
+        .spinner { border: 3px solid #f0f0f0; border-top: 3px solid var(--accent); border-radius: 50%; width: 32px; height: 32px; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .new-row { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { background: #e8f5e9; } to { background: transparent; } }
+        @media (max-width: 768px) { .header-top { flex-direction: column; gap: 12px; } .summary-cards { grid-template-columns: repeat(2, 1fr); } .main { padding: 16px; } .detail-panel { width: 100%; } }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="header-top">
+        <div style="display:flex;align-items:center;gap:16px">
+            <div class="logo">&#9889; Generic<span>Utility</span> Billing</div>
+            <div class="refresh-badge"><div class="refresh-dot"></div>Live data</div>
+        </div>
+        <div class="header-info">
+            <div class="stat"><div class="stat-value" id="total-customers">-</div><div class="stat-label">Customers</div></div>
+            <div class="stat"><div class="stat-value" id="total-invoices">-</div><div class="stat-label">Invoices</div></div>
+            <div class="stat"><div class="stat-value" id="total-revenue">-</div><div class="stat-label">Total Billed</div></div>
+        </div>
+    </div>
+    <div class="nav">
+        <button class="nav-btn active" onclick="showTab('customers')">Customers</button>
+        <button class="nav-btn" onclick="showTab('invoices')">Invoices</button>
+        <button class="nav-btn" onclick="showTab('payments')">Payments</button>
+    </div>
+</div>
+
+<div class="main">
+    <div id="tab-customers" class="tab-content active">
+        <div class="summary-cards" id="customer-summary"></div>
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">Customer Accounts</div>
+                <input type="text" class="search-input" placeholder="Search customers..." oninput="filterTable('customers-table', this.value)">
+            </div>
+            <div id="customers-loading" class="loading"><div class="spinner"></div>Loading customers...</div>
+            <table class="data-table" id="customers-table" style="display:none"></table>
+        </div>
+    </div>
+    <div id="tab-invoices" class="tab-content">
+        <div class="summary-cards" id="invoice-summary"></div>
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">All Invoices</div>
+                <input type="text" class="search-input" placeholder="Search invoices..." oninput="filterTable('invoices-table', this.value)">
+            </div>
+            <div id="invoices-loading" class="loading"><div class="spinner"></div>Loading invoices...</div>
+            <table class="data-table" id="invoices-table" style="display:none"></table>
+        </div>
+    </div>
+    <div id="tab-payments" class="tab-content">
+        <div class="summary-cards" id="payment-summary"></div>
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">Payment History</div>
+                <input type="text" class="search-input" placeholder="Search payments..." oninput="filterTable('payments-table', this.value)">
+            </div>
+            <div id="payments-loading" class="loading"><div class="spinner"></div>Loading payments...</div>
+            <table class="data-table" id="payments-table" style="display:none"></table>
+        </div>
+    </div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeDetail()"></div>
+<div class="detail-panel" id="detail-panel">
+    <div class="detail-header">
+        <span id="detail-title">Details</span>
+        <button class="detail-close" onclick="closeDetail()">&times;</button>
+    </div>
+    <div class="detail-body" id="detail-body"></div>
+</div>
+
+<script>
+let customersData=[], invoicesData=[], paymentsData=[], prevPayCount=0;
+
+async function fetchData() {
+    try {
+        const [c,i,p] = await Promise.all([
+            fetch('/api/gateway/customers').then(r=>r.json()),
+            fetch('/api/gateway/invoices').then(r=>r.json()),
+            fetch('/api/gateway/payments').then(r=>r.json())
+        ]);
+        prevPayCount = paymentsData.length;
+        customersData=c; invoicesData=i; paymentsData=p;
+        renderCustomers(); renderInvoices(); renderPayments(); updateHeader();
+    } catch(e) {
+        console.error(e);
+        document.querySelectorAll('.loading').forEach(el => el.innerHTML='<p style="color:#dc3545">Failed to load data.</p>');
+    }
+}
+
+function updateHeader() {
+    document.getElementById('total-customers').textContent = customersData.length;
+    document.getElementById('total-invoices').textContent = invoicesData.length;
+    const t = invoicesData.reduce((s,i) => s+(i.totalAmount||0), 0);
+    document.getElementById('total-revenue').textContent = '$'+t.toLocaleString('en-US',{minimumFractionDigits:2});
+}
+
+function renderCustomers() {
+    const res=customersData.filter(c=>c.serviceType==='Residential').length;
+    const com=customersData.filter(c=>c.serviceType==='Commercial').length;
+    const ind=customersData.filter(c=>c.serviceType==='Industrial').length;
+    document.getElementById('customer-summary').innerHTML=`
+        <div class="summary-card"><div class="card-label">Total Customers</div><div class="card-value">${customersData.length}</div><div class="card-sub">Active accounts</div></div>
+        <div class="summary-card accent"><div class="card-label">Residential</div><div class="card-value">${res}</div></div>
+        <div class="summary-card success"><div class="card-label">Commercial</div><div class="card-value">${com}</div></div>
+        <div class="summary-card warning"><div class="card-label">Industrial</div><div class="card-value">${ind}</div></div>`;
+    const t=document.getElementById('customers-table');
+    t.innerHTML=`<thead><tr><th>Account</th><th>Name</th><th>Address</th><th>Type</th><th>Rate</th><th>Meter</th><th>Card</th><th>AutoPay</th></tr></thead>
+    <tbody>${customersData.map(c=>`<tr onclick="showCustomer(${c.id})">
+        <td><strong>${c.accountNumber}</strong></td><td>${c.name}</td><td>${c.address}</td>
+        <td><span class="badge badge-${(c.serviceType||'').toLowerCase()}">${c.serviceType}</span></td>
+        <td>${c.rateClass}</td><td>${c.meterNumber}</td>
+        <td>${c.creditCardType} ...${c.creditCardLast4}</td>
+        <td>${c.autoPayEnabled?'<span style="color:var(--success)">&#10003; Yes</span>':'No'}</td>
+    </tr>`).join('')}</tbody>`;
+    document.getElementById('customers-loading').style.display='none'; t.style.display='table';
+}
+
+function renderInvoices() {
+    const unpaid=invoicesData.filter(i=>i.status==='Unpaid');
+    const paid=invoicesData.filter(i=>i.status==='Paid');
+    const overdue=invoicesData.filter(i=>i.status==='Overdue');
+    const totalUnpaid=unpaid.reduce((s,i)=>s+(i.totalAmount||0),0);
+    document.getElementById('invoice-summary').innerHTML=`
+        <div class="summary-card"><div class="card-label">Total Invoices</div><div class="card-value">${invoicesData.length}</div></div>
+        <div class="summary-card warning"><div class="card-label">Unpaid</div><div class="card-value">${unpaid.length}</div><div class="card-sub">$${totalUnpaid.toLocaleString('en-US',{minimumFractionDigits:2})}</div></div>
+        <div class="summary-card success"><div class="card-label">Paid</div><div class="card-value">${paid.length}</div></div>
+        <div class="summary-card danger"><div class="card-label">Overdue</div><div class="card-value">${overdue.length}</div></div>`;
+    const t=document.getElementById('invoices-table');
+    t.innerHTML=`<thead><tr><th>Invoice</th><th>Account</th><th>Period</th><th>Usage</th><th>Energy</th><th>Delivery</th><th>Taxes</th><th>Total</th><th>Due</th><th>Status</th></tr></thead>
+    <tbody>${invoicesData.map(i=>`<tr onclick="showInvoice(${i.id})">
+        <td><strong>INV-${i.id}</strong></td><td>${i.accountNumber}</td>
+        <td>${fmtDate(i.billingPeriodStart)} - ${fmtDate(i.billingPeriodEnd)}</td>
+        <td>${(i.usageKWh||0).toLocaleString()}</td><td>$${(i.energyCharge||0).toFixed(2)}</td>
+        <td>$${(i.deliveryCharge||0).toFixed(2)}</td><td>$${(i.taxesAndFees||0).toFixed(2)}</td>
+        <td><strong>$${(i.totalAmount||0).toFixed(2)}</strong></td><td>${fmtDate(i.dueDate)}</td>
+        <td><span class="badge badge-${(i.status||'').toLowerCase()}">${i.status}</span></td>
+    </tr>`).join('')}</tbody>`;
+    document.getElementById('invoices-loading').style.display='none'; t.style.display='table';
+}
+
+function renderPayments() {
+    const comp=paymentsData.filter(p=>p.status==='Completed');
+    const pend=paymentsData.filter(p=>p.status==='Pending');
+    const totalPaid=comp.reduce((s,p)=>s+(p.amount||0),0);
+    document.getElementById('payment-summary').innerHTML=`
+        <div class="summary-card"><div class="card-label">Total Payments</div><div class="card-value">${paymentsData.length}</div></div>
+        <div class="summary-card success"><div class="card-label">Completed</div><div class="card-value">${comp.length}</div><div class="card-sub">$${totalPaid.toLocaleString('en-US',{minimumFractionDigits:2})}</div></div>
+        <div class="summary-card accent"><div class="card-label">Pending</div><div class="card-value">${pend.length}</div></div>
+        <div class="summary-card danger"><div class="card-label">Failed</div><div class="card-value">${paymentsData.filter(p=>p.status==='Failed').length}</div></div>`;
+    const t=document.getElementById('payments-table');
+    const isNew = prevPayCount > 0 && paymentsData.length > prevPayCount;
+    t.innerHTML=`<thead><tr><th>Payment</th><th>Account</th><th>Invoice</th><th>Amount</th><th>Date</th><th>Method</th><th>Confirmation</th><th>Status</th></tr></thead>
+    <tbody>${paymentsData.slice().reverse().map((p,idx)=>`<tr onclick="showPayment(${p.id})" class="${isNew && idx < paymentsData.length - prevPayCount ? 'new-row' : ''}">
+        <td><strong>PAY-${p.id}</strong></td><td>${p.accountNumber}</td><td>INV-${p.invoiceId}</td>
+        <td><strong>$${(p.amount||0).toFixed(2)}</strong></td><td>${fmtDate(p.paymentDate)}</td>
+        <td>${p.method}</td><td style="font-family:monospace;font-size:12px">${p.confirmationNumber}</td>
+        <td><span class="badge badge-${(p.status||'').toLowerCase()}">${p.status}</span></td>
+    </tr>`).join('')}</tbody>`;
+    document.getElementById('payments-loading').style.display='none'; t.style.display='table';
+}
+
+function showTab(tab) { document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active')); document.querySelectorAll('.nav-btn').forEach(e=>e.classList.remove('active')); document.getElementById('tab-'+tab).classList.add('active'); event.target.classList.add('active'); }
+
+function showCustomer(id) {
+    const c=customersData.find(x=>x.id===id); if(!c) return;
+    const inv=invoicesData.filter(i=>i.customerId===id);
+    document.getElementById('detail-title').textContent=c.name;
+    document.getElementById('detail-body').innerHTML=`
+        ${dr('Account',c.accountNumber)}${dr('Meter',c.meterNumber)}${dr('Address',c.address)}
+        ${dr('Email',c.email)}${dr('Phone',c.phone)}
+        ${dr('Type','<span class="badge badge-'+c.serviceType.toLowerCase()+'">'+c.serviceType+'</span>')}
+        ${dr('Rate Class',c.rateClass)}
+        ${dr('Payment Card',c.creditCardType+' ending in '+c.creditCardLast4)}
+        ${dr('Auto Pay',c.autoPayEnabled?'<span style="color:var(--success)">Enabled</span>':'Disabled')}
+        <h4 style="margin:20px 0 10px;font-size:13px;color:var(--text-light)">RECENT INVOICES</h4>
+        ${inv.slice(-3).reverse().map(i=>'<div style="background:#f8f9fb;padding:12px;border-radius:8px;margin-bottom:8px"><div style="display:flex;justify-content:space-between"><strong>INV-'+i.id+'</strong><span class="badge badge-'+i.status.toLowerCase()+'">'+i.status+'</span></div><div style="font-size:13px;color:var(--text-light);margin-top:4px">'+fmtDate(i.billingPeriodStart)+' - '+fmtDate(i.billingPeriodEnd)+'</div><div style="font-size:16px;font-weight:600;margin-top:4px">$'+i.totalAmount.toFixed(2)+'</div></div>').join('')||'<p style="color:var(--text-light)">No invoices</p>'}`;
+    openDetail();
+}
+
+function showInvoice(id) {
+    const i=invoicesData.find(x=>x.id===id); if(!i) return;
+    document.getElementById('detail-title').textContent='Invoice INV-'+id;
+    document.getElementById('detail-body').innerHTML=`
+        ${dr('Invoice','INV-'+i.id)}${dr('Account',i.accountNumber)}${dr('Date',fmtDate(i.invoiceDate))}
+        ${dr('Period',fmtDate(i.billingPeriodStart)+' &mdash; '+fmtDate(i.billingPeriodEnd))}
+        ${dr('Status','<span class="badge badge-'+i.status.toLowerCase()+'">'+i.status+'</span>')}
+        <h4 style="margin:20px 0 10px;font-size:13px;color:var(--text-light)">CHARGES</h4>
+        ${dr('Usage',(i.usageKWh||0).toLocaleString()+' kWh')}${dr('Rate','$'+i.ratePerKWh+'/kWh')}
+        ${dr('Energy','$'+(i.energyCharge||0).toFixed(2))}${dr('Delivery','$'+(i.deliveryCharge||0).toFixed(2))}
+        ${dr('Taxes','$'+(i.taxesAndFees||0).toFixed(2))}
+        <div style="display:flex;justify-content:space-between;padding:14px 0;border-top:2px solid var(--primary);margin-top:8px;font-size:18px;font-weight:700"><span>Total</span><span>$${(i.totalAmount||0).toFixed(2)}</span></div>
+        ${dr('Due',fmtDate(i.dueDate))}`;
+    openDetail();
+}
+
+function showPayment(id) {
+    const p=paymentsData.find(x=>x.id===id); if(!p) return;
+    document.getElementById('detail-title').textContent='Payment PAY-'+id;
+    document.getElementById('detail-body').innerHTML=`
+        ${dr('Payment','PAY-'+p.id)}${dr('Account',p.accountNumber)}${dr('Invoice','INV-'+p.invoiceId)}
+        ${dr('Amount','$'+(p.amount||0).toFixed(2))}${dr('Date',fmtDate(p.paymentDate))}
+        ${dr('Method',p.method)}${dr('Confirmation',p.confirmationNumber)}
+        ${dr('Status','<span class="badge badge-'+p.status.toLowerCase()+'">'+p.status+'</span>')}`;
+    openDetail();
+}
+
+function dr(l,v){return '<div class="detail-row"><span class="detail-label">'+l+'</span><span class="detail-value">'+v+'</span></div>';}
+function openDetail(){document.getElementById('detail-panel').classList.add('open');document.getElementById('overlay').classList.add('open');}
+function closeDetail(){document.getElementById('detail-panel').classList.remove('open');document.getElementById('overlay').classList.remove('open');}
+function filterTable(id,q){document.querySelectorAll('#'+id+' tbody tr').forEach(r=>{r.style.display=r.textContent.toLowerCase().includes(q.toLowerCase())?'':'none';});}
+function fmtDate(s){if(!s)return'-';return new Date(s).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
+
+fetchData();
+setInterval(fetchData, 30000);
+</script>
+</body>
+</html>

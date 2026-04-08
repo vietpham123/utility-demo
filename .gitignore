@@ -1,0 +1,12 @@
+node_modules/
+.DS_Store
+._*
+*.tar.gz
+*.log
+target/
+bin/
+obj/
+__pycache__/
+*.pyc
+.env
+test folder/

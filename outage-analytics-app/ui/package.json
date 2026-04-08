@@ -1,0 +1,12 @@
+{
+  "name": "outage-analytics-ui",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "scripts": {
+    "start": "echo 'Add React scripts here'"
+  }
+}
