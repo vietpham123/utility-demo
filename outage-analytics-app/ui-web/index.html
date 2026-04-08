@@ -90,6 +90,7 @@
         <button onclick="showSection('forecast')">Demand Forecast</button>
         <button onclick="showSection('crew')">Crew Dispatch</button>
         <button onclick="showSection('notifications')">Notifications</button>
+        <button onclick="showSection('weather')">Weather</button>
         <button onclick="showSection('health')">Service Health</button>
     </div>
 
@@ -129,6 +130,16 @@
                 <div class="panel">
                     <div class="panel-header"><h3>Customer Notifications</h3><span class="badge badge-green" id="overview-notif-badge">0 sent</span></div>
                     <div class="panel-body" id="overview-notifications"><div class="loading">Loading...</div></div>
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="panel">
+                    <div class="panel-header"><h3>Weather Correlation</h3><span class="badge badge-blue" id="overview-weather-badge">0 regions</span></div>
+                    <div class="panel-body" id="overview-weather"><div class="loading">Loading...</div></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header"><h3>Storm Forecast</h3><span class="badge badge-yellow" id="overview-storm-badge">0 alerts</span></div>
+                    <div class="panel-body" id="overview-storm"><div class="loading">Loading...</div></div>
                 </div>
             </div>
         </div>
@@ -234,6 +245,31 @@
             <div class="panel">
                 <div class="panel-header"><h3>Recent Notifications</h3></div>
                 <div class="panel-body" style="max-height:400px" id="notif-log"><div class="loading">Loading...</div></div>
+            </div>
+        </div>
+
+        <!-- WEATHER CORRELATION -->
+        <div id="weather" class="section">
+            <div class="kpi-row" id="weather-kpis"></div>
+            <div class="grid-2">
+                <div class="panel">
+                    <div class="panel-header"><h3>Regional Conditions</h3></div>
+                    <div class="panel-body" style="max-height:400px" id="weather-conditions"><div class="loading">Loading...</div></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header"><h3>Storm Forecasts</h3><span class="badge badge-yellow" id="weather-storm-count">0</span></div>
+                    <div class="panel-body" style="max-height:400px" id="weather-forecasts"><div class="loading">Loading...</div></div>
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="panel">
+                    <div class="panel-header"><h3>Weather Alerts</h3><span class="badge badge-red" id="weather-alert-count">0</span></div>
+                    <div class="panel-body" style="max-height:350px" id="weather-alerts"><div class="loading">Loading...</div></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header"><h3>Outage-Weather Correlations</h3></div>
+                    <div class="panel-body" style="max-height:350px" id="weather-correlations"><div class="loading">Loading...</div></div>
+                </div>
             </div>
         </div>
 
@@ -377,6 +413,27 @@ async function fetchOverview() {
                 ${kpi('SMS', (ds.sms?.delivered||0), `${ds.sms?.failed||0} failed`, 'info')}
                 ${kpi('Email', (ds.email?.delivered||0), `${ds.email?.failed||0} failed`, 'info')}
                 ${kpi('Push', (ds.push?.delivered||0), `${ds.push?.failed||0} failed`, 'info')}
+            </div>`;
+    }
+
+    // Weather overview
+    if (dashboard && dashboard.weather) {
+        const w = dashboard.weather;
+        document.getElementById('overview-weather-badge').textContent = `${w.regionsMonitored||0} regions`;
+        document.getElementById('overview-storm-badge').textContent = `${w.activeAlerts||0} alerts`;
+        document.getElementById('overview-weather').innerHTML = `
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                ${kpi('Regions', w.regionsMonitored||0, 'monitored', 'info')}
+                ${kpi('Avg Temp', (w.avgTemperatureF||0)+'°F', 'all regions', 'info')}
+                ${kpi('Max Wind', (w.maxWindSpeedMph||0)+' mph', 'peak gust', (w.maxWindSpeedMph||0)>30?'warning':'good')}
+                ${kpi('High Risk', w.highRiskRegions||0, 'regions', (w.highRiskRegions||0)>0?'critical':'good')}
+            </div>`;
+        document.getElementById('overview-storm').innerHTML = `
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                ${kpi('Storm Mode', w.stormModeRegions||0, 'regions active', (w.stormModeRegions||0)>0?'critical':'good')}
+                ${kpi('Active Alerts', w.activeAlerts||0, 'weather warnings', (w.activeAlerts||0)>0?'warning':'good')}
+                ${kpi('Correlations', w.totalCorrelations||0, 'analyzed', 'info')}
+                ${kpi('Weather Outages', w.weatherRelatedOutages||0, 'confirmed', (w.weatherRelatedOutages||0)>0?'warning':'info')}
             </div>`;
     }
 }
@@ -653,6 +710,61 @@ async function fetchNotifications() {
     }
 }
 
+async function fetchWeather() {
+    const [summary, conditions, forecasts, alerts, correlations] = await Promise.all([
+        fetchJSON(`${API}/weather/summary`),
+        fetchJSON(`${API}/weather/conditions`),
+        fetchJSON(`${API}/weather/forecast`),
+        fetchJSON(`${API}/weather/alerts?limit=30`),
+        fetchJSON(`${API}/weather/correlations`)
+    ]);
+
+    if (summary) {
+        document.getElementById('weather-kpis').innerHTML = [
+            kpi('Regions', summary.regionsMonitored||0, 'monitored', 'info'),
+            kpi('Avg Temp', (summary.avgTemperatureF||0)+'°F', 'all regions', 'info'),
+            kpi('Avg Wind', (summary.avgWindSpeedMph||0)+' mph', 'all regions', 'info'),
+            kpi('Max Wind', (summary.maxWindSpeedMph||0)+' mph', 'peak gust', (summary.maxWindSpeedMph||0)>30?'warning':'good'),
+            kpi('Storm Mode', summary.stormModeRegions||0, 'regions', (summary.stormModeRegions||0)>0?'critical':'good'),
+            kpi('High Risk', summary.highRiskRegions||0, 'regions', (summary.highRiskRegions||0)>0?'critical':'good'),
+            kpi('Alerts', summary.activeAlerts||0, 'active', (summary.activeAlerts||0)>0?'warning':'good'),
+            kpi('Correlations', summary.totalCorrelations||0, `${summary.weatherRelatedOutages||0} weather-related`, 'info')
+        ].join('');
+    }
+
+    if (conditions) {
+        const entries = Object.entries(conditions);
+        document.getElementById('weather-conditions').innerHTML = entries.length===0 ? '<div class="loading">No weather data yet</div>' :
+            `<table><tr><th>Region</th><th>Temp °F</th><th>Humidity</th><th>Wind</th><th>Dir</th><th>Pressure</th><th>Precip</th><th>Condition</th><th>Severity</th></tr>${
+            entries.map(([name, c]) => `<tr><td>${name}</td><td>${c.temperatureF}</td><td>${c.humidityPct}%</td><td>${c.windSpeedMph} mph</td><td>${c.windDirection}</td><td>${c.barometricPressureInHg} inHg</td><td>${c.precipitationIn} in</td><td>${c.condition}</td><td>${statusBadge(c.severity==='None'?'normal':c.severity==='Low'?'normal':c.severity==='Moderate'?'warning':'active')}</td></tr>`
+        ).join('')}</table>`;
+    }
+
+    if (forecasts && Array.isArray(forecasts)) {
+        const activeStorms = forecasts.filter(f => f.stormType !== 'None');
+        document.getElementById('weather-storm-count').textContent = activeStorms.length;
+        document.getElementById('weather-forecasts').innerHTML = forecasts.length===0 ? '<div class="loading">No forecasts</div>' :
+            `<table><tr><th>Region</th><th>Storm Type</th><th>Severity</th><th>Prob %</th><th>Wind</th><th>Precip</th><th>Est Outages</th><th>Customers</th><th>Storm Mode</th></tr>${
+            forecasts.map(f => `<tr><td>${f.region}</td><td>${f.stormType}</td><td>${statusBadge(f.severity==='None'?'normal':f.severity==='Minor'?'normal':f.severity==='Moderate'?'warning':'active')}</td><td>${f.probabilityPct}%</td><td>${f.expectedWindMph} mph</td><td>${f.expectedPrecipitationIn} in</td><td>${f.estimatedOutages}</td><td>${(f.estimatedCustomersAffected||0).toLocaleString()}</td><td>${f.stormModeActive?'<span class="status status-active">ACTIVE</span>':'—'}</td></tr>`
+        ).join('')}</table>`;
+    }
+
+    if (alerts && Array.isArray(alerts)) {
+        document.getElementById('weather-alert-count').textContent = alerts.length;
+        document.getElementById('weather-alerts').innerHTML = alerts.length===0 ? '<div style="color:#3fb950;padding:12px;">No active weather alerts</div>' :
+            `<table><tr><th>ID</th><th>Region</th><th>Type</th><th>Severity</th><th>Wind</th><th>Message</th><th>Storm Trigger</th></tr>${
+            alerts.slice(-30).reverse().map(a => `<tr><td>${a.alertId}</td><td>${a.region}</td><td>${a.alertType}</td><td>${statusBadge(a.severity==='High'?'active':'warning')}</td><td>${a.windSpeedMph} mph</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${a.message}</td><td>${a.stormModeTrigger?'<span class="status status-active">YES</span>':'—'}</td></tr>`
+        ).join('')}</table>`;
+    }
+
+    if (correlations && Array.isArray(correlations)) {
+        document.getElementById('weather-correlations').innerHTML = correlations.length===0 ? '<div style="color:#8b949e;padding:12px;">No correlations yet</div>' :
+            `<table><tr><th>Outage</th><th>Weather Related</th><th>Score</th><th>Primary Factor</th><th>Risk</th></tr>${
+            correlations.slice(-30).reverse().map(c => `<tr><td>${c.outageId}</td><td>${c.weatherRelated?'<span class="status status-active">Yes</span>':'<span class="status status-normal">No</span>'}</td><td>${c.correlationScore}%</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${c.primaryFactor}</td><td>${statusBadge(c.riskLevel==='Critical'?'active':c.riskLevel==='High'?'warning':'normal')}</td></tr>`
+        ).join('')}</table>`;
+    }
+}
+
 async function fetchHealth() {
     const data = await fetchJSON(`${API}/health`);
     if (data) {
@@ -676,6 +788,7 @@ async function fetchData() {
         case 'forecast': await fetchForecast(); break;
         case 'crew': await fetchCrew(); break;
         case 'notifications': await fetchNotifications(); break;
+        case 'weather': await fetchWeather(); break;
         case 'health': await fetchHealth(); break;
     }
 }

@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package weather;
+
+option go_package = "github.com/genericutility/weather-service/proto";
+
+service WeatherService {
+  rpc GetCurrentConditions (LocationRequest) returns (WeatherConditions);
+  rpc GetStormForecast (RegionRequest) returns (StormForecast);
+  rpc GetOutageCorrelation (CorrelationRequest) returns (CorrelationResponse);
+  rpc StreamWeatherAlerts (RegionRequest) returns (stream WeatherAlert);
+}
+
+message LocationRequest {
+  double latitude = 1;
+  double longitude = 2;
+  string city = 3;
+}
+
+message RegionRequest {
+  string region = 1;
+}
+
+message CorrelationRequest {
+  string outage_id = 1;
+  string location = 2;
+  double latitude = 3;
+  double longitude = 4;
+}
+
+message WeatherConditions {
+  double temperature_f = 1;
+  double humidity_pct = 2;
+  double wind_speed_mph = 3;
+  string wind_direction = 4;
+  double barometric_pressure_inhg = 5;
+  double precipitation_in = 6;
+  string condition = 7;
+  string severity = 8;
+  double visibility_mi = 9;
+  double lightning_density = 10;
+  string timestamp = 11;
+  string location = 12;
+}
+
+message StormForecast {
+  string region = 1;
+  string storm_type = 2;
+  string severity = 3;
+  double probability_pct = 4;
+  double expected_wind_mph = 5;
+  double expected_precipitation_in = 6;
+  string expected_start = 7;
+  string expected_end = 8;
+  int32 estimated_outages = 9;
+  int32 estimated_customers_affected = 10;
+  bool storm_mode_active = 11;
+}
+
+message CorrelationResponse {
+  string outage_id = 1;
+  bool weather_related = 2;
+  string primary_factor = 3;
+  double correlation_score = 4;
+  WeatherConditions conditions_at_time = 5;
+  string risk_level = 6;
+  repeated string contributing_factors = 7;
+}
+
+message WeatherAlert {
+  string alert_id = 1;
+  string alert_type = 2;
+  string severity = 3;
+  string region = 4;
+  string message = 5;
+  string issued_at = 6;
+  string expires_at = 7;
+  double wind_speed_mph = 8;
+  bool storm_mode_trigger = 9;
+}

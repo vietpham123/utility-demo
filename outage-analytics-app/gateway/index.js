@@ -13,6 +13,7 @@ const RELIABILITY_URL = process.env.RELIABILITY_SERVICE_URL || 'http://reliabili
 const FORECAST_URL = process.env.FORECAST_SERVICE_URL || 'http://demand-forecast-service:3000';
 const CREW_URL = process.env.CREW_SERVICE_URL || 'http://crew-dispatch-service:3001';
 const NOTIFICATION_URL = process.env.NOTIFICATION_SERVICE_URL || 'http://notification-service:5001';
+const WEATHER_URL = process.env.WEATHER_SERVICE_URL || 'http://weather-service:8080';
 
 // ============================================================
 // Request logging middleware — debug/info/error for every request
@@ -134,6 +135,16 @@ app.get('/api/notifications/stats', proxy(NOTIFICATION_URL));
 app.get('/api/notifications/customers', proxy(NOTIFICATION_URL));
 app.post('/api/notifications/simulate', proxy(NOTIFICATION_URL));
 
+// Weather Correlation routes (Go + gRPC)
+app.get('/api/weather/conditions', proxy(WEATHER_URL));
+app.get('/api/weather/region/:region', proxy(WEATHER_URL));
+app.get('/api/weather/forecast', proxy(WEATHER_URL));
+app.get('/api/weather/alerts', proxy(WEATHER_URL));
+app.get('/api/weather/correlations', proxy(WEATHER_URL));
+app.get('/api/weather/summary', proxy(WEATHER_URL));
+app.post('/api/weather/simulate', proxy(WEATHER_URL));
+app.post('/api/weather/correlate', proxy(WEATHER_URL));
+
 // ============================================================
 // Simulation Orchestrator — creates end-to-end Dynatrace PurePaths
 // Gateway → HTTP calls to all services → each service writes DB/Kafka/Redis
@@ -144,7 +155,7 @@ app.post('/api/simulate/cycle', async (req, res) => {
   logger.info('POST /api/simulate/cycle - orchestrating simulation cycle');
   const results = {};
 
-  // Wave 1: Data generators (parallel) — SCADA, Meter, Forecast
+  // Wave 1: Data generators (parallel) — SCADA, Meter, Forecast, Weather
   const wave1 = await Promise.allSettled([
     axios.post(`${SCADA_URL}/api/scada/simulate`, {}, { timeout: 10000 })
       .then(r => { results.scada = r.data; })
@@ -154,7 +165,10 @@ app.post('/api/simulate/cycle', async (req, res) => {
       .catch(err => { results.meter = { error: err.message }; }),
     axios.post(`${FORECAST_URL}/api/forecast/simulate`, {}, { timeout: 10000 })
       .then(r => { results.forecast = r.data; })
-      .catch(err => { results.forecast = { error: err.message }; })
+      .catch(err => { results.forecast = { error: err.message }; }),
+    axios.post(`${WEATHER_URL}/api/weather/simulate`, {}, { timeout: 10000 })
+      .then(r => { results.weather = r.data; })
+      .catch(err => { results.weather = { error: err.message }; })
   ]);
 
   // Wave 2: Event processors (parallel) — Outage, Usage
@@ -199,7 +213,8 @@ app.get('/api/dashboard', async (req, res) => {
     reliability: axios.get(`${RELIABILITY_URL}/api/reliability/indices`).then(r => r.data).catch(() => null),
     forecast: axios.get(`${FORECAST_URL}/api/forecast/summary`).then(r => r.data).catch(() => null),
     crewDispatch: axios.get(`${CREW_URL}/api/crew/stats`).then(r => r.data).catch(() => null),
-    notifications: axios.get(`${NOTIFICATION_URL}/api/notifications/stats`).then(r => r.data).catch(() => null)
+    notifications: axios.get(`${NOTIFICATION_URL}/api/notifications/stats`).then(r => r.data).catch(() => null),
+    weather: axios.get(`${WEATHER_URL}/api/weather/summary`).then(r => r.data).catch(() => null)
   };
   const results = {};
   for (const [key, promise] of Object.entries(fetches)) {
@@ -219,7 +234,8 @@ app.get('/api/health', async (req, res) => {
     { name: 'reliability-service', url: `${RELIABILITY_URL}/api/reliability/health` },
     { name: 'demand-forecast-service', url: `${FORECAST_URL}/api/forecast/health` },
     { name: 'crew-dispatch-service', url: `${CREW_URL}/api/crew/health` },
-    { name: 'notification-service', url: `${NOTIFICATION_URL}/api/notifications/health` }
+    { name: 'notification-service', url: `${NOTIFICATION_URL}/api/notifications/health` },
+    { name: 'weather-service', url: `${WEATHER_URL}/api/weather/health` }
   ];
   const results = await Promise.all(checks.map(async c => {
     try {
