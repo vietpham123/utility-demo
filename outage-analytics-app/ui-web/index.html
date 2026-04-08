@@ -346,16 +346,18 @@ async function fetchJSON(url) {
 }
 
 async function fetchOverview() {
-    const [dashboard, outages, alerts, weatherConditions, weatherForecasts] = await Promise.all([
+    const [dashboard, outages, alerts, weatherConditions, weatherForecasts, crewList, activeDispatches] = await Promise.all([
         fetchJSON(`${API}/dashboard`),
         fetchJSON(`${API}/outages/active`),
         fetchJSON(`${API}/scada/alerts`),
         fetchJSON(`${API}/weather/conditions`),
-        fetchJSON(`${API}/weather/forecast`)
+        fetchJSON(`${API}/weather/forecast`),
+        fetchJSON(`${API}/crew/crews`),
+        fetchJSON(`${API}/crew/dispatches/active`)
     ]);
 
-    // Render the territory map with weather overlay
-    renderTerritoryMap(weatherConditions, weatherForecasts, outages);
+    // Render the territory map with weather overlay, crew & outage details
+    renderTerritoryMap(weatherConditions, weatherForecasts, outages, crewList, activeDispatches);
 
     const el = document.getElementById('overview-kpis');
     if (dashboard) {
@@ -763,18 +765,82 @@ const MAP_REGIONS = [
     { name: 'Delaware-Valley',     city: 'Wilmington',    state: 'DE', lat: 39.7391, lng: -75.5398 },
 ];
 
+// Map crew regions to approximate lat/lng for positioning
+const CREW_REGION_COORDS = {
+    'Chicago-North': { lat: 42.05, lng: -87.68 },
+    'Chicago-South': { lat: 41.72, lng: -87.60 },
+    'Baltimore':     { lat: 39.35, lng: -76.55 },
+    'Philadelphia':  { lat: 40.02, lng: -75.10 },
+    'Washington-DC': { lat: 38.85, lng: -77.10 },
+    'Atlantic-City': { lat: 39.42, lng: -74.35 },
+    'Wilmington':    { lat: 39.80, lng: -75.48 },
+    'Cherry-Hill':   { lat: 39.93, lng: -74.95 },
+};
+
 const WIND_DIR_ANGLES = { N:0, NE:45, E:90, SE:135, S:180, SW:225, W:270, NW:315 };
 const CONDITION_ICONS = {
     'Clear':'☀️','Partly Cloudy':'⛅','Overcast':'☁️','Light Rain':'🌦️','Heavy Rain':'🌧️',
     'Thunderstorm':'⛈️','Ice/Sleet':'🧊','Snow':'❄️','Fog':'🌫️','High Winds':'💨'
 };
 
+// Geographic bounds: covers eastern US from IL to the coast
+const MAP_BOUNDS = { minLng: -92, maxLng: -71, minLat: 33, maxLat: 45 };
+
 function geoToSVG(lat, lng, W, H) {
-    const minLng = -89, maxLng = -73, minLat = 37.5, maxLat = 43;
+    const { minLng, maxLng, minLat, maxLat } = MAP_BOUNDS;
     const x = ((lng - minLng) / (maxLng - minLng)) * W;
     const y = ((maxLat - lat) / (maxLat - minLat)) * H;
     return { x, y };
 }
+
+// Simplified US state outlines as arrays of [lng, lat] boundary points
+// Service territory states (Exelon/ComEd/PECO/BGE/Pepco/DPL/ACE): IL, PA, NJ, MD, DE, DC
+const SERVICE_STATES = ['IL','PA','NJ','MD','DE','DC'];
+const US_STATES_GEO = {
+    // Service territory states
+    'IL': [[-91.5,42.5],[-91.2,42.0],[-91.1,41.7],[-91.0,41.2],[-91.1,40.7],[-90.9,40.2],[-90.6,39.7],[-90.3,39.3],[-90.1,39.0],[-89.7,38.2],[-89.4,37.9],[-89.1,37.6],[-89.0,37.0],[-88.7,37.1],[-88.3,37.1],[-88.1,37.5],[-88.0,38.0],[-87.8,38.2],[-87.7,38.6],[-87.5,38.9],[-87.5,39.4],[-87.5,39.9],[-87.5,40.5],[-87.5,41.0],[-87.5,41.5],[-87.5,41.8],[-87.8,42.5],[-88.2,42.5],[-89.0,42.5],[-90.0,42.5],[-90.6,42.5],[-91.5,42.5]],
+    'PA': [[-80.5,42.0],[-80.5,41.0],[-80.5,40.6],[-80.1,40.3],[-79.8,40.0],[-79.5,39.7],[-78.0,39.7],[-76.5,39.7],[-75.7,39.7],[-75.5,39.8],[-75.2,39.9],[-75.0,40.2],[-74.8,40.4],[-74.7,41.1],[-74.7,41.4],[-75.0,41.8],[-75.3,42.0],[-76.0,42.0],[-77.0,42.0],[-78.0,42.0],[-79.0,42.0],[-79.8,42.0],[-80.5,42.0]],
+    'NJ': [[-75.5,39.5],[-75.2,39.5],[-75.0,39.7],[-74.9,39.9],[-74.7,40.2],[-74.7,40.5],[-74.5,40.6],[-74.3,40.7],[-74.1,40.9],[-74.0,41.1],[-74.7,41.4],[-75.0,41.1],[-75.2,40.5],[-75.2,40.2],[-75.3,39.9],[-75.5,39.7],[-75.5,39.5]],
+    'MD': [[-79.5,39.7],[-79.5,39.3],[-79.1,39.3],[-78.5,39.5],[-77.8,39.3],[-77.3,39.3],[-77.0,39.0],[-76.8,38.8],[-76.5,38.5],[-76.2,38.3],[-76.0,38.0],[-75.7,38.0],[-75.6,38.2],[-75.4,38.5],[-75.4,38.8],[-75.3,39.1],[-75.5,39.4],[-75.6,39.5],[-75.7,39.7],[-76.0,39.7],[-77.0,39.7],[-78.0,39.7],[-79.0,39.7],[-79.5,39.7]],
+    'DE': [[-75.8,39.7],[-75.6,39.5],[-75.4,39.2],[-75.4,38.8],[-75.4,38.5],[-75.6,38.5],[-75.7,38.8],[-75.8,39.0],[-75.8,39.3],[-75.8,39.7]],
+    'DC': [[-77.12,38.99],[-77.04,38.99],[-76.91,38.85],[-77.04,38.79],[-77.12,38.85],[-77.12,38.99]],
+    // Non-service surrounding states
+    'OH': [[-84.8,41.7],[-84.8,41.0],[-84.8,40.5],[-84.5,39.8],[-84.3,39.3],[-84.0,39.0],[-83.5,38.6],[-83.0,38.5],[-82.5,38.4],[-82.0,38.4],[-81.5,38.5],[-81.0,38.8],[-80.6,39.0],[-80.5,39.7],[-80.5,40.6],[-80.5,41.0],[-80.5,41.5],[-80.5,42.0],[-81.0,42.0],[-81.5,41.8],[-82.0,41.5],[-82.5,41.5],[-83.0,41.6],[-83.5,41.7],[-84.0,41.7],[-84.8,41.7]],
+    'IN': [[-88.1,41.8],[-87.5,41.8],[-87.5,41.5],[-87.5,41.0],[-87.5,40.5],[-87.5,39.9],[-87.5,39.4],[-87.5,38.9],[-87.7,38.6],[-87.8,38.2],[-88.0,38.0],[-87.8,37.8],[-87.5,37.9],[-87.1,37.8],[-86.5,37.9],[-86.0,38.0],[-85.5,38.0],[-85.0,38.3],[-84.8,38.5],[-84.8,39.0],[-84.8,39.5],[-84.8,40.0],[-84.8,40.5],[-84.8,41.0],[-84.8,41.7],[-85.5,41.8],[-86.5,41.8],[-87.5,41.8],[-88.1,41.8]],
+    'WV': [[-82.5,38.4],[-82.0,38.4],[-81.5,38.5],[-81.0,38.8],[-80.6,39.0],[-80.5,39.7],[-79.5,39.7],[-79.5,39.3],[-79.1,39.3],[-78.5,39.5],[-77.8,39.3],[-77.7,39.3],[-77.8,39.0],[-78.5,38.5],[-79.0,38.0],[-79.5,37.7],[-80.0,37.5],[-80.5,37.5],[-81.0,37.5],[-81.5,37.3],[-82.0,37.5],[-82.3,37.7],[-82.5,38.0],[-82.5,38.4]],
+    'VA': [[-83.5,36.6],[-83.0,36.6],[-82.0,36.6],[-81.5,36.6],[-80.5,36.5],[-79.5,36.5],[-78.5,36.5],[-77.5,36.5],[-76.5,36.6],[-76.0,36.9],[-75.6,37.2],[-75.6,37.6],[-76.0,37.8],[-76.3,38.0],[-76.5,38.3],[-76.8,38.5],[-77.0,38.7],[-77.0,39.0],[-77.3,39.3],[-77.7,39.3],[-77.8,39.0],[-78.5,38.5],[-79.0,38.0],[-79.5,37.7],[-80.0,37.5],[-80.5,37.5],[-81.0,37.5],[-81.5,37.3],[-82.0,37.5],[-82.5,37.5],[-83.0,37.0],[-83.5,36.6]],
+    'NY': [[-79.8,42.0],[-79.5,42.5],[-79.0,43.0],[-78.0,43.3],[-77.0,43.3],[-76.0,43.5],[-75.5,43.8],[-75.0,44.0],[-74.5,44.5],[-73.7,45.0],[-73.3,44.0],[-73.3,43.0],[-73.3,42.3],[-73.3,42.0],[-73.5,41.2],[-74.0,41.1],[-74.7,41.4],[-74.7,41.1],[-75.0,41.1],[-75.3,42.0],[-76.0,42.0],[-77.0,42.0],[-78.0,42.0],[-79.0,42.0],[-79.8,42.0]],
+    'CT': [[-73.7,41.1],[-73.7,41.3],[-73.3,41.5],[-72.5,41.4],[-72.0,41.3],[-71.8,41.3],[-71.8,41.0],[-72.5,41.0],[-73.0,41.0],[-73.5,41.0],[-73.7,41.1]],
+    'MA': [[-73.3,42.0],[-73.3,42.3],[-72.5,42.3],[-72.0,42.3],[-71.5,42.3],[-71.0,42.3],[-70.5,42.0],[-70.5,41.7],[-71.0,41.7],[-71.5,41.8],[-71.8,41.3],[-72.0,41.3],[-72.5,41.4],[-73.3,41.5],[-73.3,42.0]],
+    'KY': [[-89.5,36.5],[-89.0,36.5],[-88.5,36.5],[-87.5,36.5],[-86.5,36.5],[-85.5,36.5],[-84.5,36.5],[-84.0,36.5],[-83.5,36.6],[-83.0,37.0],[-82.5,37.5],[-82.3,37.7],[-82.5,38.0],[-82.5,38.4],[-83.0,38.5],[-83.5,38.6],[-84.0,39.0],[-84.3,39.0],[-84.5,39.1],[-84.8,39.0],[-85.0,38.3],[-85.5,38.0],[-86.0,38.0],[-86.5,37.9],[-87.1,37.8],[-87.5,37.9],[-87.8,37.8],[-88.0,37.5],[-88.3,37.1],[-88.7,37.1],[-89.0,37.0],[-89.3,37.0],[-89.5,36.8],[-89.5,36.5]],
+    'NC': [[-84.3,35.2],[-83.5,35.0],[-82.5,35.2],[-81.5,35.2],[-80.5,35.2],[-80.0,35.0],[-79.0,35.0],[-78.0,35.2],[-77.0,35.5],[-76.0,35.6],[-75.5,35.8],[-75.5,36.2],[-76.0,36.5],[-76.5,36.6],[-77.5,36.5],[-78.5,36.5],[-79.5,36.5],[-80.5,36.5],[-81.5,36.6],[-82.0,36.6],[-83.0,36.6],[-83.5,36.6],[-84.3,36.5],[-84.3,35.8],[-84.3,35.2]],
+    'TN': [[-90.3,35.0],[-90.0,35.0],[-89.5,35.0],[-89.0,35.0],[-88.0,35.0],[-87.0,35.0],[-86.0,35.0],[-85.5,35.0],[-84.3,35.2],[-84.3,35.8],[-84.3,36.5],[-84.5,36.5],[-85.5,36.5],[-86.5,36.5],[-87.5,36.5],[-88.5,36.5],[-89.0,36.5],[-89.5,36.5],[-90.3,36.5],[-90.3,35.8],[-90.3,35.0]],
+    'SC': [[-83.1,35.0],[-82.5,35.2],[-81.5,35.2],[-80.5,35.2],[-80.0,35.0],[-79.5,34.4],[-79.0,34.0],[-79.0,33.5],[-79.5,33.2],[-80.0,32.8],[-80.8,32.1],[-81.5,32.5],[-82.0,33.0],[-82.5,33.5],[-83.0,34.0],[-83.3,34.5],[-83.1,35.0]],
+    'GA': [[-85.5,35.0],[-84.3,35.0],[-83.1,35.0],[-83.3,34.5],[-83.0,34.0],[-82.5,33.5],[-82.0,33.0],[-81.5,32.5],[-81.0,31.5],[-81.5,31.0],[-82.0,30.5],[-83.0,30.5],[-84.0,30.5],[-85.0,31.0],[-85.0,31.5],[-85.0,32.0],[-85.0,32.5],[-85.0,33.0],[-85.0,33.5],[-85.0,34.0],[-85.0,34.5],[-85.5,35.0]],
+    'MI': [[-86.5,41.8],[-86.0,41.8],[-85.5,41.8],[-84.8,41.7],[-84.0,41.7],[-83.5,41.7],[-83.0,42.0],[-82.5,42.3],[-82.5,43.0],[-82.5,43.5],[-83.0,44.0],[-83.5,44.0],[-84.0,43.5],[-84.5,43.8],[-84.5,44.2],[-84.8,44.5],[-85.0,45.0],[-85.5,44.8],[-86.0,44.5],[-86.5,44.0],[-86.5,43.5],[-86.5,43.0],[-86.2,42.5],[-86.5,41.8]],
+    'WI': [[-92.0,42.5],[-91.5,42.5],[-90.6,42.5],[-90.0,42.5],[-89.0,42.5],[-88.2,42.5],[-87.8,42.5],[-87.8,43.0],[-87.8,43.5],[-87.8,44.0],[-87.5,44.5],[-87.5,45.0],[-88.0,45.5],[-88.5,46.0],[-89.0,46.3],[-90.0,46.5],[-90.5,46.5],[-91.0,46.5],[-92.0,46.0],[-92.5,45.5],[-92.5,45.0],[-92.5,44.5],[-92.0,44.0],[-91.5,43.5],[-91.5,43.0],[-92.0,42.5]],
+    'VT': [[-73.3,42.7],[-73.3,43.0],[-73.3,44.0],[-73.3,44.5],[-72.5,45.0],[-72.0,45.0],[-71.5,45.0],[-71.5,44.5],[-71.5,44.0],[-72.0,43.5],[-72.5,43.0],[-72.5,42.7],[-73.3,42.7]],
+    'NH': [[-72.5,42.7],[-72.5,43.0],[-72.0,43.5],[-71.5,44.0],[-71.5,44.5],[-71.5,45.0],[-71.0,45.0],[-71.0,44.0],[-71.0,43.5],[-71.0,43.0],[-71.0,42.7],[-71.5,42.7],[-72.0,42.7],[-72.5,42.7]],
+    'ME': [[-71.0,43.5],[-70.5,43.2],[-70.0,43.5],[-69.0,44.0],[-68.0,44.5],[-67.5,44.5],[-67.0,45.0],[-67.0,45.5],[-67.5,47.0],[-68.5,47.3],[-69.0,47.3],[-69.5,47.0],[-70.0,46.5],[-70.5,46.0],[-71.0,45.5],[-71.0,45.0],[-71.5,45.0],[-71.5,44.5],[-71.5,44.0],[-71.0,43.5]],
+    'RI': [[-71.8,41.3],[-71.8,41.7],[-71.5,41.8],[-71.2,41.5],[-71.2,41.2],[-71.5,41.2],[-71.8,41.3]],
+};
+
+// Outage location keyword to approximate lat/lng
+const OUTAGE_LOCATION_COORDS = {
+    'chicago':         { lat: 41.88, lng: -87.63 },
+    'baltimore':       { lat: 39.29, lng: -76.61 },
+    'philadelphia':    { lat: 39.95, lng: -75.17 },
+    'washington':      { lat: 38.91, lng: -77.04 },
+    'atlantic city':   { lat: 39.36, lng: -74.42 },
+    'wilmington':      { lat: 39.74, lng: -75.54 },
+    'dc':              { lat: 38.91, lng: -77.04 },
+    'cherry hill':     { lat: 39.93, lng: -74.95 },
+    'il':              { lat: 41.5,  lng: -87.8  },
+    'md':              { lat: 39.3,  lng: -76.6  },
+    'pa':              { lat: 40.0,  lng: -75.5  },
+    'nj':              { lat: 39.8,  lng: -74.5  },
+    'de':              { lat: 39.5,  lng: -75.5  },
+};
 
 function severityColor(severity, stormMode) {
     if (stormMode) return '#a371f7';
@@ -786,10 +852,9 @@ function severityColor(severity, stormMode) {
     }
 }
 
-function renderTerritoryMap(weatherData, forecastData, outageData) {
+function renderTerritoryMap(weatherData, forecastData, outageData, crewData, dispatchData) {
     const container = document.getElementById('territory-map');
-    const tooltip = document.getElementById('map-tooltip');
-    const W = 960, H = 420;
+    const W = 960, H = 550;
 
     // Build forecast lookup
     const forecastMap = {};
@@ -797,7 +862,7 @@ function renderTerritoryMap(weatherData, forecastData, outageData) {
         forecastData.forEach(f => { forecastMap[f.region] = f; });
     }
 
-    // Count active outages per region (rough matching by city name in location)
+    // Count active outages per region
     const outagesByRegion = {};
     MAP_REGIONS.forEach(r => { outagesByRegion[r.name] = 0; });
     if (outageData && Array.isArray(outageData)) {
@@ -811,51 +876,99 @@ function renderTerritoryMap(weatherData, forecastData, outageData) {
         });
     }
 
+    // Resolve outage positions with jitter to avoid overlap
+    const outagePositions = [];
+    if (outageData && Array.isArray(outageData)) {
+        outageData.forEach((o, oi) => {
+            const loc = (o.location || '').toLowerCase();
+            let coord = null;
+            for (const [key, val] of Object.entries(OUTAGE_LOCATION_COORDS)) {
+                if (loc.includes(key)) { coord = val; break; }
+            }
+            if (!coord) coord = { lat: 39.5 + (oi % 5) * 0.3, lng: -76.5 + (oi % 3) * 0.4 };
+            // Add jitter so markers don't stack
+            const jLat = coord.lat + (Math.sin(oi * 2.1) * 0.25);
+            const jLng = coord.lng + (Math.cos(oi * 1.7) * 0.3);
+            outagePositions.push({ ...o, _lat: jLat, _lng: jLng });
+        });
+    }
+
     // Build SVG
     let svg = `<svg class="map-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
-    // Dark map background with grid
     svg += `<defs>
         <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#21262d" stroke-width="0.5"/>
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#21262d" stroke-width="0.3"/>
         </pattern>
-        <filter id="glow"><feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+        <filter id="glow"><feGaussianBlur stdDeviation="6" result="coloredBlur"/>
             <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
-        <radialGradient id="radarGreen" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#3fb950" stop-opacity="0.25"/><stop offset="100%" stop-color="#3fb950" stop-opacity="0"/></radialGradient>
-        <radialGradient id="radarYellow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#d29922" stop-opacity="0.25"/><stop offset="100%" stop-color="#d29922" stop-opacity="0"/></radialGradient>
-        <radialGradient id="radarRed" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#f85149" stop-opacity="0.3"/><stop offset="100%" stop-color="#f85149" stop-opacity="0"/></radialGradient>
-        <radialGradient id="radarPurple" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#a371f7" stop-opacity="0.3"/><stop offset="100%" stop-color="#a371f7" stop-opacity="0"/></radialGradient>
+        <filter id="crew-shadow"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000" flood-opacity="0.5"/></filter>
+        <radialGradient id="radarGreen" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#3fb950" stop-opacity="0.2"/><stop offset="100%" stop-color="#3fb950" stop-opacity="0"/></radialGradient>
+        <radialGradient id="radarYellow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#d29922" stop-opacity="0.2"/><stop offset="100%" stop-color="#d29922" stop-opacity="0"/></radialGradient>
+        <radialGradient id="radarRed" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#f85149" stop-opacity="0.25"/><stop offset="100%" stop-color="#f85149" stop-opacity="0"/></radialGradient>
+        <radialGradient id="radarPurple" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#a371f7" stop-opacity="0.25"/><stop offset="100%" stop-color="#a371f7" stop-opacity="0"/></radialGradient>
     </defs>`;
     svg += `<rect width="${W}" height="${H}" fill="#0d1117"/>`;
     svg += `<rect width="${W}" height="${H}" fill="url(#grid)"/>`;
 
-    // Stylized state outlines (simplified polygons for the mid-Atlantic + IL region)
-    const states = [
-        { name: 'IL', color: '#161b22', pts: '85,40 140,40 150,80 155,140 160,260 150,300 130,310 90,305 70,280 60,220 65,140 75,80' },
-        { name: 'PA', color: '#161b22', pts: '500,48 720,35 740,55 750,100 740,160 710,175 530,180 510,160 490,100' },
-        { name: 'NJ', color: '#161b22', pts: '740,55 770,50 790,90 800,140 810,200 790,260 760,280 740,250 720,190 710,175 740,160 750,100' },
-        { name: 'MD', color: '#161b22', pts: '490,180 710,175 720,190 700,210 680,230 650,250 620,260 550,265 500,270 460,260 440,240 450,210 470,195' },
-        { name: 'DE', color: '#161b22', pts: '730,175 750,180 760,220 755,260 740,270 720,250 710,220 710,195 720,185' },
-        { name: 'DC', color: '#1c2128', pts: '540,245 560,240 570,255 560,270 540,265' },
-    ];
-    states.forEach(s => {
-        svg += `<polygon points="${s.pts}" fill="${s.color}" stroke="#30363d" stroke-width="1" opacity="0.8"/>`;
+    // ---- Render all US state outlines ----
+    Object.entries(US_STATES_GEO).forEach(([stName, coords]) => {
+        const isService = SERVICE_STATES.includes(stName);
+        const fillColor = isService ? '#161b22' : '#0e1116';
+        const strokeColor = isService ? '#30363d' : '#1b2028';
+        const strokeW = isService ? 1.2 : 0.6;
+        const pts = coords.map(([lng, lat]) => {
+            const p = geoToSVG(lat, lng, W, H);
+            return `${p.x},${p.y}`;
+        }).join(' ');
+        svg += `<polygon points="${pts}" fill="${fillColor}" stroke="${strokeColor}" stroke-width="${strokeW}" opacity="${isService ? 0.9 : 0.5}"/>`;
         // State label
-        const pts = s.pts.split(' ').map(p => p.split(',').map(Number));
-        const cx = pts.reduce((a,p)=>a+p[0],0)/pts.length;
-        const cy = pts.reduce((a,p)=>a+p[1],0)/pts.length;
-        svg += `<text x="${cx}" y="${cy}" fill="#30363d" font-size="14" font-weight="600" text-anchor="middle" dominant-baseline="middle">${s.name}</text>`;
+        const cx = coords.reduce((a, c) => a + c[0], 0) / coords.length;
+        const cy = coords.reduce((a, c) => a + c[1], 0) / coords.length;
+        const lp = geoToSVG(cy, cx, W, H);
+        const labelColor = isService ? '#484f58' : '#21262d';
+        const labelSize = isService ? 12 : 9;
+        svg += `<text x="${lp.x}" y="${lp.y}" fill="${labelColor}" font-size="${labelSize}" font-weight="${isService?700:400}" text-anchor="middle" dominant-baseline="middle">${stName}</text>`;
     });
 
-    // Connection lines between regions (service territory network)
+    // ---- Service territory border highlight ----
+    SERVICE_STATES.forEach(stName => {
+        if (!US_STATES_GEO[stName]) return;
+        const pts = US_STATES_GEO[stName].map(([lng, lat]) => {
+            const p = geoToSVG(lat, lng, W, H);
+            return `${p.x},${p.y}`;
+        }).join(' ');
+        svg += `<polygon points="${pts}" fill="none" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.4"/>`;
+    });
+
+    // ---- Connection lines between service regions ----
     const connections = [[0,2],[2,5],[5,3],[2,4],[1,3],[1,5]];
     MAP_REGIONS.forEach((r, i) => { r._pos = geoToSVG(r.lat, r.lng, W, H); });
     connections.forEach(([a,b]) => {
         const pa = MAP_REGIONS[a]._pos, pb = MAP_REGIONS[b]._pos;
-        svg += `<line x1="${pa.x}" y1="${pa.y}" x2="${pb.x}" y2="${pb.y}" stroke="#21262d" stroke-width="1.5" stroke-dasharray="6,4"/>`;
+        svg += `<line x1="${pa.x}" y1="${pa.y}" x2="${pb.x}" y2="${pb.y}" stroke="#21262d" stroke-width="1" stroke-dasharray="4,3"/>`;
     });
 
-    // Render each region
+    // ---- Individual outage markers ----
+    outagePositions.forEach((o, oi) => {
+        const pos = geoToSVG(o._lat, o._lng, W, H);
+        const pri = (o.priority || '').toLowerCase();
+        let oColor = '#d29922'; // Medium default
+        if (pri === 'critical') oColor = '#f85149';
+        else if (pri === 'high') oColor = '#f0883e';
+        else if (pri === 'low') oColor = '#58a6ff';
+        // Pulsing ring for critical outages
+        if (pri === 'critical') {
+            svg += `<circle cx="${pos.x}" cy="${pos.y}" r="8" fill="none" stroke="${oColor}" stroke-width="1" opacity="0.4">
+                <animate attributeName="r" values="8;14;8" dur="2s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.4;0;0.4" dur="2s" repeatCount="indefinite"/>
+            </circle>`;
+        }
+        svg += `<circle cx="${pos.x}" cy="${pos.y}" r="4" fill="${oColor}" stroke="#0d1117" stroke-width="1" class="outage-marker" data-oidx="${oi}"/>`;
+        svg += `<text x="${pos.x}" y="${pos.y + 1}" text-anchor="middle" dominant-baseline="middle" fill="#0d1117" font-size="5" font-weight="700">⚡</text>`;
+    });
+
+    // ---- Weather overlay per region ----
     MAP_REGIONS.forEach((region, idx) => {
         const { x, y } = region._pos;
         const wx = weatherData ? weatherData[region.name] : null;
@@ -865,81 +978,140 @@ function renderTerritoryMap(weatherData, forecastData, outageData) {
         const severity = wx ? wx.severity : 'None';
         const color = severityColor(severity, stormMode);
 
-        // Weather radar radius based on severity
-        let radarR = 55;
+        let radarR = 40;
         let radarFill = 'url(#radarGreen)';
-        if (stormMode) { radarR = 80; radarFill = 'url(#radarPurple)'; }
-        else if (severity === 'High') { radarR = 70; radarFill = 'url(#radarRed)'; }
-        else if (severity === 'Moderate') { radarR = 60; radarFill = 'url(#radarYellow)'; }
+        if (stormMode) { radarR = 55; radarFill = 'url(#radarPurple)'; }
+        else if (severity === 'High') { radarR = 50; radarFill = 'url(#radarRed)'; }
+        else if (severity === 'Moderate') { radarR = 45; radarFill = 'url(#radarYellow)'; }
 
-        // Precipitation overlay (concentric rings for rain)
+        // Precipitation rings
         if (wx && wx.precipitationIn > 0.1) {
-            const precipR = Math.min(40 + wx.precipitationIn * 20, 80);
-            svg += `<circle cx="${x}" cy="${y}" r="${precipR}" fill="none" stroke="#58a6ff" stroke-width="0.5" stroke-dasharray="3,3" opacity="0.3"/>`;
-            svg += `<circle cx="${x}" cy="${y}" r="${precipR*0.65}" fill="none" stroke="#58a6ff" stroke-width="0.5" stroke-dasharray="2,4" opacity="0.2"/>`;
+            const precipR = Math.min(30 + wx.precipitationIn * 15, 55);
+            svg += `<circle cx="${x}" cy="${y}" r="${precipR}" fill="none" stroke="#58a6ff" stroke-width="0.5" stroke-dasharray="3,3" opacity="0.25"/>`;
+            svg += `<circle cx="${x}" cy="${y}" r="${precipR*0.6}" fill="none" stroke="#58a6ff" stroke-width="0.5" stroke-dasharray="2,4" opacity="0.15"/>`;
         }
 
-        // Radar glow
         svg += `<circle cx="${x}" cy="${y}" r="${radarR}" fill="${radarFill}" class="region-glow"/>`;
 
-        // Wind direction arrow
+        // Wind arrow
         if (wx && wx.windSpeedMph > 5) {
             const angle = WIND_DIR_ANGLES[wx.windDirection] || 0;
-            const arrowLen = Math.min(15 + wx.windSpeedMph * 0.5, 40);
+            const arrowLen = Math.min(12 + wx.windSpeedMph * 0.4, 30);
             const rad = (angle - 90) * Math.PI / 180;
             const ax = x + Math.cos(rad) * arrowLen;
             const ay = y + Math.sin(rad) * arrowLen;
             const windColor = wx.windSpeedMph > 30 ? '#f85149' : wx.windSpeedMph > 20 ? '#d29922' : '#8b949e';
-            svg += `<line x1="${x}" y1="${y}" x2="${ax}" y2="${ay}" stroke="${windColor}" stroke-width="1.5" opacity="0.7"/>`;
-            // Arrowhead
-            const headLen = 6, headAng = 0.4;
-            const hx1 = ax - headLen * Math.cos(rad - headAng);
-            const hy1 = ay - headLen * Math.sin(rad - headAng);
-            const hx2 = ax - headLen * Math.cos(rad + headAng);
-            const hy2 = ay - headLen * Math.sin(rad + headAng);
-            svg += `<polygon points="${ax},${ay} ${hx1},${hy1} ${hx2},${hy2}" fill="${windColor}" opacity="0.7"/>`;
+            svg += `<line x1="${x}" y1="${y}" x2="${ax}" y2="${ay}" stroke="${windColor}" stroke-width="1.5" opacity="0.6"/>`;
+            const headLen = 5, headAng = 0.4;
+            svg += `<polygon points="${ax},${ay} ${ax - headLen * Math.cos(rad - headAng)},${ay - headLen * Math.sin(rad - headAng)} ${ax - headLen * Math.cos(rad + headAng)},${ay - headLen * Math.sin(rad + headAng)}" fill="${windColor}" opacity="0.6"/>`;
         }
 
-        // Center marker (pulsing for storm mode)
-        svg += `<circle cx="${x}" cy="${y}" r="8" fill="${color}" stroke="#0d1117" stroke-width="2" filter="url(#glow)" class="map-region" data-idx="${idx}"/>`;
+        // Center marker
+        svg += `<circle cx="${x}" cy="${y}" r="6" fill="${color}" stroke="#0d1117" stroke-width="1.5" filter="url(#glow)" class="map-region" data-idx="${idx}"/>`;
         if (stormMode) {
-            svg += `<circle cx="${x}" cy="${y}" r="14" fill="none" stroke="${color}" stroke-width="1.5" opacity="0.6">
-                <animate attributeName="r" values="14;22;14" dur="2s" repeatCount="indefinite"/>
+            svg += `<circle cx="${x}" cy="${y}" r="10" fill="none" stroke="${color}" stroke-width="1.5" opacity="0.6">
+                <animate attributeName="r" values="10;18;10" dur="2s" repeatCount="indefinite"/>
                 <animate attributeName="opacity" values="0.6;0.1;0.6" dur="2s" repeatCount="indefinite"/>
             </circle>`;
         }
 
-        // Weather icon
+        // Weather icon + city label
         const icon = wx ? (CONDITION_ICONS[wx.condition] || '☀️') : '—';
-        svg += `<text x="${x}" y="${y - 18}" text-anchor="middle" font-size="16">${icon}</text>`;
-
-        // City label
-        svg += `<text x="${x}" y="${y + 24}" text-anchor="middle" fill="#c9d1d9" font-size="11" font-weight="600">${region.city}</text>`;
-
-        // Temperature
+        svg += `<text x="${x}" y="${y - 14}" text-anchor="middle" font-size="13">${icon}</text>`;
+        svg += `<text x="${x}" y="${y + 18}" text-anchor="middle" fill="#c9d1d9" font-size="9" font-weight="600">${region.city}</text>`;
         if (wx) {
-            svg += `<text x="${x}" y="${y + 37}" text-anchor="middle" fill="#8b949e" font-size="10">${wx.temperatureF}°F · ${wx.windSpeedMph} mph</text>`;
+            svg += `<text x="${x}" y="${y + 28}" text-anchor="middle" fill="#8b949e" font-size="8">${wx.temperatureF}°F · ${wx.windSpeedMph}mph</text>`;
         }
 
-        // Outage badge
+        // Outage count badge
         if (outages > 0) {
-            svg += `<circle cx="${x + 16}" cy="${y - 16}" r="9" fill="#f85149" stroke="#0d1117" stroke-width="1.5"/>`;
-            svg += `<text x="${x + 16}" y="${y - 12}" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">⚡${outages}</text>`;
+            svg += `<circle cx="${x + 12}" cy="${y - 12}" r="7" fill="#f85149" stroke="#0d1117" stroke-width="1"/>`;
+            svg += `<text x="${x + 12}" y="${y - 9}" text-anchor="middle" fill="#fff" font-size="7" font-weight="700">${outages}</text>`;
         }
 
         // Storm mode badge
         if (stormMode) {
-            svg += `<rect x="${x - 30}" y="${y + 42}" width="60" height="16" rx="3" fill="#a371f720" stroke="#a371f7" stroke-width="0.5"/>`;
-            svg += `<text x="${x}" y="${y + 53}" text-anchor="middle" fill="#a371f7" font-size="9" font-weight="700">STORM MODE</text>`;
+            svg += `<rect x="${x - 24}" y="${y + 32}" width="48" height="13" rx="3" fill="#a371f720" stroke="#a371f7" stroke-width="0.5"/>`;
+            svg += `<text x="${x}" y="${y + 41}" text-anchor="middle" fill="#a371f7" font-size="7" font-weight="700">STORM MODE</text>`;
         }
     });
 
+    // ---- Crew markers ----
+    const crews = crewData && Array.isArray(crewData) ? crewData : [];
+    const dispatches = dispatchData && Array.isArray(dispatchData) ? dispatchData : [];
+    // Build dispatch lookup by crew name
+    const crewDispatchMap = {};
+    dispatches.forEach(d => { crewDispatchMap[d.crewName] = d; });
+
+    crews.forEach((crew, ci) => {
+        const regionCoords = CREW_REGION_COORDS[crew.region];
+        if (!regionCoords) return;
+        // Slight offset per crew so they don't stack
+        const offsetLat = regionCoords.lat + (ci % 2 === 0 ? 0.12 : -0.12);
+        const offsetLng = regionCoords.lng + (ci % 3 === 0 ? 0.15 : ci % 3 === 1 ? -0.15 : 0);
+        const pos = geoToSVG(offsetLat, offsetLng, W, H);
+
+        const status = (crew.status || 'Available').toLowerCase();
+        let crewColor = '#3fb950'; // Available = green
+        let crewIcon = '🚐';
+        if (status === 'dispatched' || status === 'en-route') { crewColor = '#f0883e'; crewIcon = '🚨'; }
+        else if (status === 'on-site') { crewColor = '#d29922'; crewIcon = '🔧'; }
+
+        // Crew marker background
+        svg += `<rect x="${pos.x - 10}" y="${pos.y - 10}" width="20" height="20" rx="4" fill="#161b22" stroke="${crewColor}" stroke-width="1.2" filter="url(#crew-shadow)" class="crew-marker" data-cidx="${ci}"/>`;
+        svg += `<text x="${pos.x}" y="${pos.y + 2}" text-anchor="middle" dominant-baseline="middle" font-size="11">${crewIcon}</text>`;
+        // Status dot
+        svg += `<circle cx="${pos.x + 8}" cy="${pos.y - 8}" r="3" fill="${crewColor}" stroke="#0d1117" stroke-width="0.8"/>`;
+
+        // For dispatched crews, draw line to outage
+        const dispatch = crewDispatchMap[crew.name];
+        if (dispatch && dispatch.location) {
+            const dloc = dispatch.location.toLowerCase();
+            for (const [key, val] of Object.entries(OUTAGE_LOCATION_COORDS)) {
+                if (dloc.includes(key)) {
+                    const target = geoToSVG(val.lat, val.lng, W, H);
+                    svg += `<line x1="${pos.x}" y1="${pos.y}" x2="${target.x}" y2="${target.y}" stroke="${crewColor}" stroke-width="1" stroke-dasharray="3,2" opacity="0.5"/>`;
+                    break;
+                }
+            }
+        }
+    });
+
+    // ---- Map Legend ----
+    const lx = 12, ly = H - 130;
+    svg += `<rect x="${lx}" y="${ly}" width="135" height="125" rx="6" fill="#0d1117" stroke="#21262d" stroke-width="1" opacity="0.9"/>`;
+    svg += `<text x="${lx+8}" y="${ly+15}" fill="#c9d1d9" font-size="9" font-weight="700">MAP LEGEND</text>`;
+    // Service territory
+    svg += `<rect x="${lx+8}" y="${ly+22}" width="10" height="10" fill="#161b22" stroke="#58a6ff" stroke-width="1" stroke-dasharray="2,1"/>`;
+    svg += `<text x="${lx+24}" y="${ly+31}" fill="#8b949e" font-size="7.5">Service Territory</text>`;
+    // Outage priorities
+    svg += `<circle cx="${lx+13}" cy="${ly+42}" r="3.5" fill="#f85149"/><text x="${lx+24}" y="${ly+45}" fill="#8b949e" font-size="7.5">Critical Outage</text>`;
+    svg += `<circle cx="${lx+13}" cy="${ly+54}" r="3.5" fill="#f0883e"/><text x="${lx+24}" y="${ly+57}" fill="#8b949e" font-size="7.5">High Priority</text>`;
+    svg += `<circle cx="${lx+13}" cy="${ly+66}" r="3.5" fill="#d29922"/><text x="${lx+24}" y="${ly+69}" fill="#8b949e" font-size="7.5">Medium Priority</text>`;
+    svg += `<circle cx="${lx+13}" cy="${ly+78}" r="3.5" fill="#58a6ff"/><text x="${lx+24}" y="${ly+81}" fill="#8b949e" font-size="7.5">Low Priority</text>`;
+    // Crew statuses
+    svg += `<text x="${lx+8}" y="${ly+95}" fill="#c9d1d9" font-size="8" font-weight="600">Crews</text>`;
+    svg += `<rect x="${lx+8}" y="${ly+100}" width="10" height="10" rx="2" fill="#161b22" stroke="#3fb950" stroke-width="1"/>`;
+    svg += `<text x="${lx+24}" y="${ly+109}" fill="#8b949e" font-size="7.5">Available</text>`;
+    svg += `<rect x="${lx+68}" y="${ly+100}" width="10" height="10" rx="2" fill="#161b22" stroke="#f0883e" stroke-width="1"/>`;
+    svg += `<text x="${lx+84}" y="${ly+109}" fill="#8b949e" font-size="7.5">Dispatched</text>`;
+    svg += `<rect x="${lx+8}" y="${ly+113}" width="10" height="10" rx="2" fill="#161b22" stroke="#d29922" stroke-width="1"/>`;
+    svg += `<text x="${lx+24}" y="${ly+122}" fill="#8b949e" font-size="7.5">On-Site</text>`;
+
     svg += `</svg>`;
-    // Keep tooltip element
     container.innerHTML = svg + '<div class="map-tooltip" id="map-tooltip"></div>';
 
-    // Tooltip events
+    // ---- Tooltip events ----
     const tooltipEl = document.getElementById('map-tooltip');
+    function showTooltip(e, html) {
+        tooltipEl.innerHTML = html;
+        tooltipEl.style.display = 'block';
+        const rect = container.getBoundingClientRect();
+        tooltipEl.style.left = (e.clientX - rect.left + 15) + 'px';
+        tooltipEl.style.top = (e.clientY - rect.top - 10) + 'px';
+    }
+
+    // Region tooltips
     container.querySelectorAll('.map-region').forEach(el => {
         el.addEventListener('mouseenter', (e) => {
             const idx = parseInt(el.getAttribute('data-idx'));
@@ -947,38 +1119,75 @@ function renderTerritoryMap(weatherData, forecastData, outageData) {
             const wx = weatherData ? weatherData[r.name] : null;
             const fc = forecastMap[r.name];
             const outages = outagesByRegion[r.name] || 0;
-
             let html = `<div class="tt-city">${r.city}, ${r.state}</div>`;
             if (wx) {
-                html += `
-                    <div class="tt-row"><span>Condition</span><span class="tt-val">${wx.condition}</span></div>
-                    <div class="tt-row"><span>Temperature</span><span class="tt-val">${wx.temperatureF}°F</span></div>
-                    <div class="tt-row"><span>Humidity</span><span class="tt-val">${wx.humidityPct}%</span></div>
+                html += `<div class="tt-row"><span>Condition</span><span class="tt-val">${wx.condition}</span></div>
+                    <div class="tt-row"><span>Temp</span><span class="tt-val">${wx.temperatureF}°F</span></div>
                     <div class="tt-row"><span>Wind</span><span class="tt-val">${wx.windSpeedMph} mph ${wx.windDirection}</span></div>
-                    <div class="tt-row"><span>Pressure</span><span class="tt-val">${wx.barometricPressureInHg} inHg</span></div>
-                    <div class="tt-row"><span>Precipitation</span><span class="tt-val">${wx.precipitationIn} in</span></div>
-                    <div class="tt-row"><span>Visibility</span><span class="tt-val">${wx.visibilityMi} mi</span></div>
+                    <div class="tt-row"><span>Precip</span><span class="tt-val">${wx.precipitationIn} in</span></div>
                     <div class="tt-row"><span>Lightning</span><span class="tt-val">${wx.lightningDensity} /km²</span></div>`;
             }
             if (fc) {
-                html += `<div style="border-top:1px solid #30363d;margin-top:6px;padding-top:6px;">
-                    <div class="tt-row"><span>Storm Type</span><span class="tt-val">${fc.stormType}</span></div>
-                    <div class="tt-row"><span>Probability</span><span class="tt-val">${fc.probabilityPct}%</span></div>
+                html += `<div style="border-top:1px solid #30363d;margin-top:4px;padding-top:4px;">
+                    <div class="tt-row"><span>Storm</span><span class="tt-val">${fc.stormType} (${fc.probabilityPct}%)</span></div>
                     <div class="tt-row"><span>Est. Outages</span><span class="tt-val">${fc.estimatedOutages}</span></div>
-                    <div class="tt-row"><span>Storm Mode</span><span class="tt-val" style="color:${fc.stormModeActive?'#a371f7':'#3fb950'}">${fc.stormModeActive?'ACTIVE':'Inactive'}</span></div>
+                    <div class="tt-row"><span>Storm Mode</span><span class="tt-val" style="color:${fc.stormModeActive?'#a371f7':'#3fb950'}">${fc.stormModeActive?'ACTIVE':'Off'}</span></div>
                 </div>`;
             }
-            html += `<div style="border-top:1px solid #30363d;margin-top:6px;padding-top:6px;">
+            html += `<div style="border-top:1px solid #30363d;margin-top:4px;padding-top:4px;">
                 <div class="tt-row"><span>Active Outages</span><span class="tt-val" style="color:${outages>0?'#f85149':'#3fb950'}">${outages}</span></div>
             </div>`;
+            showTooltip(e, html);
+        });
+        el.addEventListener('mouseleave', () => { tooltipEl.style.display = 'none'; });
+    });
 
-            tooltipEl.innerHTML = html;
-            tooltipEl.style.display = 'block';
-            const rect = container.getBoundingClientRect();
-            const ex = e.clientX - rect.left;
-            const ey = e.clientY - rect.top;
-            tooltipEl.style.left = (ex + 15) + 'px';
-            tooltipEl.style.top = (ey - 10) + 'px';
+    // Outage marker tooltips
+    container.querySelectorAll('.outage-marker').forEach(el => {
+        el.addEventListener('mouseenter', (e) => {
+            const oi = parseInt(el.getAttribute('data-oidx'));
+            const o = outagePositions[oi];
+            if (!o) return;
+            let html = `<div class="tt-city">⚡ Outage ${o.id || ''}</div>`;
+            html += `<div class="tt-row"><span>Location</span><span class="tt-val">${o.location||'-'}</span></div>`;
+            html += `<div class="tt-row"><span>Priority</span><span class="tt-val" style="color:${(o.priority||'')=='Critical'?'#f85149':'#d29922'}">${o.priority||'-'}</span></div>`;
+            html += `<div class="tt-row"><span>Cause</span><span class="tt-val">${o.cause||'-'}</span></div>`;
+            html += `<div class="tt-row"><span>Affected</span><span class="tt-val">${o.affectedCustomers||0} customers</span></div>`;
+            html += `<div class="tt-row"><span>Equipment</span><span class="tt-val">${o.equipmentType||'-'}</span></div>`;
+            html += `<div class="tt-row"><span>Crew</span><span class="tt-val">${o.crewAssigned||'None'}</span></div>`;
+            html += `<div class="tt-row"><span>Status</span><span class="tt-val">${o.status||'-'}</span></div>`;
+            showTooltip(e, html);
+        });
+        el.addEventListener('mouseleave', () => { tooltipEl.style.display = 'none'; });
+    });
+
+    // Crew marker tooltips
+    container.querySelectorAll('.crew-marker').forEach(el => {
+        el.addEventListener('mouseenter', (e) => {
+            const ci = parseInt(el.getAttribute('data-cidx'));
+            const crew = crews[ci];
+            if (!crew) return;
+            const dispatch = crewDispatchMap[crew.name];
+            let html = `<div class="tt-city">${crew.name}</div>`;
+            html += `<div class="tt-row"><span>Lead</span><span class="tt-val">${crew.lead}</span></div>`;
+            html += `<div class="tt-row"><span>Members</span><span class="tt-val">${crew.members}</span></div>`;
+            html += `<div class="tt-row"><span>Vehicle</span><span class="tt-val">${crew.vehicle}</span></div>`;
+            html += `<div class="tt-row"><span>Region</span><span class="tt-val">${crew.region}</span></div>`;
+            const sc = (crew.status||'Available');
+            const sColor = sc==='Available'?'#3fb950':sc==='On-Site'?'#d29922':'#f0883e';
+            html += `<div class="tt-row"><span>Status</span><span class="tt-val" style="color:${sColor}">${sc}</span></div>`;
+            if (dispatch) {
+                html += `<div style="border-top:1px solid #30363d;margin-top:4px;padding-top:4px;">
+                    <div class="tt-row"><span>Dispatch</span><span class="tt-val">${dispatch.dispatchId||'-'}</span></div>
+                    <div class="tt-row"><span>Outage</span><span class="tt-val">${dispatch.outageId||'-'}</span></div>
+                    <div class="tt-row"><span>Location</span><span class="tt-val">${dispatch.location||'-'}</span></div>
+                    <div class="tt-row"><span>ETR</span><span class="tt-val">${dispatch.etr||'-'}</span></div>
+                </div>`;
+            }
+            if (crew.currentAssignment) {
+                html += `<div class="tt-row"><span>Assignment</span><span class="tt-val">${crew.currentAssignment}</span></div>`;
+            }
+            showTooltip(e, html);
         });
         el.addEventListener('mouseleave', () => { tooltipEl.style.display = 'none'; });
     });
