@@ -69,6 +69,19 @@
         .new-row { animation: glow 1.5s ease-out; }
         @keyframes glow { from { background: #1f6feb30; } to { background: transparent; } }
         .error-msg { color: #f85149; font-size: 12px; padding: 12px; }
+
+        /* Service Territory Map */
+        .map-container { position: relative; width: 100%; background: #0d1117; border-radius: 8px; overflow: hidden; }
+        .map-svg { width: 100%; height: auto; display: block; }
+        .map-region { cursor: pointer; transition: all 0.3s ease; }
+        .map-region:hover .region-glow { opacity: 0.4; }
+        .map-tooltip { position: absolute; background: #1c2128; border: 1px solid #30363d; border-radius: 8px; padding: 12px; font-size: 11px; pointer-events: none; z-index: 100; min-width: 200px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); display: none; }
+        .map-tooltip .tt-city { font-size: 14px; font-weight: 700; color: #f0f6fc; margin-bottom: 6px; }
+        .map-tooltip .tt-row { display: flex; justify-content: space-between; gap: 12px; padding: 2px 0; color: #8b949e; }
+        .map-tooltip .tt-val { color: #c9d1d9; font-weight: 600; }
+        .map-legend { display: flex; gap: 16px; padding: 8px 16px; font-size: 10px; color: #8b949e; flex-wrap: wrap; }
+        .map-legend-item { display: flex; align-items: center; gap: 4px; }
+        .map-legend-dot { width: 10px; height: 10px; border-radius: 50%; }
     </style>
 </head>
 <body>
@@ -98,6 +111,29 @@
         <!-- OVERVIEW -->
         <div id="overview" class="section active">
             <div class="kpi-row" id="overview-kpis"></div>
+
+            <!-- SERVICE TERRITORY MAP WITH WEATHER OVERLAY -->
+            <div class="panel" style="margin-bottom:16px;">
+                <div class="panel-header">
+                    <h3>🗺️ Service Territory — Weather &amp; Outage Map</h3>
+                    <span class="badge badge-blue" id="map-region-count">6 regions</span>
+                </div>
+                <div class="panel-body" style="max-height:none;padding:0;overflow:visible;">
+                    <div class="map-container" id="territory-map">
+                        <div class="map-tooltip" id="map-tooltip"></div>
+                    </div>
+                    <div class="map-legend">
+                        <div class="map-legend-item"><div class="map-legend-dot" style="background:#3fb950;"></div> Clear / Low Risk</div>
+                        <div class="map-legend-item"><div class="map-legend-dot" style="background:#d29922;"></div> Moderate</div>
+                        <div class="map-legend-item"><div class="map-legend-dot" style="background:#f85149;"></div> Severe / Storm Mode</div>
+                        <div class="map-legend-item"><div class="map-legend-dot" style="background:#58a6ff;"></div> Rain / Precip</div>
+                        <div class="map-legend-item"><svg width="14" height="10"><line x1="0" y1="5" x2="12" y2="5" stroke="#8b949e" stroke-width="1.5"/><polygon points="10,2 14,5 10,8" fill="#8b949e"/></svg> Wind Direction</div>
+                        <div class="map-legend-item"><span style="color:#f85149;font-weight:700;">⚡</span> Active Outages</div>
+                        <div class="map-legend-item"><span style="color:#a371f7;font-weight:700;">☁</span> Storm Mode</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="grid-2">
                 <div class="panel">
                     <div class="panel-header"><h3>Active Outages</h3><span class="badge badge-red" id="active-outage-count">0</span></div>
@@ -310,11 +346,16 @@ async function fetchJSON(url) {
 }
 
 async function fetchOverview() {
-    const [dashboard, outages, alerts] = await Promise.all([
+    const [dashboard, outages, alerts, weatherConditions, weatherForecasts] = await Promise.all([
         fetchJSON(`${API}/dashboard`),
         fetchJSON(`${API}/outages/active`),
-        fetchJSON(`${API}/scada/alerts`)
+        fetchJSON(`${API}/scada/alerts`),
+        fetchJSON(`${API}/weather/conditions`),
+        fetchJSON(`${API}/weather/forecast`)
     ]);
+
+    // Render the territory map with weather overlay
+    renderTerritoryMap(weatherConditions, weatherForecasts, outages);
 
     const el = document.getElementById('overview-kpis');
     if (dashboard) {
@@ -708,6 +749,239 @@ async function fetchNotifications() {
             log.map(n => `<tr><td style="font-size:10px">${n.notificationId}</td><td>${n.customerId}</td><td>${(n.eventType||'').replace(/_/g,' ')}</td><td style="text-transform:uppercase">${n.channel}</td><td>${statusBadge(n.status==='sent'?'normal':'warning')}</td><td>${new Date(n.createdAt).toLocaleTimeString()}</td></tr>`
         ).join('')}</table>`;
     }
+}
+
+// ============================================================
+// Service Territory Map with Weather Overlay
+// ============================================================
+const MAP_REGIONS = [
+    { name: 'Chicago-Metro',       city: 'Chicago',       state: 'IL', lat: 41.8781, lng: -87.6298 },
+    { name: 'Baltimore-Metro',     city: 'Baltimore',     state: 'MD', lat: 39.2904, lng: -76.6122 },
+    { name: 'Philadelphia-Metro',  city: 'Philadelphia',  state: 'PA', lat: 39.9526, lng: -75.1652 },
+    { name: 'DC-Metro',            city: 'Washington',    state: 'DC', lat: 38.9072, lng: -77.0369 },
+    { name: 'Atlantic-Coast',      city: 'Atlantic City', state: 'NJ', lat: 39.3643, lng: -74.4229 },
+    { name: 'Delaware-Valley',     city: 'Wilmington',    state: 'DE', lat: 39.7391, lng: -75.5398 },
+];
+
+const WIND_DIR_ANGLES = { N:0, NE:45, E:90, SE:135, S:180, SW:225, W:270, NW:315 };
+const CONDITION_ICONS = {
+    'Clear':'☀️','Partly Cloudy':'⛅','Overcast':'☁️','Light Rain':'🌦️','Heavy Rain':'🌧️',
+    'Thunderstorm':'⛈️','Ice/Sleet':'🧊','Snow':'❄️','Fog':'🌫️','High Winds':'💨'
+};
+
+function geoToSVG(lat, lng, W, H) {
+    const minLng = -89, maxLng = -73, minLat = 37.5, maxLat = 43;
+    const x = ((lng - minLng) / (maxLng - minLng)) * W;
+    const y = ((maxLat - lat) / (maxLat - minLat)) * H;
+    return { x, y };
+}
+
+function severityColor(severity, stormMode) {
+    if (stormMode) return '#a371f7';
+    switch (severity) {
+        case 'High': return '#f85149';
+        case 'Moderate': return '#d29922';
+        case 'Low': return '#58a6ff';
+        default: return '#3fb950';
+    }
+}
+
+function renderTerritoryMap(weatherData, forecastData, outageData) {
+    const container = document.getElementById('territory-map');
+    const tooltip = document.getElementById('map-tooltip');
+    const W = 960, H = 420;
+
+    // Build forecast lookup
+    const forecastMap = {};
+    if (forecastData && Array.isArray(forecastData)) {
+        forecastData.forEach(f => { forecastMap[f.region] = f; });
+    }
+
+    // Count active outages per region (rough matching by city name in location)
+    const outagesByRegion = {};
+    MAP_REGIONS.forEach(r => { outagesByRegion[r.name] = 0; });
+    if (outageData && Array.isArray(outageData)) {
+        outageData.forEach(o => {
+            const loc = (o.location || '').toLowerCase();
+            MAP_REGIONS.forEach(r => {
+                if (loc.includes(r.city.toLowerCase()) || loc.includes(r.state.toLowerCase())) {
+                    outagesByRegion[r.name]++;
+                }
+            });
+        });
+    }
+
+    // Build SVG
+    let svg = `<svg class="map-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+    // Dark map background with grid
+    svg += `<defs>
+        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#21262d" stroke-width="0.5"/>
+        </pattern>
+        <filter id="glow"><feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+            <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <radialGradient id="radarGreen" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#3fb950" stop-opacity="0.25"/><stop offset="100%" stop-color="#3fb950" stop-opacity="0"/></radialGradient>
+        <radialGradient id="radarYellow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#d29922" stop-opacity="0.25"/><stop offset="100%" stop-color="#d29922" stop-opacity="0"/></radialGradient>
+        <radialGradient id="radarRed" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#f85149" stop-opacity="0.3"/><stop offset="100%" stop-color="#f85149" stop-opacity="0"/></radialGradient>
+        <radialGradient id="radarPurple" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#a371f7" stop-opacity="0.3"/><stop offset="100%" stop-color="#a371f7" stop-opacity="0"/></radialGradient>
+    </defs>`;
+    svg += `<rect width="${W}" height="${H}" fill="#0d1117"/>`;
+    svg += `<rect width="${W}" height="${H}" fill="url(#grid)"/>`;
+
+    // Stylized state outlines (simplified polygons for the mid-Atlantic + IL region)
+    const states = [
+        { name: 'IL', color: '#161b22', pts: '85,40 140,40 150,80 155,140 160,260 150,300 130,310 90,305 70,280 60,220 65,140 75,80' },
+        { name: 'PA', color: '#161b22', pts: '500,48 720,35 740,55 750,100 740,160 710,175 530,180 510,160 490,100' },
+        { name: 'NJ', color: '#161b22', pts: '740,55 770,50 790,90 800,140 810,200 790,260 760,280 740,250 720,190 710,175 740,160 750,100' },
+        { name: 'MD', color: '#161b22', pts: '490,180 710,175 720,190 700,210 680,230 650,250 620,260 550,265 500,270 460,260 440,240 450,210 470,195' },
+        { name: 'DE', color: '#161b22', pts: '730,175 750,180 760,220 755,260 740,270 720,250 710,220 710,195 720,185' },
+        { name: 'DC', color: '#1c2128', pts: '540,245 560,240 570,255 560,270 540,265' },
+    ];
+    states.forEach(s => {
+        svg += `<polygon points="${s.pts}" fill="${s.color}" stroke="#30363d" stroke-width="1" opacity="0.8"/>`;
+        // State label
+        const pts = s.pts.split(' ').map(p => p.split(',').map(Number));
+        const cx = pts.reduce((a,p)=>a+p[0],0)/pts.length;
+        const cy = pts.reduce((a,p)=>a+p[1],0)/pts.length;
+        svg += `<text x="${cx}" y="${cy}" fill="#30363d" font-size="14" font-weight="600" text-anchor="middle" dominant-baseline="middle">${s.name}</text>`;
+    });
+
+    // Connection lines between regions (service territory network)
+    const connections = [[0,2],[2,5],[5,3],[2,4],[1,3],[1,5]];
+    MAP_REGIONS.forEach((r, i) => { r._pos = geoToSVG(r.lat, r.lng, W, H); });
+    connections.forEach(([a,b]) => {
+        const pa = MAP_REGIONS[a]._pos, pb = MAP_REGIONS[b]._pos;
+        svg += `<line x1="${pa.x}" y1="${pa.y}" x2="${pb.x}" y2="${pb.y}" stroke="#21262d" stroke-width="1.5" stroke-dasharray="6,4"/>`;
+    });
+
+    // Render each region
+    MAP_REGIONS.forEach((region, idx) => {
+        const { x, y } = region._pos;
+        const wx = weatherData ? weatherData[region.name] : null;
+        const fc = forecastMap[region.name];
+        const outages = outagesByRegion[region.name] || 0;
+        const stormMode = fc && fc.stormModeActive;
+        const severity = wx ? wx.severity : 'None';
+        const color = severityColor(severity, stormMode);
+
+        // Weather radar radius based on severity
+        let radarR = 55;
+        let radarFill = 'url(#radarGreen)';
+        if (stormMode) { radarR = 80; radarFill = 'url(#radarPurple)'; }
+        else if (severity === 'High') { radarR = 70; radarFill = 'url(#radarRed)'; }
+        else if (severity === 'Moderate') { radarR = 60; radarFill = 'url(#radarYellow)'; }
+
+        // Precipitation overlay (concentric rings for rain)
+        if (wx && wx.precipitationIn > 0.1) {
+            const precipR = Math.min(40 + wx.precipitationIn * 20, 80);
+            svg += `<circle cx="${x}" cy="${y}" r="${precipR}" fill="none" stroke="#58a6ff" stroke-width="0.5" stroke-dasharray="3,3" opacity="0.3"/>`;
+            svg += `<circle cx="${x}" cy="${y}" r="${precipR*0.65}" fill="none" stroke="#58a6ff" stroke-width="0.5" stroke-dasharray="2,4" opacity="0.2"/>`;
+        }
+
+        // Radar glow
+        svg += `<circle cx="${x}" cy="${y}" r="${radarR}" fill="${radarFill}" class="region-glow"/>`;
+
+        // Wind direction arrow
+        if (wx && wx.windSpeedMph > 5) {
+            const angle = WIND_DIR_ANGLES[wx.windDirection] || 0;
+            const arrowLen = Math.min(15 + wx.windSpeedMph * 0.5, 40);
+            const rad = (angle - 90) * Math.PI / 180;
+            const ax = x + Math.cos(rad) * arrowLen;
+            const ay = y + Math.sin(rad) * arrowLen;
+            const windColor = wx.windSpeedMph > 30 ? '#f85149' : wx.windSpeedMph > 20 ? '#d29922' : '#8b949e';
+            svg += `<line x1="${x}" y1="${y}" x2="${ax}" y2="${ay}" stroke="${windColor}" stroke-width="1.5" opacity="0.7"/>`;
+            // Arrowhead
+            const headLen = 6, headAng = 0.4;
+            const hx1 = ax - headLen * Math.cos(rad - headAng);
+            const hy1 = ay - headLen * Math.sin(rad - headAng);
+            const hx2 = ax - headLen * Math.cos(rad + headAng);
+            const hy2 = ay - headLen * Math.sin(rad + headAng);
+            svg += `<polygon points="${ax},${ay} ${hx1},${hy1} ${hx2},${hy2}" fill="${windColor}" opacity="0.7"/>`;
+        }
+
+        // Center marker (pulsing for storm mode)
+        svg += `<circle cx="${x}" cy="${y}" r="8" fill="${color}" stroke="#0d1117" stroke-width="2" filter="url(#glow)" class="map-region" data-idx="${idx}"/>`;
+        if (stormMode) {
+            svg += `<circle cx="${x}" cy="${y}" r="14" fill="none" stroke="${color}" stroke-width="1.5" opacity="0.6">
+                <animate attributeName="r" values="14;22;14" dur="2s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.6;0.1;0.6" dur="2s" repeatCount="indefinite"/>
+            </circle>`;
+        }
+
+        // Weather icon
+        const icon = wx ? (CONDITION_ICONS[wx.condition] || '☀️') : '—';
+        svg += `<text x="${x}" y="${y - 18}" text-anchor="middle" font-size="16">${icon}</text>`;
+
+        // City label
+        svg += `<text x="${x}" y="${y + 24}" text-anchor="middle" fill="#c9d1d9" font-size="11" font-weight="600">${region.city}</text>`;
+
+        // Temperature
+        if (wx) {
+            svg += `<text x="${x}" y="${y + 37}" text-anchor="middle" fill="#8b949e" font-size="10">${wx.temperatureF}°F · ${wx.windSpeedMph} mph</text>`;
+        }
+
+        // Outage badge
+        if (outages > 0) {
+            svg += `<circle cx="${x + 16}" cy="${y - 16}" r="9" fill="#f85149" stroke="#0d1117" stroke-width="1.5"/>`;
+            svg += `<text x="${x + 16}" y="${y - 12}" text-anchor="middle" fill="#fff" font-size="9" font-weight="700">⚡${outages}</text>`;
+        }
+
+        // Storm mode badge
+        if (stormMode) {
+            svg += `<rect x="${x - 30}" y="${y + 42}" width="60" height="16" rx="3" fill="#a371f720" stroke="#a371f7" stroke-width="0.5"/>`;
+            svg += `<text x="${x}" y="${y + 53}" text-anchor="middle" fill="#a371f7" font-size="9" font-weight="700">STORM MODE</text>`;
+        }
+    });
+
+    svg += `</svg>`;
+    // Keep tooltip element
+    container.innerHTML = svg + '<div class="map-tooltip" id="map-tooltip"></div>';
+
+    // Tooltip events
+    const tooltipEl = document.getElementById('map-tooltip');
+    container.querySelectorAll('.map-region').forEach(el => {
+        el.addEventListener('mouseenter', (e) => {
+            const idx = parseInt(el.getAttribute('data-idx'));
+            const r = MAP_REGIONS[idx];
+            const wx = weatherData ? weatherData[r.name] : null;
+            const fc = forecastMap[r.name];
+            const outages = outagesByRegion[r.name] || 0;
+
+            let html = `<div class="tt-city">${r.city}, ${r.state}</div>`;
+            if (wx) {
+                html += `
+                    <div class="tt-row"><span>Condition</span><span class="tt-val">${wx.condition}</span></div>
+                    <div class="tt-row"><span>Temperature</span><span class="tt-val">${wx.temperatureF}°F</span></div>
+                    <div class="tt-row"><span>Humidity</span><span class="tt-val">${wx.humidityPct}%</span></div>
+                    <div class="tt-row"><span>Wind</span><span class="tt-val">${wx.windSpeedMph} mph ${wx.windDirection}</span></div>
+                    <div class="tt-row"><span>Pressure</span><span class="tt-val">${wx.barometricPressureInHg} inHg</span></div>
+                    <div class="tt-row"><span>Precipitation</span><span class="tt-val">${wx.precipitationIn} in</span></div>
+                    <div class="tt-row"><span>Visibility</span><span class="tt-val">${wx.visibilityMi} mi</span></div>
+                    <div class="tt-row"><span>Lightning</span><span class="tt-val">${wx.lightningDensity} /km²</span></div>`;
+            }
+            if (fc) {
+                html += `<div style="border-top:1px solid #30363d;margin-top:6px;padding-top:6px;">
+                    <div class="tt-row"><span>Storm Type</span><span class="tt-val">${fc.stormType}</span></div>
+                    <div class="tt-row"><span>Probability</span><span class="tt-val">${fc.probabilityPct}%</span></div>
+                    <div class="tt-row"><span>Est. Outages</span><span class="tt-val">${fc.estimatedOutages}</span></div>
+                    <div class="tt-row"><span>Storm Mode</span><span class="tt-val" style="color:${fc.stormModeActive?'#a371f7':'#3fb950'}">${fc.stormModeActive?'ACTIVE':'Inactive'}</span></div>
+                </div>`;
+            }
+            html += `<div style="border-top:1px solid #30363d;margin-top:6px;padding-top:6px;">
+                <div class="tt-row"><span>Active Outages</span><span class="tt-val" style="color:${outages>0?'#f85149':'#3fb950'}">${outages}</span></div>
+            </div>`;
+
+            tooltipEl.innerHTML = html;
+            tooltipEl.style.display = 'block';
+            const rect = container.getBoundingClientRect();
+            const ex = e.clientX - rect.left;
+            const ey = e.clientY - rect.top;
+            tooltipEl.style.left = (ex + 15) + 'px';
+            tooltipEl.style.top = (ey - 10) + 'px';
+        });
+        el.addEventListener('mouseleave', () => { tooltipEl.style.display = 'none'; });
+    });
 }
 
 async function fetchWeather() {
