@@ -5,6 +5,7 @@ browsing data, using search, and interacting with UI elements.
 Each tab click triggers the same API calls the browser makes.
 """
 import json
+import os
 import random
 import time
 import logging
@@ -13,23 +14,15 @@ from locust import HttpUser, task, between, SequentialTaskSet
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("ui-nav")
 
-# All 15 demo users
-DEMO_USERS = [
-    {"username": "operator_jones", "password": "demo"},
-    {"username": "engineer_chen", "password": "demo"},
-    {"username": "manager_smith", "password": "demo"},
-    {"username": "analyst_garcia", "password": "demo"},
-    {"username": "dispatcher_lee", "password": "demo"},
-    {"username": "supervisor_patel", "password": "demo"},
-    {"username": "technician_wong", "password": "demo"},
-    {"username": "director_johnson", "password": "demo"},
-    {"username": "operator_brown", "password": "demo"},
-    {"username": "engineer_martinez", "password": "demo"},
-    {"username": "analyst_taylor", "password": "demo"},
-    {"username": "dispatcher_harris", "password": "demo"},
-    {"username": "technician_clark", "password": "demo"},
-    {"username": "manager_lewis", "password": "demo"},
-    {"username": "operator_robinson", "password": "demo"},
+# Password from env or default
+DEMO_PASSWORD = os.getenv("DEMO_PASSWORD", "utility2026")
+
+# All 15 demo usernames — password is shared
+DEMO_USERNAMES = [
+    "operator_jones", "engineer_chen", "manager_smith", "analyst_garcia",
+    "dispatcher_lee", "supervisor_patel", "technician_wong", "director_johnson",
+    "operator_brown", "engineer_martinez", "analyst_taylor", "dispatcher_harris",
+    "technician_clark", "manager_lewis", "operator_robinson",
 ]
 
 SEARCH_TERMS = ["chicago", "baltimore", "philadelphia", "washington", "atlantic",
@@ -64,10 +57,10 @@ class UISession(SequentialTaskSet):
     # --- Login ---
     @task
     def login(self):
-        self.user_info = random.choice(DEMO_USERS)
+        username = random.choice(DEMO_USERNAMES)
         with self.client.post("/api/auth/login", json={
-            "username": self.user_info["username"],
-            "password": self.user_info["password"]
+            "username": username,
+            "password": DEMO_PASSWORD
         }, name="[Login] POST /api/auth/login", catch_response=True) as resp:
             if resp.status_code == 200:
                 try:
