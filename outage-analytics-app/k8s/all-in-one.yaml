@@ -1014,6 +1014,18 @@ spec:
           value: "http://notification-service:5001"
         - name: WEATHER_SERVICE_URL
           value: "http://weather-service:8080"
+        - name: AGGREGATOR_SERVICE_URL
+          value: "http://aggregator-service:3002"
+        - name: CUSTOMER_SERVICE_URL
+          value: "http://customer-service:4567"
+        - name: AUDIT_SERVICE_URL
+          value: "http://audit-service:8090"
+        - name: PRICING_SERVICE_URL
+          value: "http://pricing-service:8000"
+        - name: WORK_ORDER_SERVICE_URL
+          value: "http://work-order-service:4000"
+        - name: ALERT_CORRELATION_SERVICE_URL
+          value: "http://alert-correlation-service:8070"
         resources:
           requests:
             memory: "128Mi"
@@ -1096,9 +1108,445 @@ metadata:
   name: analytics-ui
   namespace: utility-outage-analytics
 spec:
-  type: LoadBalancer
   selector:
     app: analytics-ui
   ports:
   - port: 80
     targetPort: 80
+---
+# ============================================================
+# PHASE 1-3 NEW SERVICES
+# ============================================================
+# Aggregator Service (Node.js) — deep multi-hop orchestration
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aggregator-service
+  namespace: utility-outage-analytics
+  labels:
+    app: aggregator-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aggregator-service
+  template:
+    metadata:
+      labels:
+        app: aggregator-service
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: aggregator-service
+        image: vietregistry.azurecr.io/aggregator-service:latest
+        ports:
+        - containerPort: 3002
+        env:
+        - name: OUTAGE_SERVICE_URL
+          value: "http://outage-service:3000"
+        - name: USAGE_SERVICE_URL
+          value: "http://usage-service:3000"
+        - name: SCADA_SERVICE_URL
+          value: "http://scada-service"
+        - name: METER_SERVICE_URL
+          value: "http://meter-data-service:8080"
+        - name: GRID_SERVICE_URL
+          value: "http://grid-topology-service:3000"
+        - name: RELIABILITY_SERVICE_URL
+          value: "http://reliability-service:5000"
+        - name: FORECAST_SERVICE_URL
+          value: "http://demand-forecast-service:3000"
+        - name: CREW_SERVICE_URL
+          value: "http://crew-dispatch-service:3001"
+        - name: NOTIFICATION_SERVICE_URL
+          value: "http://notification-service:5001"
+        - name: WEATHER_SERVICE_URL
+          value: "http://weather-service:8080"
+        - name: PRICING_SERVICE_URL
+          value: "http://pricing-service:8000"
+        - name: CUSTOMER_SERVICE_URL
+          value: "http://customer-service:4567"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /api/aggregate/health
+            port: 3002
+          initialDelaySeconds: 15
+          periodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aggregator-service
+  namespace: utility-outage-analytics
+spec:
+  selector:
+    app: aggregator-service
+  ports:
+  - port: 3002
+    targetPort: 3002
+---
+# Customer Service (Ruby/Sinatra) — auth, customer management
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-service
+  namespace: utility-outage-analytics
+  labels:
+    app: customer-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customer-service
+  template:
+    metadata:
+      labels:
+        app: customer-service
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: customer-service
+        image: vietregistry.azurecr.io/customer-service:latest
+        ports:
+        - containerPort: 4567
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /api/customers/stats
+            port: 4567
+          initialDelaySeconds: 20
+          periodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer-service
+  namespace: utility-outage-analytics
+spec:
+  selector:
+    app: customer-service
+  ports:
+  - port: 4567
+    targetPort: 4567
+---
+# Audit Service (Kotlin/Ktor) — event audit trail
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: audit-service
+  namespace: utility-outage-analytics
+  labels:
+    app: audit-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: audit-service
+  template:
+    metadata:
+      labels:
+        app: audit-service
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: audit-service
+        image: vietregistry.azurecr.io/audit-service:latest
+        ports:
+        - containerPort: 8090
+        env:
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          value: "kafka:9092"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /api/audit/health
+            port: 8090
+          initialDelaySeconds: 40
+          periodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: audit-service
+  namespace: utility-outage-analytics
+spec:
+  selector:
+    app: audit-service
+  ports:
+  - port: 8090
+    targetPort: 8090
+---
+# Pricing Service (PHP) — energy pricing and rate calculation
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pricing-service
+  namespace: utility-outage-analytics
+  labels:
+    app: pricing-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pricing-service
+  template:
+    metadata:
+      labels:
+        app: pricing-service
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: pricing-service
+        image: vietregistry.azurecr.io/pricing-service:latest
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+        livenessProbe:
+          httpGet:
+            path: /api/pricing/health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pricing-service
+  namespace: utility-outage-analytics
+spec:
+  selector:
+    app: pricing-service
+  ports:
+  - port: 8000
+    targetPort: 8000
+---
+# Work Order Service (Elixir/Plug) — work order management
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: work-order-service
+  namespace: utility-outage-analytics
+  labels:
+    app: work-order-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: work-order-service
+  template:
+    metadata:
+      labels:
+        app: work-order-service
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: work-order-service
+        image: vietregistry.azurecr.io/work-order-service:latest
+        ports:
+        - containerPort: 4000
+        env:
+        - name: CUSTOMER_SERVICE_URL
+          value: "http://customer-service:4567"
+        - name: AUDIT_SERVICE_URL
+          value: "http://audit-service:8090"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /api/work-orders/health
+            port: 4000
+          initialDelaySeconds: 30
+          periodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: work-order-service
+  namespace: utility-outage-analytics
+spec:
+  selector:
+    app: work-order-service
+  ports:
+  - port: 4000
+    targetPort: 4000
+---
+# Alert Correlation Service (Rust/Actix) — SCADA + weather + outage correlation
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alert-correlation-service
+  namespace: utility-outage-analytics
+  labels:
+    app: alert-correlation-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alert-correlation-service
+  template:
+    metadata:
+      labels:
+        app: alert-correlation-service
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: alert-correlation-service
+        image: vietregistry.azurecr.io/alert-correlation-service:latest
+        ports:
+        - containerPort: 8070
+        env:
+        - name: WEATHER_SERVICE_URL
+          value: "http://weather-service:8080"
+        - name: OUTAGE_SERVICE_URL
+          value: "http://outage-service:3000"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /api/alerts/health
+            port: 8070
+          initialDelaySeconds: 20
+          periodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alert-correlation-service
+  namespace: utility-outage-analytics
+spec:
+  selector:
+    app: alert-correlation-service
+  ports:
+  - port: 8070
+    targetPort: 8070
+---
+# Reverse Proxy (nginx) — front-door with RUM headers
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reverse-proxy
+  namespace: utility-outage-analytics
+  labels:
+    app: reverse-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reverse-proxy
+  template:
+    metadata:
+      labels:
+        app: reverse-proxy
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: reverse-proxy
+        image: vietregistry.azurecr.io/reverse-proxy:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reverse-proxy
+  namespace: utility-outage-analytics
+spec:
+  type: LoadBalancer
+  selector:
+    app: reverse-proxy
+  ports:
+  - port: 80
+    targetPort: 80
+---
+# Load Generator (Python/Locust) — continuous traffic generation
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: load-generator
+  namespace: utility-outage-analytics
+  labels:
+    app: load-generator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: load-generator
+  template:
+    metadata:
+      labels:
+        app: load-generator
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: load-generator
+        image: vietregistry.azurecr.io/load-generator:latest
+        env:
+        - name: LOCUST_HOST
+          value: "http://reverse-proxy"
+        - name: LOCUST_USERS
+          value: "5"
+        - name: LOCUST_SPAWN_RATE
+          value: "1"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"

@@ -179,29 +179,61 @@
         .timeline-time { font-size: 10px; color: #8b949e; }
         .timeline-text { font-size: 12px; color: #c9d1d9; }
     </style>
+    <link rel="stylesheet" href="extensions.css">
 </head>
 <body>
+    <!-- Login Overlay -->
+    <div class="login-overlay" id="login-overlay">
+        <div class="login-box">
+            <h2>⚡ GenericUtility</h2>
+            <div class="login-sub">Analytics Platform — Sign in to continue</div>
+            <div class="login-error" id="login-error"></div>
+            <label>Username</label>
+            <input type="text" id="login-username" placeholder="operator_jones" autocomplete="username">
+            <label>Password</label>
+            <input type="password" id="login-password" placeholder="utility2026" autocomplete="current-password">
+            <button class="login-btn" id="login-submit" onclick="doLogin()">Sign In</button>
+            <div class="login-demo">Demo: <code>operator_jones</code> / <code>utility2026</code></div>
+        </div>
+    </div>
+
+    <div class="main-app" style="display:none;">
     <div class="header">
         <h1>⚡ <span>GenericUtility</span> Analytics Platform</h1>
         <div style="display:flex;align-items:center;gap:12px;">
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search outages, customers, orders..." oninput="handleSearch(event)" autocomplete="off">
+                <div class="search-results" id="search-results"></div>
+            </div>
             <span class="live-badge">● Live Data</span>
             <span id="clock" style="font-size:12px;color:#8b949e;"></span>
+            <div class="user-menu" onclick="doLogout()" title="Click to sign out">
+                <div class="user-avatar" id="user-avatar-letter">U</div>
+                <span class="user-name" id="user-display-name">User</span>
+            </div>
         </div>
     </div>
 
     <div class="nav">
-        <button class="active" onclick="showSection('overview')">Overview</button>
-        <button onclick="showSection('scada')">SCADA Telemetry</button>
-        <button onclick="showSection('outages')">Outage Management</button>
-        <button onclick="showSection('metering')">Meter Data (MDMS)</button>
-        <button onclick="showSection('grid')">Grid Topology</button>
-        <button onclick="showSection('reliability')">Reliability Indices</button>
-        <button onclick="showSection('forecast')">Demand Forecast</button>
-        <button onclick="showSection('crew')">Crew Dispatch</button>
-        <button onclick="showSection('notifications')">Notifications</button>
-        <button onclick="showSection('weather')">Weather</button>
-        <button onclick="showSection('health')">Service Health</button>
-        <button onclick="showSection('featureflags')" style="border-color:#f85149;color:#f85149">⚙ Feature Flags</button>
+        <button class="active" onclick="showSection('overview')" data-section="overview">Overview</button>
+        <button onclick="showSection('scada')" data-section="scada">SCADA Telemetry</button>
+        <button onclick="showSection('outages')" data-section="outages">Outage Management</button>
+        <button onclick="showSection('metering')" data-section="metering">Meter Data (MDMS)</button>
+        <button onclick="showSection('grid')" data-section="grid">Grid Topology</button>
+        <button onclick="showSection('reliability')" data-section="reliability">Reliability Indices</button>
+        <button onclick="showSection('forecast')" data-section="forecast">Demand Forecast</button>
+        <button onclick="showSection('crew')" data-section="crew">Crew Dispatch</button>
+        <button onclick="showSection('notifications')" data-section="notifications">Notifications</button>
+        <button onclick="showSection('weather')" data-section="weather">Weather</button>
+        <button onclick="showSection('customers')" data-section="customers">Customers</button>
+        <button onclick="showSection('pricing')" data-section="pricing">Pricing</button>
+        <button onclick="showSection('workorders')" data-section="workorders">Work Orders</button>
+        <button onclick="showSection('auditlog')" data-section="auditlog">Audit Log</button>
+        <button onclick="showSection('alertcorrelation')" data-section="alertcorrelation">Alert Correlation</button>
+        <button onclick="showSection('livefeed')" data-section="livefeed" style="border-color:#3fb950;color:#3fb950">📡 Live Feed</button>
+        <button onclick="showSection('health')" data-section="health">Service Health</button>
+        <button onclick="showSection('settings')" data-section="settings">⚙ Settings</button>
+        <button onclick="showSection('featureflags')" data-section="featureflags" style="border-color:#f85149;color:#f85149">⚙ Feature Flags</button>
     </div>
 
     <div class="breadcrumb" id="breadcrumb"></div>
@@ -425,6 +457,92 @@
             <div class="panel">
                 <div class="panel-header"><h3>Service Health Status</h3></div>
                 <div class="panel-body" id="health-status"><div class="loading">Loading...</div></div>
+            </div>
+        </div>
+
+        <!-- CUSTOMERS (Ruby/Sinatra) -->
+        <div id="customers" class="section">
+            <div class="kpi-row" id="customer-kpis"></div>
+            <div class="panel">
+                <div class="panel-header"><h3>Customer Management</h3><span class="badge badge-blue">Ruby/Sinatra</span></div>
+                <div class="panel-body" style="max-height:600px" id="customer-table"><div class="loading">Loading...</div></div>
+            </div>
+        </div>
+
+        <!-- PRICING (PHP) -->
+        <div id="pricing" class="section">
+            <div class="kpi-row" id="pricing-kpis"></div>
+            <div id="pricing-detail"><div class="loading">Loading...</div></div>
+        </div>
+
+        <!-- WORK ORDERS (Elixir/Plug) -->
+        <div id="workorders" class="section">
+            <div class="kpi-row" id="workorder-kpis"></div>
+            <div class="panel">
+                <div class="panel-header"><h3>Work Order Management</h3><span class="badge badge-blue">Elixir/Plug</span></div>
+                <div class="panel-body" style="max-height:600px" id="workorder-table"><div class="loading">Loading...</div></div>
+            </div>
+        </div>
+
+        <!-- AUDIT LOG (Kotlin/Ktor) -->
+        <div id="auditlog" class="section">
+            <div class="kpi-row" id="audit-kpis"></div>
+            <div class="panel">
+                <div class="panel-header"><h3>Audit Trail</h3><span class="badge badge-blue">Kotlin/Ktor</span></div>
+                <div class="panel-body" style="max-height:600px" id="audit-table"><div class="loading">Loading...</div></div>
+            </div>
+        </div>
+
+        <!-- ALERT CORRELATION (Rust/Actix) -->
+        <div id="alertcorrelation" class="section">
+            <div class="kpi-row" id="alert-corr-kpis"></div>
+            <div class="panel">
+                <div class="panel-header"><h3>Correlated Alerts — SCADA + Weather + Outage</h3><span class="badge badge-blue">Rust/Actix</span></div>
+                <div class="panel-body" style="max-height:600px" id="alert-corr-table"><div class="loading">Loading...</div></div>
+            </div>
+        </div>
+
+        <!-- LIVE FEED (WebSocket) -->
+        <div id="livefeed" class="section">
+            <div class="panel">
+                <div class="panel-header"><h3>📡 Real-Time Event Feed</h3><span class="badge badge-green" id="ws-status">Connecting...</span></div>
+                <div class="panel-body live-feed" id="live-feed-list"><div class="loading">Waiting for events...</div></div>
+            </div>
+        </div>
+
+        <!-- SETTINGS -->
+        <div id="settings" class="section">
+            <div class="settings-grid">
+                <div class="settings-section">
+                    <h4>Display Preferences</h4>
+                    <div class="setting-row"><label>Theme</label><select id="setting-theme" onchange="saveSetting('theme',this.value)"><option value="dark">Dark</option><option value="light">Light</option></select></div>
+                    <div class="setting-row"><label>Auto Refresh</label><select id="setting-refresh" onchange="saveSetting('refreshInterval',this.value)"><option value="15">15 seconds</option><option value="30" selected>30 seconds</option><option value="60">1 minute</option><option value="0">Off</option></select></div>
+                    <div class="setting-row"><label>Timezone</label><select id="setting-timezone" onchange="saveSetting('timezone',this.value)"><option value="local">Local</option><option value="UTC">UTC</option><option value="EST">Eastern</option><option value="CST">Central</option><option value="PST">Pacific</option></select></div>
+                </div>
+                <div class="settings-section">
+                    <h4>Notifications</h4>
+                    <div class="setting-row"><label>Live Feed Toasts</label><select id="setting-toasts" onchange="saveSetting('toasts',this.value)"><option value="all">All Events</option><option value="critical" selected>Critical Only</option><option value="off">Off</option></select></div>
+                    <div class="setting-row"><label>Sound Alerts</label><select id="setting-sound" onchange="saveSetting('sound',this.value)"><option value="off" selected>Off</option><option value="critical">Critical Only</option><option value="all">All Events</option></select></div>
+                </div>
+                <div class="settings-section">
+                    <h4>Platform Info</h4>
+                    <div class="setting-row"><label>Version</label><span style="font-size:12px;color:#8b949e;">v2.0.0 (Phase 3)</span></div>
+                    <div class="setting-row"><label>Services</label><span style="font-size:12px;color:#8b949e;">24 pods · 10 languages</span></div>
+                    <div class="setting-row"><label>Backend</label><span style="font-size:12px;color:#8b949e;">Node · .NET · Java · Python · Go · Ruby · Kotlin · PHP · Elixir · Rust</span></div>
+                </div>
+                <div class="settings-section">
+                    <h4>API Endpoints</h4>
+                    <div style="font-size:11px;color:#8b949e;line-height:1.8;">
+                        <div>/api/dashboard — Aggregated overview</div>
+                        <div>/api/search?q= — Global search</div>
+                        <div>/api/customers — Customer management</div>
+                        <div>/api/pricing/calculate — Rate calculator</div>
+                        <div>/api/work-orders — Work order CRUD</div>
+                        <div>/api/audit/log — Audit trail</div>
+                        <div>/api/alerts/correlated — Alert correlation</div>
+                        <div>/ws — WebSocket live feed</div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1710,5 +1828,7 @@ fetchData();
 setInterval(fetchData, 15000);
 setInterval(() => { document.getElementById('clock').textContent = new Date().toLocaleTimeString(); }, 1000);
 </script>
+<script src="extensions.js"></script>
+</div><!-- /main-app -->
 </body>
 </html>

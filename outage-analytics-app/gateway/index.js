@@ -15,6 +15,14 @@ const CREW_URL = process.env.CREW_SERVICE_URL || 'http://crew-dispatch-service:3
 const NOTIFICATION_URL = process.env.NOTIFICATION_SERVICE_URL || 'http://notification-service:5001';
 const WEATHER_URL = process.env.WEATHER_SERVICE_URL || 'http://weather-service:8080';
 
+// Phase 1-3 new service URLs
+const AGGREGATOR_URL = process.env.AGGREGATOR_SERVICE_URL || 'http://aggregator-service:3002';
+const CUSTOMER_URL = process.env.CUSTOMER_SERVICE_URL || 'http://customer-service:4567';
+const AUDIT_URL = process.env.AUDIT_SERVICE_URL || 'http://audit-service:8090';
+const PRICING_URL = process.env.PRICING_SERVICE_URL || 'http://pricing-service:8000';
+const WORK_ORDER_URL = process.env.WORK_ORDER_SERVICE_URL || 'http://work-order-service:4000';
+const ALERT_CORR_URL = process.env.ALERT_CORRELATION_SERVICE_URL || 'http://alert-correlation-service:8070';
+
 // ============================================================
 // Fault Injection Engine — togglable failure scenarios for Dynatrace demos
 // Injects real HTTP 500 errors with exception traces that Davis AI detects
@@ -314,6 +322,88 @@ app.get('/api/weather/summary', proxy(WEATHER_URL));
 app.post('/api/weather/simulate', proxy(WEATHER_URL));
 app.post('/api/weather/correlate', proxy(WEATHER_URL));
 
+// Aggregator Service routes (Node.js — deep multi-hop orchestration)
+app.get('/api/aggregate/dashboard', proxy(AGGREGATOR_URL));
+app.get('/api/aggregate/outage/:id', proxy(AGGREGATOR_URL));
+app.get('/api/aggregate/correlation', proxy(AGGREGATOR_URL));
+app.get('/api/aggregate/operations', proxy(AGGREGATOR_URL));
+app.get('/api/aggregate/report/:type', proxy(AGGREGATOR_URL));
+
+// Customer Service routes (Ruby/Sinatra)
+app.post('/api/auth/login', proxy(CUSTOMER_URL));
+app.post('/api/auth/register', proxy(CUSTOMER_URL));
+app.post('/api/auth/logout', proxy(CUSTOMER_URL));
+app.get('/api/auth/me', proxy(CUSTOMER_URL));
+app.put('/api/auth/preferences', proxy(CUSTOMER_URL));
+app.get('/api/customers', proxy(CUSTOMER_URL));
+app.get('/api/customers/search', proxy(CUSTOMER_URL));
+app.get('/api/customers/stats', proxy(CUSTOMER_URL));
+app.get('/api/customers/region/:region', proxy(CUSTOMER_URL));
+app.get('/api/customers/:id', proxy(CUSTOMER_URL));
+
+// Audit Service routes (Kotlin/Ktor)
+app.get('/api/audit/log', proxy(AUDIT_URL));
+app.get('/api/audit/stats', proxy(AUDIT_URL));
+app.get('/api/audit/search', proxy(AUDIT_URL));
+app.post('/api/audit/log', proxy(AUDIT_URL));
+
+// Pricing Service routes (PHP)
+app.get('/api/pricing/current', proxy(PRICING_URL));
+app.get('/api/pricing/calculate', proxy(PRICING_URL));
+app.get('/api/pricing/rates', proxy(PRICING_URL));
+app.get('/api/pricing/regions', proxy(PRICING_URL));
+app.get('/api/pricing/outage-impact', proxy(PRICING_URL));
+
+// Work Order Service routes (Elixir/Plug)
+app.get('/api/work-orders', proxy(WORK_ORDER_URL));
+app.get('/api/work-orders/stats', proxy(WORK_ORDER_URL));
+app.get('/api/work-orders/:id', proxy(WORK_ORDER_URL));
+app.post('/api/work-orders', proxy(WORK_ORDER_URL));
+app.put('/api/work-orders/:id', proxy(WORK_ORDER_URL));
+
+// Alert Correlation Service routes (Rust/Actix)
+app.get('/api/alerts/correlated', proxy(ALERT_CORR_URL));
+app.get('/api/alerts/stats', proxy(ALERT_CORR_URL));
+app.post('/api/alerts/correlate', proxy(ALERT_CORR_URL));
+
+// Global Search — queries multiple services in parallel
+app.get('/api/search', async (req, res) => {
+  const q = req.query.q || '';
+  if (!q) return res.json({ results: [] });
+  logger.info('GET /api/search', { query: q });
+  const [outages, customers, meters, crews, workOrders, auditLogs] = await Promise.allSettled([
+    axios.get(`${OUTAGE_URL}/api/outages`, { timeout: 5000 }).then(r => {
+      const items = Array.isArray(r.data) ? r.data : r.data.outages || [];
+      return items.filter(o => JSON.stringify(o).toLowerCase().includes(q.toLowerCase())).slice(0, 10);
+    }),
+    axios.get(`${CUSTOMER_URL}/api/customers/search?q=${encodeURIComponent(q)}`, { timeout: 5000 }).then(r => r.data.customers || []),
+    axios.get(`${METER_URL}/api/meter-data/meters`, { timeout: 5000 }).then(r => {
+      const items = Array.isArray(r.data) ? r.data : r.data.meters || [];
+      return items.filter(m => JSON.stringify(m).toLowerCase().includes(q.toLowerCase())).slice(0, 10);
+    }),
+    axios.get(`${CREW_URL}/api/crew/crews`, { timeout: 5000 }).then(r => {
+      const items = Array.isArray(r.data) ? r.data : r.data.crews || [];
+      return items.filter(c => JSON.stringify(c).toLowerCase().includes(q.toLowerCase())).slice(0, 10);
+    }),
+    axios.get(`${WORK_ORDER_URL}/api/work-orders`, { timeout: 5000 }).then(r => {
+      const items = Array.isArray(r.data) ? r.data : r.data.workOrders || [];
+      return items.filter(w => JSON.stringify(w).toLowerCase().includes(q.toLowerCase())).slice(0, 10);
+    }),
+    axios.get(`${AUDIT_URL}/api/audit/search?q=${encodeURIComponent(q)}`, { timeout: 5000 }).then(r => r.data.entries || [])
+  ]);
+  res.json({
+    query: q,
+    results: {
+      outages: outages.status === 'fulfilled' ? outages.value : [],
+      customers: customers.status === 'fulfilled' ? customers.value : [],
+      meters: meters.status === 'fulfilled' ? meters.value : [],
+      crews: crews.status === 'fulfilled' ? crews.value : [],
+      workOrders: workOrders.status === 'fulfilled' ? workOrders.value : [],
+      auditLogs: auditLogs.status === 'fulfilled' ? auditLogs.value : []
+    }
+  });
+});
+
 // ============================================================
 // Simulation Orchestrator — creates end-to-end Dynatrace PurePaths
 // ENHANCED: 5-wave pipeline with data passing between waves
@@ -379,8 +469,25 @@ app.post('/api/simulate/cycle', async (req, res) => {
     .then(r => { results.notifications = r.data; })
     .catch(err => { results.notifications = { error: err.message }; });
 
+  // Wave 6: Extended services (parallel) — pricing queries, alert correlation, work order creation
+  logger.info('Simulation Wave 6: Extended services (pricing + alerts + work-orders + audit)');
+  await Promise.allSettled([
+    axios.get(`${PRICING_URL}/api/pricing/current`, { timeout: 10000 })
+      .then(r => { results.pricing = r.data; })
+      .catch(err => { results.pricing = { error: err.message }; }),
+    axios.post(`${ALERT_CORR_URL}/api/alerts/correlate`, {}, { timeout: 10000 })
+      .then(r => { results.alertCorrelation = r.data; })
+      .catch(err => { results.alertCorrelation = { error: err.message }; }),
+    axios.get(`${WORK_ORDER_URL}/api/work-orders/stats`, { timeout: 10000 })
+      .then(r => { results.workOrders = r.data; })
+      .catch(err => { results.workOrders = { error: err.message }; }),
+    axios.get(`${AUDIT_URL}/api/audit/stats`, { timeout: 10000 })
+      .then(r => { results.audit = r.data; })
+      .catch(err => { results.audit = { error: err.message }; })
+  ]);
+
   const durationMs = Date.now() - cycleStart;
-  logger.info('Simulation cycle complete', { durationMs, waves: 5, services: Object.keys(results).length });
+  logger.info('Simulation cycle complete', { durationMs, waves: 6, services: Object.keys(results).length });
   res.json({ status: 'Cycle complete', durationMs, results });
 });
 
@@ -431,8 +538,23 @@ app.get('/api/dashboard', async (req, res) => {
   results.crewDispatch = crewResult.status === 'fulfilled' ? crewResult.value : null;
   results.notifications = notifResult.status === 'fulfilled' ? notifResult.value : null;
 
+  // Phase 5: New services data (parallel) — pricing, customers, work orders, alerts, audit
+  logger.info('Dashboard Phase 5: Extended services (pricing + customers + work-orders + alerts + audit)');
+  const [pricingResult, customerResult, workOrderResult, alertResult, auditResult] = await Promise.allSettled([
+    axios.get(`${PRICING_URL}/api/pricing/current`, { timeout: 8000 }).then(r => r.data),
+    axios.get(`${CUSTOMER_URL}/api/customers/stats`, { timeout: 8000 }).then(r => r.data),
+    axios.get(`${WORK_ORDER_URL}/api/work-orders/stats`, { timeout: 8000 }).then(r => r.data),
+    axios.get(`${ALERT_CORR_URL}/api/alerts/stats`, { timeout: 8000 }).then(r => r.data),
+    axios.get(`${AUDIT_URL}/api/audit/stats`, { timeout: 8000 }).then(r => r.data)
+  ]);
+  results.pricing = pricingResult.status === 'fulfilled' ? pricingResult.value : null;
+  results.customers = customerResult.status === 'fulfilled' ? customerResult.value : null;
+  results.workOrders = workOrderResult.status === 'fulfilled' ? workOrderResult.value : null;
+  results.alertCorrelation = alertResult.status === 'fulfilled' ? alertResult.value : null;
+  results.auditLog = auditResult.status === 'fulfilled' ? auditResult.value : null;
+
   const durationMs = Date.now() - dashStart;
-  logger.info('Dashboard aggregation complete', { durationMs, phases: 4 });
+  logger.info('Dashboard aggregation complete', { durationMs, phases: 5 });
   res.json(results);
 });
 
@@ -579,7 +701,13 @@ app.get('/api/health', async (req, res) => {
     { name: 'demand-forecast-service', url: `${FORECAST_URL}/api/forecast/health` },
     { name: 'crew-dispatch-service', url: `${CREW_URL}/api/crew/health` },
     { name: 'notification-service', url: `${NOTIFICATION_URL}/api/notifications/health` },
-    { name: 'weather-service', url: `${WEATHER_URL}/api/weather/health` }
+    { name: 'weather-service', url: `${WEATHER_URL}/api/weather/health` },
+    { name: 'aggregator-service', url: `${AGGREGATOR_URL}/api/aggregate/health` },
+    { name: 'customer-service', url: `${CUSTOMER_URL}/api/customers/stats` },
+    { name: 'audit-service', url: `${AUDIT_URL}/api/audit/health` },
+    { name: 'pricing-service', url: `${PRICING_URL}/api/pricing/health` },
+    { name: 'work-order-service', url: `${WORK_ORDER_URL}/api/work-orders/health` },
+    { name: 'alert-correlation-service', url: `${ALERT_CORR_URL}/api/alerts/health` }
   ];
   const results = await Promise.all(checks.map(async c => {
     try {
@@ -597,12 +725,46 @@ app.get('/api/health', async (req, res) => {
   });
 });
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  logger.info(`Analytics Gateway running on port ${port}`);
+const http = require('http');
+const WebSocket = require('ws');
 
-  // Periodic simulation trigger — calls own endpoint via HTTP so Dynatrace
-  // creates a proper PurePath with the inbound request as the root span
+const port = process.env.PORT || 3000;
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server, path: '/ws' });
+
+// WebSocket: broadcast live events to all connected UI clients
+const wsClients = new Set();
+wss.on('connection', (ws) => {
+  wsClients.add(ws);
+  logger.info('WebSocket client connected', { total: wsClients.size });
+  ws.send(JSON.stringify({ type: 'connected', timestamp: new Date().toISOString() }));
+  ws.on('close', () => { wsClients.delete(ws); });
+});
+
+function broadcastEvent(event) {
+  const msg = JSON.stringify(event);
+  wsClients.forEach(ws => { if (ws.readyState === WebSocket.OPEN) ws.send(msg); });
+}
+
+// Periodic live event broadcaster — sends simulated events every 10s
+setInterval(() => {
+  if (wsClients.size === 0) return;
+  const eventTypes = ['outage_detected', 'scada_alert', 'crew_dispatched', 'weather_warning', 'work_order_created', 'meter_anomaly', 'pricing_update'];
+  const regions = ['northeast', 'southeast', 'midwest', 'southwest', 'northwest', 'central'];
+  const type = eventTypes[Math.floor(Math.random() * eventTypes.length)];
+  broadcastEvent({
+    type,
+    region: regions[Math.floor(Math.random() * regions.length)],
+    severity: ['low', 'medium', 'high', 'critical'][Math.floor(Math.random() * 4)],
+    message: `Live event: ${type.replace(/_/g, ' ')}`,
+    timestamp: new Date().toISOString()
+  });
+}, 10000);
+
+server.listen(port, () => {
+  logger.info(`Analytics Gateway v2.0 running on port ${port} (HTTP + WebSocket)`);
+
+  // Periodic simulation trigger
   const SIMULATE_INTERVAL = parseInt(process.env.SIMULATE_INTERVAL || '15000');
   setTimeout(() => {
     logger.info(`Starting simulation orchestrator (interval: ${SIMULATE_INTERVAL}ms)`);
@@ -611,5 +773,5 @@ app.listen(port, () => {
         .then(r => logger.info('Simulation cycle triggered', { durationMs: r.data.durationMs }))
         .catch(err => logger.warn('Simulation cycle failed', { error: err.message }));
     }, SIMULATE_INTERVAL);
-  }, 30000); // Wait 30s for services to initialize
+  }, 30000);
 });

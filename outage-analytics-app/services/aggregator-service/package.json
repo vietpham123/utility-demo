@@ -1,11 +1,10 @@
 {
-  "name": "analytics-gateway",
-  "version": "2.0.0",
+  "name": "aggregator-service",
+  "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
     "express": "^4.18.0",
     "axios": "^1.6.0",
-    "winston": "^3.8.0",
-    "ws": "^8.16.0"
+    "winston": "^3.8.0"
   }
 }
