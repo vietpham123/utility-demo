@@ -558,10 +558,17 @@ async function fetchJSON(url) {
 }
 
 async function fetchOverview() {
-    const [dashboard, outages, alerts, weatherConditions, weatherForecasts, crewList, activeDispatches] = await Promise.all([
-        fetchJSON(`${API}/dashboard`),
+    // Phase 1: Dashboard aggregation (gateway orchestrates phased backend calls)
+    const dashboard = await fetchJSON(`${API}/dashboard`);
+
+    // Phase 2: Live event data (parallel) — outages + SCADA alerts
+    const [outages, alerts] = await Promise.all([
         fetchJSON(`${API}/outages/active`),
-        fetchJSON(`${API}/scada/alerts`),
+        fetchJSON(`${API}/scada/alerts`)
+    ]);
+
+    // Phase 3: Context enrichment (parallel) — weather + crew data
+    const [weatherConditions, weatherForecasts, crewList, activeDispatches] = await Promise.all([
         fetchJSON(`${API}/weather/conditions`),
         fetchJSON(`${API}/weather/forecast`),
         fetchJSON(`${API}/crew/crews`),
@@ -695,8 +702,9 @@ async function fetchOverview() {
 }
 
 async function fetchScada() {
-    const [summary, readings, alerts] = await Promise.all([
-        fetchJSON(`${API}/scada/summary`),
+    // Sequential: summary first, then readings + alerts in parallel
+    const summary = await fetchJSON(`${API}/scada/summary`);
+    const [readings, alerts] = await Promise.all([
         fetchJSON(`${API}/scada/readings/latest`),
         fetchJSON(`${API}/scada/alerts?limit=30`)
     ]);
@@ -738,10 +746,9 @@ async function fetchScada() {
 }
 
 async function fetchOutages() {
-    const [outages, stats] = await Promise.all([
-        fetchJSON(`${API}/outages`),
-        fetchJSON(`${API}/outages/stats/summary`)
-    ]);
+    // Sequential: stats summary first, then full outage list
+    const stats = await fetchJSON(`${API}/outages/stats/summary`);
+    const outages = await fetchJSON(`${API}/outages`);
 
     if (stats) {
         const bp = stats.byPriority || {};
@@ -918,12 +925,13 @@ async function fetchForecast() {
 }
 
 async function fetchCrew() {
-    const [stats, crews, dispatches, history] = await Promise.all([
-        fetchJSON(`${API}/crew/stats`),
+    // Sequential: stats first, then crew + dispatches in parallel, then history
+    const stats = await fetchJSON(`${API}/crew/stats`);
+    const [crews, dispatches] = await Promise.all([
         fetchJSON(`${API}/crew/crews`),
-        fetchJSON(`${API}/crew/dispatches/active`),
-        fetchJSON(`${API}/crew/dispatches?limit=30`)
+        fetchJSON(`${API}/crew/dispatches/active`)
     ]);
+    const history = await fetchJSON(`${API}/crew/dispatches?limit=30`);
 
     if (stats) {
         document.getElementById('crew-kpis').innerHTML = [

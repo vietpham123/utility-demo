@@ -147,80 +147,255 @@ app.post('/api/weather/correlate', proxy(WEATHER_URL));
 
 // ============================================================
 // Simulation Orchestrator — creates end-to-end Dynatrace PurePaths
-// Gateway → HTTP calls to all services → each service writes DB/Kafka/Redis
-// Dynatrace OneAgent auto-instruments HTTP, Kafka, DB, Redis spans
+// ENHANCED: 5-wave pipeline with data passing between waves
+// Wave 1 (parallel): SCADA + Weather generators → produce telemetry
+// Wave 2 (sequential): Weather correlation → enriches with SCADA context
+// Wave 3 (parallel): Outage + Usage + Forecast + Meter data processors
+// Wave 4 (sequential): Reliability calculation → depends on outage data
+// Wave 5 (parallel → sequential): Crew dispatch → then notifications
 // ============================================================
 app.post('/api/simulate/cycle', async (req, res) => {
   const cycleStart = Date.now();
-  logger.info('POST /api/simulate/cycle - orchestrating simulation cycle');
+  logger.info('POST /api/simulate/cycle - orchestrating 5-wave simulation pipeline');
   const results = {};
 
-  // Wave 1: Data generators (parallel) — SCADA, Meter, Forecast, Weather
-  const wave1 = await Promise.allSettled([
+  // Wave 1: Sensor data generators (parallel) — SCADA telemetry + Weather observations
+  logger.info('Simulation Wave 1: Sensor data generation (SCADA + Weather)');
+  await Promise.allSettled([
     axios.post(`${SCADA_URL}/api/scada/simulate`, {}, { timeout: 10000 })
       .then(r => { results.scada = r.data; })
       .catch(err => { results.scada = { error: err.message }; }),
-    axios.post(`${METER_URL}/api/meter-data/simulate`, {}, { timeout: 10000 })
-      .then(r => { results.meter = r.data; })
-      .catch(err => { results.meter = { error: err.message }; }),
-    axios.post(`${FORECAST_URL}/api/forecast/simulate`, {}, { timeout: 10000 })
-      .then(r => { results.forecast = r.data; })
-      .catch(err => { results.forecast = { error: err.message }; }),
     axios.post(`${WEATHER_URL}/api/weather/simulate`, {}, { timeout: 10000 })
       .then(r => { results.weather = r.data; })
       .catch(err => { results.weather = { error: err.message }; })
   ]);
 
-  // Wave 2: Event processors (parallel) — Outage, Usage
-  const wave2 = await Promise.allSettled([
+  // Wave 2: Weather correlation (sequential) — correlates weather with SCADA context
+  logger.info('Simulation Wave 2: Weather correlation analysis (sequential)');
+  await axios.post(`${WEATHER_URL}/api/weather/correlate`, {}, { timeout: 10000 })
+    .then(r => { results.weatherCorrelation = r.data; })
+    .catch(err => { results.weatherCorrelation = { error: err.message }; });
+
+  // Wave 3: Event processors (parallel) — Outage, Usage, Forecast, Meter data
+  logger.info('Simulation Wave 3: Event processing (Outage + Usage + Forecast + Meter)');
+  await Promise.allSettled([
     axios.post(`${OUTAGE_URL}/api/outages/simulate`, {}, { timeout: 10000 })
       .then(r => { results.outage = r.data; })
       .catch(err => { results.outage = { error: err.message }; }),
     axios.post(`${USAGE_URL}/api/usage/simulate`, {}, { timeout: 10000 })
       .then(r => { results.usage = r.data; })
-      .catch(err => { results.usage = { error: err.message }; })
+      .catch(err => { results.usage = { error: err.message }; }),
+    axios.post(`${FORECAST_URL}/api/forecast/simulate`, {}, { timeout: 10000 })
+      .then(r => { results.forecast = r.data; })
+      .catch(err => { results.forecast = { error: err.message }; }),
+    axios.post(`${METER_URL}/api/meter-data/simulate`, {}, { timeout: 10000 })
+      .then(r => { results.meter = r.data; })
+      .catch(err => { results.meter = { error: err.message }; })
   ]);
 
-  // Wave 3: Analytics — Reliability calculation (depends on outage data)
+  // Wave 4: Analytics (sequential) — Reliability calculation depends on outage data
+  logger.info('Simulation Wave 4: Reliability analytics (sequential, depends on outage data)');
   await axios.post(`${RELIABILITY_URL}/api/reliability/calculate`, {}, { timeout: 10000 })
     .then(r => { results.reliability = r.data; })
     .catch(err => { results.reliability = { error: err.message }; });
 
-  // Wave 4: Operations (parallel) — Crew Dispatch + Customer Notifications (depends on outage data)
-  const wave4 = await Promise.allSettled([
-    axios.post(`${CREW_URL}/api/crew/simulate`, {}, { timeout: 10000 })
-      .then(r => { results.crew = r.data; })
-      .catch(err => { results.crew = { error: err.message }; }),
-    axios.post(`${NOTIFICATION_URL}/api/notifications/simulate`, {}, { timeout: 10000 })
-      .then(r => { results.notifications = r.data; })
-      .catch(err => { results.notifications = { error: err.message }; })
-  ]);
+  // Wave 5: Operations — Crew Dispatch first (sequential), then Notifications (depends on dispatch)
+  logger.info('Simulation Wave 5a: Crew dispatch (sequential)');
+  await axios.post(`${CREW_URL}/api/crew/simulate`, {}, { timeout: 10000 })
+    .then(r => { results.crew = r.data; })
+    .catch(err => { results.crew = { error: err.message }; });
+
+  logger.info('Simulation Wave 5b: Customer notifications (depends on dispatch)');
+  await axios.post(`${NOTIFICATION_URL}/api/notifications/simulate`, {}, { timeout: 10000 })
+    .then(r => { results.notifications = r.data; })
+    .catch(err => { results.notifications = { error: err.message }; });
 
   const durationMs = Date.now() - cycleStart;
-  logger.info('Simulation cycle complete', { durationMs, services: Object.keys(results).length });
+  logger.info('Simulation cycle complete', { durationMs, waves: 5, services: Object.keys(results).length });
   res.json({ status: 'Cycle complete', durationMs, results });
 });
 
-// Aggregated dashboard endpoint
+// ============================================================
+// Aggregated dashboard endpoint — PHASED sequential + parallel
+// Creates rich distributed traces: infrastructure → events → analytics → ops
+// ============================================================
 app.get('/api/dashboard', async (req, res) => {
-  logger.info('GET /api/dashboard - aggregating all services');
-  const fetches = {
-    outages: axios.get(`${OUTAGE_URL}/api/outages/stats/summary`).then(r => r.data).catch(() => null),
-    usage: axios.get(`${USAGE_URL}/api/usage/summary`).then(r => r.data).catch(() => null),
-    scada: axios.get(`${SCADA_URL}/api/scada/summary`).then(r => r.data).catch(() => null),
-    meterData: axios.get(`${METER_URL}/api/meter-data/summary`).then(r => r.data).catch(() => null),
-    grid: axios.get(`${GRID_URL}/api/grid/stats`).then(r => r.data).catch(() => null),
-    reliability: axios.get(`${RELIABILITY_URL}/api/reliability/indices`).then(r => r.data).catch(() => null),
-    forecast: axios.get(`${FORECAST_URL}/api/forecast/summary`).then(r => r.data).catch(() => null),
-    crewDispatch: axios.get(`${CREW_URL}/api/crew/stats`).then(r => r.data).catch(() => null),
-    notifications: axios.get(`${NOTIFICATION_URL}/api/notifications/stats`).then(r => r.data).catch(() => null),
-    weather: axios.get(`${WEATHER_URL}/api/weather/summary`).then(r => r.data).catch(() => null)
-  };
+  const dashStart = Date.now();
+  logger.info('GET /api/dashboard - phased aggregation (sequential + parallel)');
   const results = {};
-  for (const [key, promise] of Object.entries(fetches)) {
-    results[key] = await promise;
-  }
+
+  // Phase 1: Infrastructure baseline (parallel) — grid topology + SCADA telemetry
+  logger.info('Dashboard Phase 1: Infrastructure data (grid + SCADA)');
+  const [gridResult, scadaResult] = await Promise.allSettled([
+    axios.get(`${GRID_URL}/api/grid/stats`, { timeout: 8000 }).then(r => r.data),
+    axios.get(`${SCADA_URL}/api/scada/summary`, { timeout: 8000 }).then(r => r.data)
+  ]);
+  results.grid = gridResult.status === 'fulfilled' ? gridResult.value : null;
+  results.scada = scadaResult.status === 'fulfilled' ? scadaResult.value : null;
+
+  // Phase 2: Event data (parallel) — outages + weather depend on infrastructure awareness
+  logger.info('Dashboard Phase 2: Event data (outages + weather)');
+  const [outageResult, weatherResult] = await Promise.allSettled([
+    axios.get(`${OUTAGE_URL}/api/outages/stats/summary`, { timeout: 8000 }).then(r => r.data),
+    axios.get(`${WEATHER_URL}/api/weather/summary`, { timeout: 8000 }).then(r => r.data)
+  ]);
+  results.outages = outageResult.status === 'fulfilled' ? outageResult.value : null;
+  results.weather = weatherResult.status === 'fulfilled' ? weatherResult.value : null;
+
+  // Phase 3: Analytics (sequential) — reliability depends on outage data, then forecast
+  logger.info('Dashboard Phase 3: Analytics (reliability → forecast)');
+  results.reliability = await axios.get(`${RELIABILITY_URL}/api/reliability/indices`, { timeout: 8000 })
+    .then(r => r.data).catch(() => null);
+  results.forecast = await axios.get(`${FORECAST_URL}/api/forecast/summary`, { timeout: 8000 })
+    .then(r => r.data).catch(() => null);
+
+  // Phase 4: Operations (parallel) — usage, meter, crew, notifications
+  logger.info('Dashboard Phase 4: Operations data (usage + meter + crew + notifications)');
+  const [usageResult, meterResult, crewResult, notifResult] = await Promise.allSettled([
+    axios.get(`${USAGE_URL}/api/usage/summary`, { timeout: 8000 }).then(r => r.data),
+    axios.get(`${METER_URL}/api/meter-data/summary`, { timeout: 8000 }).then(r => r.data),
+    axios.get(`${CREW_URL}/api/crew/stats`, { timeout: 8000 }).then(r => r.data),
+    axios.get(`${NOTIFICATION_URL}/api/notifications/stats`, { timeout: 8000 }).then(r => r.data)
+  ]);
+  results.usage = usageResult.status === 'fulfilled' ? usageResult.value : null;
+  results.meterData = meterResult.status === 'fulfilled' ? meterResult.value : null;
+  results.crewDispatch = crewResult.status === 'fulfilled' ? crewResult.value : null;
+  results.notifications = notifResult.status === 'fulfilled' ? notifResult.value : null;
+
+  const durationMs = Date.now() - dashStart;
+  logger.info('Dashboard aggregation complete', { durationMs, phases: 4 });
   res.json(results);
+});
+
+// ============================================================
+// Enriched chained endpoints — sequential service-to-service calls
+// Create deep waterfall traces in Dynatrace for observability demos
+// ============================================================
+
+// Outage detail enriched: outage → crew dispatches → weather for region → grid impact
+app.get('/api/outages/:id/enriched', async (req, res) => {
+  const enrichStart = Date.now();
+  const outageId = req.params.id;
+  logger.info(`GET /api/outages/${outageId}/enriched - sequential enrichment chain`);
+
+  // Step 1: Fetch base outage data
+  logger.info('Enrichment Step 1: Fetch outage details');
+  const outage = await axios.get(`${OUTAGE_URL}/api/outages/${outageId}`, { timeout: 8000 })
+    .then(r => r.data).catch(() => null);
+  if (!outage) return res.status(404).json({ error: 'Outage not found' });
+
+  // Step 2: Fetch active crew dispatches (depends on outage context)
+  logger.info('Enrichment Step 2: Fetch crew dispatches');
+  const dispatches = await axios.get(`${CREW_URL}/api/crew/dispatches/active`, { timeout: 8000 })
+    .then(r => r.data).catch(() => []);
+
+  // Step 3: Fetch weather for the outage region (depends on outage location)
+  logger.info('Enrichment Step 3: Fetch weather for outage region');
+  const region = outage.region || outage.location || 'northeast';
+  const weather = await axios.get(`${WEATHER_URL}/api/weather/region/${encodeURIComponent(region)}`, { timeout: 8000 })
+    .then(r => r.data).catch(() => null);
+
+  // Step 4: Fetch grid topology impact (parallel with reliability)
+  logger.info('Enrichment Step 4: Grid impact + reliability (parallel)');
+  const [gridResult, reliabilityResult] = await Promise.allSettled([
+    axios.get(`${GRID_URL}/api/grid/stats`, { timeout: 8000 }).then(r => r.data),
+    axios.get(`${RELIABILITY_URL}/api/reliability/indices`, { timeout: 8000 }).then(r => r.data)
+  ]);
+
+  const durationMs = Date.now() - enrichStart;
+  logger.info(`Outage enrichment complete`, { outageId, durationMs, steps: 4 });
+  res.json({
+    outage,
+    relatedDispatches: dispatches,
+    weatherContext: weather,
+    gridImpact: gridResult.status === 'fulfilled' ? gridResult.value : null,
+    reliability: reliabilityResult.status === 'fulfilled' ? reliabilityResult.value : null,
+    enrichmentDurationMs: durationMs
+  });
+});
+
+// Analytics correlation: weather → outages → SCADA → reliability (full sequential chain)
+app.get('/api/analytics/correlation', async (req, res) => {
+  const corrStart = Date.now();
+  logger.info('GET /api/analytics/correlation - full sequential correlation chain');
+
+  // Step 1: Weather conditions
+  logger.info('Correlation Step 1: Weather conditions');
+  const weather = await axios.get(`${WEATHER_URL}/api/weather/conditions`, { timeout: 8000 })
+    .then(r => r.data).catch(() => null);
+
+  // Step 2: Active outages (influenced by weather)
+  logger.info('Correlation Step 2: Active outages');
+  const outages = await axios.get(`${OUTAGE_URL}/api/outages/active`, { timeout: 8000 })
+    .then(r => r.data).catch(() => []);
+
+  // Step 3: SCADA alerts (correlated with outages)
+  logger.info('Correlation Step 3: SCADA alerts');
+  const scadaAlerts = await axios.get(`${SCADA_URL}/api/scada/alerts/active`, { timeout: 8000 })
+    .then(r => r.data).catch(() => []);
+
+  // Step 4: Reliability indices (calculated from outage/SCADA data)
+  logger.info('Correlation Step 4: Reliability indices');
+  const reliability = await axios.get(`${RELIABILITY_URL}/api/reliability/indices`, { timeout: 8000 })
+    .then(r => r.data).catch(() => null);
+
+  // Step 5: Demand forecast (impacted by outages + weather)
+  logger.info('Correlation Step 5: Demand forecast');
+  const forecast = await axios.get(`${FORECAST_URL}/api/forecast/current`, { timeout: 8000 })
+    .then(r => r.data).catch(() => null);
+
+  const durationMs = Date.now() - corrStart;
+  logger.info('Correlation analysis complete', { durationMs, steps: 5 });
+  res.json({
+    weather,
+    activeOutages: outages,
+    scadaAlerts,
+    reliability,
+    forecast,
+    correlationDurationMs: durationMs
+  });
+});
+
+// Operational readiness: grid → crews → dispatches → notifications (mixed pattern)
+app.get('/api/operations/readiness', async (req, res) => {
+  const readStart = Date.now();
+  logger.info('GET /api/operations/readiness - mixed sequential + parallel operations');
+
+  // Step 1: Grid topology baseline (sequential — needed for context)
+  logger.info('Readiness Step 1: Grid topology');
+  const grid = await axios.get(`${GRID_URL}/api/grid/topology`, { timeout: 8000 })
+    .then(r => r.data).catch(() => null);
+
+  // Step 2: Crew + Weather status (parallel)
+  logger.info('Readiness Step 2: Crew + Weather status (parallel)');
+  const [crewResult, weatherResult] = await Promise.allSettled([
+    axios.get(`${CREW_URL}/api/crew/crews`, { timeout: 8000 }).then(r => r.data),
+    axios.get(`${WEATHER_URL}/api/weather/conditions`, { timeout: 8000 }).then(r => r.data)
+  ]);
+
+  // Step 3: Active dispatches (depends on crew data)
+  logger.info('Readiness Step 3: Active dispatches (sequential)');
+  const dispatches = await axios.get(`${CREW_URL}/api/crew/dispatches/active`, { timeout: 8000 })
+    .then(r => r.data).catch(() => []);
+
+  // Step 4: Notification log + Forecast (parallel)
+  logger.info('Readiness Step 4: Notifications + Forecast (parallel)');
+  const [notifResult, forecastResult] = await Promise.allSettled([
+    axios.get(`${NOTIFICATION_URL}/api/notifications/log`, { timeout: 8000 }).then(r => r.data),
+    axios.get(`${FORECAST_URL}/api/forecast/current`, { timeout: 8000 }).then(r => r.data)
+  ]);
+
+  const durationMs = Date.now() - readStart;
+  logger.info('Readiness assessment complete', { durationMs, steps: 4 });
+  res.json({
+    grid,
+    crews: crewResult.status === 'fulfilled' ? crewResult.value : null,
+    weather: weatherResult.status === 'fulfilled' ? weatherResult.value : null,
+    activeDispatches: dispatches,
+    recentNotifications: notifResult.status === 'fulfilled' ? notifResult.value : null,
+    forecast: forecastResult.status === 'fulfilled' ? forecastResult.value : null,
+    readinessDurationMs: durationMs
+  });
 });
 
 // Health check for all services
