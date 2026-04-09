@@ -219,6 +219,25 @@ kubectl port-forward deployment/load-generator 8089:8089 -n <your-namespace>
 
 Configure number of users, spawn rate, and start the test. Locust emulates real users navigating through all 18 UI tabs.
 
+### 6. Browser Traffic Generator (Playwright)
+
+For Dynatrace RUM session detection, deploy the Browser Traffic Generator. Unlike Locust (HTTP only), this uses headless Chromium to execute the Dynatrace JS agent, producing real user sessions:
+
+```bash
+# Build and push the image
+docker build -t $REGISTRY/browser-traffic-gen:latest ../browser-traffic-generator/
+docker push $REGISTRY/browser-traffic-gen:latest
+
+# Deploy (uses APP_MODE=utility)
+kubectl apply -f ../browser-traffic-generator/k8s-utility.yaml
+
+# Enable / Disable
+kubectl scale deployment/browser-traffic-gen -n <your-namespace> --replicas=1  # enable
+kubectl scale deployment/browser-traffic-gen -n <your-namespace> --replicas=0  # disable
+```
+
+See [browser-traffic-generator/README.md](../browser-traffic-generator/README.md) for full configuration options.
+
 ## Demo Users
 
 The platform ships with 15 demo users across 7 roles (operator, engineer, manager, analyst, dispatcher, supervisor, technician, director). User credentials are configured in the customer-service.

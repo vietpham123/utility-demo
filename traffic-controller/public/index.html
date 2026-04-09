@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Traffic Controller</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0d1117; color: #c9d1d9; min-height: 100vh; }
+  .header { background: linear-gradient(135deg, #161b22 0%, #0d1117 100%); padding: 20px 32px; border-bottom: 1px solid #21262d; display: flex; align-items: center; gap: 16px; }
+  .header h1 { font-size: 22px; color: #58a6ff; }
+  .header h1 span { color: #f0883e; }
+  .header .subtitle { color: #8b949e; font-size: 13px; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(540px, 1fr)); gap: 20px; }
+  .card { background: #161b22; border: 1px solid #21262d; border-radius: 12px; overflow: hidden; }
+  .card-header { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #21262d; }
+  .card-header h2 { font-size: 15px; color: #e6edf3; }
+  .badge { padding: 3px 10px; border-radius: 10px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+  .badge.on { background: #238636; color: #fff; }
+  .badge.off { background: #da3633; color: #fff; }
+  .badge.browser { background: #1f6feb22; color: #58a6ff; border: 1px solid #1f6feb44; margin-left: 8px; }
+  .badge.locust { background: #f0883e22; color: #f0883e; border: 1px solid #f0883e44; margin-left: 8px; }
+  .card-body { padding: 16px 20px; }
+  .config-row { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .config-field { flex: 1; min-width: 140px; }
+  .config-field label { display: block; font-size: 11px; color: #8b949e; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .config-field input { width: 100%; background: #0d1117; border: 1px solid #30363d; color: #c9d1d9; padding: 8px 10px; border-radius: 6px; font-size: 14px; }
+  .config-field input:focus { outline: none; border-color: #58a6ff; }
+  .config-field input:disabled { opacity: 0.5; }
+  .btn-row { display: flex; gap: 8px; margin-top: 12px; }
+  button { cursor: pointer; border: none; border-radius: 6px; padding: 8px 16px; font-size: 13px; font-weight: 600; transition: all 0.15s; }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-toggle { color: #fff; min-width: 90px; }
+  .btn-toggle.enable { background: #238636; }
+  .btn-toggle.enable:hover:not(:disabled) { background: #2ea043; }
+  .btn-toggle.disable { background: #da3633; }
+  .btn-toggle.disable:hover:not(:disabled) { background: #f85149; }
+  .btn-save { background: #1f6feb; color: #fff; }
+  .btn-save:hover:not(:disabled) { background: #388bfd; }
+  .btn-logs { background: #21262d; color: #8b949e; }
+  .btn-logs:hover:not(:disabled) { background: #30363d; color: #c9d1d9; }
+  .logs-panel { margin-top: 12px; display: none; }
+  .logs-panel.show { display: block; }
+  .logs-panel pre { background: #010409; border: 1px solid #21262d; border-radius: 6px; padding: 12px; font-size: 11px; font-family: 'SFMono-Regular', Consolas, monospace; color: #8b949e; overflow-x: auto; max-height: 240px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; line-height: 1.5; }
+  .status-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .status-dot.green { background: #3fb950; box-shadow: 0 0 6px #3fb95066; }
+  .status-dot.red { background: #f85149; }
+  .status-dot.yellow { background: #d29922; box-shadow: 0 0 6px #d2992266; }
+  .status-text { font-size: 12px; color: #8b949e; }
+  .error-text { color: #f85149; font-size: 12px; margin-top: 4px; }
+  .toast { position: fixed; bottom: 24px; right: 24px; background: #238636; color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 13px; opacity: 0; transition: opacity 0.3s; z-index: 100; }
+  .toast.show { opacity: 1; }
+  .toast.error { background: #da3633; }
+  .refresh-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .refresh-bar span { font-size: 12px; color: #484f58; }
+  .btn-refresh { background: #21262d; color: #8b949e; font-size: 12px; padding: 6px 12px; }
+  .btn-refresh:hover { background: #30363d; color: #c9d1d9; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+  .loading { animation: pulse 1.5s infinite; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Traffic <span>Controller</span></h1>
+  <div class="subtitle">Manage user session &amp; load traffic generators</div>
+</div>
+
+<div class="container">
+  <div class="refresh-bar">
+    <span id="last-refresh">Loading...</span>
+    <button class="btn-refresh" onclick="loadAll()">↻ Refresh</button>
+  </div>
+  <div class="grid" id="cards"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let generators = [];
+
+function toast(msg, isError) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (isError ? ' error' : '');
+  setTimeout(() => el.className = 'toast', 3000);
+}
+
+async function loadAll() {
+  try {
+    const res = await fetch('/api/generators');
+    generators = await res.json();
+    render();
+    document.getElementById('last-refresh').textContent =
+      'Last refresh: ' + new Date().toLocaleTimeString();
+  } catch (e) {
+    toast('Failed to load generators', true);
+  }
+}
+
+function render() {
+  const container = document.getElementById('cards');
+  container.innerHTML = generators.map((g, i) => {
+    const on = g.enabled;
+    const typeBadge = g.type === 'browser'
+      ? '<span class="badge browser">🌐 Browser</span>'
+      : '<span class="badge locust">⚡ Locust</span>';
+    const statusDot = g.error ? 'red' : (on ? (g.ready > 0 ? 'green' : 'yellow') : 'red');
+    const statusText = g.error ? g.error
+      : (on ? `Running (${g.ready}/${g.replicas} ready)` : 'Stopped');
+
+    const isBrowser = g.type === 'browser';
+    const cfg = g.config || {};
+
+    return `
+      <div class="card">
+        <div class="card-header">
+          <h2>${g.label} ${typeBadge}</h2>
+          <span class="badge ${on ? 'on' : 'off'}">${on ? 'ON' : 'OFF'}</span>
+        </div>
+        <div class="card-body">
+          <div class="status-row">
+            <div class="status-dot ${statusDot}"></div>
+            <div class="status-text">${statusText}</div>
+          </div>
+
+          ${isBrowser ? `
+          <div class="config-row">
+            <div class="config-field">
+              <label>Concurrent Users</label>
+              <input type="number" id="cu-${i}" min="1" max="10" value="${cfg.CONCURRENT_USERS || 3}" ${!on ? '' : ''}>
+            </div>
+            <div class="config-field">
+              <label>Navigations / Session</label>
+              <input type="number" id="nav-${i}" min="1" max="50" value="${cfg.NAVIGATIONS_PER_SESSION || 10}">
+            </div>
+            <div class="config-field">
+              <label>Interval (sec)</label>
+              <input type="number" id="int-${i}" min="10" max="600" value="${cfg.SESSION_INTERVAL || 60}">
+            </div>
+          </div>
+          ` : `
+          <div class="config-row">
+            <div class="config-field">
+              <label>URL</label>
+              <input type="text" value="${cfg.APP_URL || ''}" disabled>
+            </div>
+          </div>
+          `}
+
+          <div class="btn-row">
+            <button class="btn-toggle ${on ? 'disable' : 'enable'}" onclick="toggle('${g.id}')">
+              ${on ? '⏹ Stop' : '▶ Start'}
+            </button>
+            ${isBrowser ? `<button class="btn-save" onclick="saveConfig('${g.id}', ${i})">💾 Apply</button>` : ''}
+            <button class="btn-logs" onclick="toggleLogs('${g.id}', ${i})">📋 Logs</button>
+          </div>
+
+          <div class="logs-panel" id="logs-${i}">
+            <pre id="logs-text-${i}">Click "Logs" to load...</pre>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function toggle(id) {
+  try {
+    const res = await fetch(`/api/generators/${id}/toggle`, { method: 'POST' });
+    const data = await res.json();
+    if (data.ok) {
+      toast(data.replicas > 0 ? 'Started' : 'Stopped');
+      setTimeout(loadAll, 2000);
+    } else {
+      toast(data.error || 'Failed', true);
+    }
+  } catch (e) {
+    toast('Request failed', true);
+  }
+}
+
+async function saveConfig(id, idx) {
+  const body = {
+    CONCURRENT_USERS: document.getElementById(`cu-${idx}`).value,
+    NAVIGATIONS_PER_SESSION: document.getElementById(`nav-${idx}`).value,
+    SESSION_INTERVAL: document.getElementById(`int-${idx}`).value,
+  };
+  try {
+    const res = await fetch(`/api/generators/${id}/config`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (data.ok) {
+      toast('Config applied — pods will restart');
+      setTimeout(loadAll, 5000);
+    } else {
+      toast(data.error || 'Failed', true);
+    }
+  } catch (e) {
+    toast('Request failed', true);
+  }
+}
+
+async function toggleLogs(id, idx) {
+  const panel = document.getElementById(`logs-${idx}`);
+  if (panel.classList.contains('show')) {
+    panel.classList.remove('show');
+    return;
+  }
+  panel.classList.add('show');
+  const pre = document.getElementById(`logs-text-${idx}`);
+  pre.textContent = 'Loading...';
+  pre.classList.add('loading');
+  try {
+    const res = await fetch(`/api/generators/${id}/logs`);
+    const data = await res.json();
+    pre.textContent = data.logs;
+  } catch (e) {
+    pre.textContent = 'Failed to load logs';
+  }
+  pre.classList.remove('loading');
+}
+
+// Auto-refresh every 15 seconds
+loadAll();
+setInterval(loadAll, 15000);
+</script>
+</body>
+</html>

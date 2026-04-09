@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: browser-traffic-gen
+  namespace: <YOUR_NAMESPACE>
+  labels:
+    app: browser-traffic-gen
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: browser-traffic-gen
+  template:
+    metadata:
+      labels:
+        app: browser-traffic-gen
+    spec:
+      containers:
+      - name: browser-traffic-gen
+        image: <YOUR_REGISTRY>/browser-traffic-gen:latest
+        imagePullPolicy: Always
+        env:
+        - name: APP_MODE
+          value: "generic"
+        - name: APP_URL
+          value: "https://<YOUR_APP_DOMAIN>"
+        - name: CONCURRENT_USERS
+          value: "3"
+        - name: NAVIGATIONS_PER_SESSION
+          value: "10"
+        - name: SESSION_INTERVAL
+          value: "60"
+        - name: NAV_SELECTOR
+          value: "nav a, [role='tab'], .nav button"
+        - name: LOGIN_URL
+          value: ""
+        - name: LOGIN_USER_SELECTOR
+          value: ""
+        - name: LOGIN_PASS_SELECTOR
+          value: ""
+        - name: LOGIN_SUBMIT_SELECTOR
+          value: ""
+        - name: LOGIN_USERNAME
+          value: ""
+        - name: LOGIN_PASSWORD
+          value: ""
+        - name: LOGOUT_SELECTOR
+          value: ""
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+      imagePullSecrets:
+      - name: <YOUR_REGISTRY_SECRET>

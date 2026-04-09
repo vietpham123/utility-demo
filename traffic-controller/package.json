@@ -1,0 +1,11 @@
+{
+  "name": "traffic-controller",
+  "version": "1.0.0",
+  "description": "Browser UI to manage Playwright traffic generators",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "dependencies": {
+    "@kubernetes/client-node": "^1.0.0",
+    "express": "^4.21.0"
+  }
+}

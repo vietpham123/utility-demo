@@ -39,6 +39,8 @@ A multi-tier, polyglot utility management platform designed for Kubernetes deplo
 |---|---|---|
 | [Customer Billing](customer-billing-app/) | 5 (3 microservices + gateway + UI) | .NET 6 |
 | [Outage Analytics](outage-analytics-app/) | 24 (16 microservices + gateway + UI + 4 infra + reverse-proxy + load-generator) | Node.js, .NET 6, Java 17, Python, Go, Ruby, Kotlin, PHP, Elixir, Rust |
+| [Browser Traffic Generator](browser-traffic-generator/) | 1 per app | Node.js (Playwright/Chromium) |
+| [Traffic Controller](traffic-controller/) | 1 | Node.js (Express) |
 
 ## Technology Stack
 
@@ -138,6 +140,19 @@ kubectl get svc -A | grep LoadBalancer
 │   │   └── alert-correlation-service/ # Rust — multi-signal correlation
 │   ├── ui-web/            # Nginx SPA (dark-themed dashboard)
 │   └── k8s/               # Kubernetes manifests
+│
+├── browser-traffic-generator/
+│   ├── generator.js       # Playwright headless Chromium (utility/retail/generic modes)
+│   ├── Dockerfile         # Based on mcr.microsoft.com/playwright:v1.52.0-noble
+│   ├── k8s-utility.yaml   # K8s deployment for utility app
+│   ├── k8s-retail.yaml    # K8s deployment for retail app
+│   └── k8s-generic.yaml   # K8s deployment template for any web app
+│
+├── traffic-controller/
+│   ├── server.js          # Express.js backend (K8s REST API client)
+│   ├── public/index.html  # Dark-themed dashboard UI
+│   ├── Dockerfile         # node:20-slim based
+│   └── k8s.yaml           # Full manifest (RBAC + Deployment + Service + Ingress)
 │
 └── README.md              # This file
 ```

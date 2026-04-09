@@ -80,3 +80,9 @@ kubectl apply -f k8s/all-in-one.yaml
 │   └── all-in-one.yaml    # Full deployment manifest (5 pods, 2 replicas each)
 └── README.md
 ```
+
+## Browser Traffic Generator
+
+For Dynatrace RUM session detection, you can deploy the Browser Traffic Generator (Playwright-based headless Chromium). It creates real browser sessions that execute the Dynatrace JS agent. Use the `generic` mode and configure CSS selectors for your app's navigation and login elements.
+
+See [browser-traffic-generator/README.md](../browser-traffic-generator/README.md) for setup instructions.

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: browser-traffic-gen
+  namespace: retail
+  labels:
+    app: browser-traffic-gen
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: browser-traffic-gen
+  template:
+    metadata:
+      labels:
+        app: browser-traffic-gen
+    spec:
+      containers:
+      - name: browser-traffic-gen
+        image: vietregistry.azurecr.io/browser-traffic-gen:latest
+        imagePullPolicy: Always
+        env:
+        - name: APP_MODE
+          value: "retail"
+        - name: APP_URL
+          value: "https://rtraffic.vptesttools.my"
+        - name: CONCURRENT_USERS
+          value: "3"
+        - name: NAVIGATIONS_PER_SESSION
+          value: "10"
+        - name: SESSION_INTERVAL
+          value: "60"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+      imagePullSecrets:
+      - name: acr-secret
