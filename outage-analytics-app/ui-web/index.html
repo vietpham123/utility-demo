@@ -188,12 +188,16 @@
             <h2>⚡ GenericUtility</h2>
             <div class="login-sub">Analytics Platform — Sign in to continue</div>
             <div class="login-error" id="login-error"></div>
+            <label>Quick Select User</label>
+            <select id="login-user-select" onchange="selectDemoUser(this.value)" style="width:100%;padding:10px 12px;background:#0d1117;border:1px solid #30363d;border-radius:6px;color:#c9d1d9;font-size:14px;margin-bottom:12px;cursor:pointer;">
+                <option value="">— Select a demo user —</option>
+            </select>
             <label>Username</label>
             <input type="text" id="login-username" placeholder="operator_jones" autocomplete="username">
             <label>Password</label>
-            <input type="password" id="login-password" placeholder="utility2026" autocomplete="current-password">
+            <input type="password" id="login-password" placeholder="password" autocomplete="current-password">
             <button class="login-btn" id="login-submit" onclick="doLogin()">Sign In</button>
-            <div class="login-demo">Demo: <code>operator_jones</code> / <code>utility2026</code></div>
+            <div class="login-demo">Demo credentials configured in customer-service</div>
         </div>
     </div>
 
@@ -543,6 +547,12 @@
                         <div>/ws — WebSocket live feed</div>
                     </div>
                 </div>
+                <div class="settings-section" style="border:1px solid #1f6feb;border-radius:8px;padding:16px;">
+                    <h4 style="color:#58a6ff;">🤖 Traffic Generator (Locust)</h4>
+                    <div style="font-size:12px;color:#8b949e;margin-bottom:12px;">Full-featured Locust load testing UI with configurable users, spawn rate, and real-time charts. Simulates 15 demo users across 5 user profiles (Operator, Engineer, Analyst, Manager, Automation).</div>
+                    <a href="https://<LOCUST_DOMAIN>" target="_blank" rel="noopener" style="display:inline-block;padding:10px 20px;background:#1f6feb;border:1px solid #388bfd;border-radius:6px;color:#fff;text-decoration:none;font-size:14px;font-weight:600;">🚀 Open Locust Dashboard</a>
+                    <div style="margin-top:10px;font-size:11px;color:#8b949e;">Configure: Number of Users · Spawn Rate · Run Time · Host Target · Real-time Statistics · Charts · Download Reports</div>
+                </div>
             </div>
         </div>
 
@@ -561,11 +571,11 @@
                 <div class="panel-header"><h3>curl / API Reference</h3></div>
                 <div class="panel-body" style="font-size:12px;color:#8b949e;line-height:1.8;">
                     <div style="margin-bottom:8px;"><strong style="color:#c9d1d9;">Enable a scenario:</strong></div>
-                    <code style="display:block;background:#0d1117;padding:8px 12px;border-radius:6px;color:#79c0ff;margin-bottom:12px;word-break:break-all;">curl -X POST http://20.165.22.240/api/fault/inject -H "Content-Type: application/json" -d '{"scenario":"database-outage"}'</code>
+                    <code style="display:block;background:#0d1117;padding:8px 12px;border-radius:6px;color:#79c0ff;margin-bottom:12px;word-break:break-all;">curl -X POST http://<APP_ENDPOINT>/api/fault/inject -H "Content-Type: application/json" -d '{"scenario":"database-outage"}'</code>
                     <div style="margin-bottom:8px;"><strong style="color:#c9d1d9;">Clear all faults:</strong></div>
-                    <code style="display:block;background:#0d1117;padding:8px 12px;border-radius:6px;color:#79c0ff;margin-bottom:12px;word-break:break-all;">curl -X POST http://20.165.22.240/api/fault/clear -H "Content-Type: application/json" -d '{}'</code>
+                    <code style="display:block;background:#0d1117;padding:8px 12px;border-radius:6px;color:#79c0ff;margin-bottom:12px;word-break:break-all;">curl -X POST http://<APP_ENDPOINT>/api/fault/clear -H "Content-Type: application/json" -d '{}'</code>
                     <div style="margin-bottom:8px;"><strong style="color:#c9d1d9;">Check status:</strong></div>
-                    <code style="display:block;background:#0d1117;padding:8px 12px;border-radius:6px;color:#79c0ff;">curl http://20.165.22.240/api/fault/status</code>
+                    <code style="display:block;background:#0d1117;padding:8px 12px;border-radius:6px;color:#79c0ff;">curl http://<APP_ENDPOINT>/api/fault/status</code>
                 </div>
             </div>
         </div>
@@ -995,43 +1005,50 @@ async function fetchMetering() {
 }
 
 async function fetchGrid() {
-    const [stats, topology] = await Promise.all([
-        fetchJSON(`${API}/grid/stats`),
-        fetchJSON(`${API}/grid/topology`)
-    ]);
+    try {
+        const [stats, topology] = await Promise.all([
+            fetchJSON(`${API}/grid/stats`),
+            fetchJSON(`${API}/grid/topology`)
+        ]);
 
-    if (stats) {
-        document.getElementById('grid-kpis').innerHTML = [
-            kpi('Substations', stats.substations?.count||0, `${stats.substations?.totalCapacityMW||0} MW capacity`, 'info'),
-            kpi('Feeders', stats.feeders?.count||0, `${stats.feeders?.totalMiles||0} miles`, 'info'),
-            kpi('Transformers', stats.transformers?.count||0, `${stats.transformers?.totalCapacityKVA||0} kVA`, 'info'),
-            kpi('Service Points', stats.servicePoints?.count||0, 'customer connections', 'info')
-        ].join('');
-    }
+        if (stats) {
+            document.getElementById('grid-kpis').innerHTML = [
+                kpi('Substations', stats.substations?.count||0, `${stats.substations?.totalCapacityMW||0} MW capacity`, 'info'),
+                kpi('Feeders', stats.feeders?.count||0, `${stats.feeders?.totalMiles||0} miles`, 'info'),
+                kpi('Transformers', stats.transformers?.count||0, `${stats.transformers?.totalCapacityKVA||0} kVA`, 'info'),
+                kpi('Service Points', stats.servicePoints?.count||0, 'customer connections', 'info')
+            ].join('');
+        }
 
-    if (topology && Array.isArray(topology)) {
-        document.getElementById('grid-topology').innerHTML = topology.map(sub => `
-            <div class="topology-node" style="border-left-color:#f0883e" onclick="this.querySelector('.topology-children').style.display=this.querySelector('.topology-children').style.display==='none'?'block':'none'">
-                <strong>🏭 ${sub.name}</strong> <span style="color:#8b949e;font-size:11px">${sub.code} | ${sub.capacity_mw} MW | ${sub.voltage_level_kv} kV | ${sub.city}, ${sub.state}</span>
-                <span style="color:#30363d;font-size:10px;float:right">▾ ${(sub.feeders||[]).length} feeders</span>
-                <div class="topology-children" onclick="event.stopPropagation()">
-                    ${(sub.feeders||[]).map(f => `
-                        <div class="topology-node" style="border-left-color:#58a6ff" onclick="this.querySelector('.topology-children').style.display=this.querySelector('.topology-children').style.display==='none'?'block':'none'">
-                            <strong>⚡ ${f.name}</strong> <span style="color:#8b949e;font-size:11px">${f.code} | ${f.voltage_kv} kV | ${f.length_miles} mi | ${f.conductor_type||''}</span>
-                            <span style="color:#30363d;font-size:10px;float:right">▾ ${(f.transformers||[]).length} xfmrs</span>
-                            <div class="topology-children" onclick="event.stopPropagation()">
-                                ${(f.transformers||[]).map(t => `
-                                    <div class="topology-node" style="border-left-color:#3fb950" onclick="event.stopPropagation();this.querySelector('.topology-children')&&(this.querySelector('.topology-children').style.display=this.querySelector('.topology-children').style.display==='none'?'block':'none')">
-                                        <strong>🔌 ${t.name}</strong> <span style="color:#8b949e;font-size:11px">${t.code} | ${t.capacity_kva} kVA | ${t.phase_config}</span>
-                                        ${(t.servicePoints||[]).length > 0 ? `<div class="topology-children" style="margin-top:4px;font-size:11px;color:#8b949e">${(t.servicePoints||[]).map(sp => `📍 ${sp.customer_id} (${sp.meter_id}) - ${sp.service_type}`).join('<br>')}</div>` : ''}
-                                    </div>
-                                `).join('')}
+        if (topology && Array.isArray(topology)) {
+            document.getElementById('grid-topology').innerHTML = topology.map(sub => `
+                <div class="topology-node" style="border-left-color:#f0883e" onclick="this.querySelector('.topology-children').style.display=this.querySelector('.topology-children').style.display==='none'?'block':'none'">
+                    <strong>🏭 ${sub.name}</strong> <span style="color:#8b949e;font-size:11px">${sub.code} | ${sub.capacity_mw} MW | ${sub.voltage_level_kv} kV | ${sub.city}, ${sub.state}</span>
+                    <span style="color:#30363d;font-size:10px;float:right">▾ ${(sub.feeders||[]).length} feeders</span>
+                    <div class="topology-children" onclick="event.stopPropagation()">
+                        ${(sub.feeders||[]).map(f => `
+                            <div class="topology-node" style="border-left-color:#58a6ff" onclick="this.querySelector('.topology-children').style.display=this.querySelector('.topology-children').style.display==='none'?'block':'none'">
+                                <strong>⚡ ${f.name}</strong> <span style="color:#8b949e;font-size:11px">${f.code} | ${f.voltage_kv} kV | ${f.length_miles} mi | ${f.conductor_type||''}</span>
+                                <span style="color:#30363d;font-size:10px;float:right">▾ ${(f.transformers||[]).length} xfmrs</span>
+                                <div class="topology-children" onclick="event.stopPropagation()">
+                                    ${(f.transformers||[]).map(t => `
+                                        <div class="topology-node" style="border-left-color:#3fb950" onclick="event.stopPropagation();this.querySelector('.topology-children')&&(this.querySelector('.topology-children').style.display=this.querySelector('.topology-children').style.display==='none'?'block':'none')">
+                                            <strong>🔌 ${t.name}</strong> <span style="color:#8b949e;font-size:11px">${t.code} | ${t.capacity_kva} kVA | ${t.phase_config}</span>
+                                            ${(t.servicePoints||[]).length > 0 ? `<div class="topology-children" style="margin-top:4px;font-size:11px;color:#8b949e">${(t.servicePoints||[]).map(sp => `📍 ${sp.customer_id} (${sp.meter_id}) - ${sp.service_type}`).join('<br>')}</div>` : ''}
+                                        </div>
+                                    `).join('')}
+                                </div>
                             </div>
-                        </div>
-                    `).join('')}
+                        `).join('')}
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `).join('');
+        } else {
+            document.getElementById('grid-topology').innerHTML = '<div style="color:#f85149;padding:12px;">No topology data returned (stats: ' + JSON.stringify(!!stats) + ', topology type: ' + typeof topology + ', isArray: ' + Array.isArray(topology) + ')</div>';
+        }
+    } catch(e) {
+        document.getElementById('grid-topology').innerHTML = '<div style="color:#f85149;padding:12px;">fetchGrid error: ' + e.message + '</div>';
+        console.error('fetchGrid error:', e);
     }
 }
 

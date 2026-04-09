@@ -45,6 +45,48 @@ function initLogin() {
     if (saved) {
         try { currentUser = JSON.parse(saved); showApp(); } catch(e) {}
     }
+    loadUserDropdown();
+}
+
+async function loadUserDropdown() {
+    const select = document.getElementById('login-user-select');
+    if (!select) return;
+    try {
+        const resp = await fetch('/api/auth/users');
+        const data = await resp.json();
+        if (data.users && Array.isArray(data.users)) {
+            data.users.forEach(u => {
+                const opt = document.createElement('option');
+                opt.value = u.username;
+                opt.textContent = `${u.name} (${u.role}) — ${u.region}`;
+                select.appendChild(opt);
+            });
+        }
+    } catch(e) {
+        // Fallback: hardcoded user list
+        const fallback = [
+            {u:'operator_jones',n:'Sarah Jones',r:'operator'},{u:'engineer_chen',n:'David Chen',r:'engineer'},
+            {u:'manager_smith',n:'Michael Smith',r:'manager'},{u:'analyst_garcia',n:'Maria Garcia',r:'analyst'},
+            {u:'dispatcher_lee',n:'James Lee',r:'dispatcher'},{u:'supervisor_patel',n:'Arun Patel',r:'supervisor'},
+            {u:'technician_wong',n:'Emily Wong',r:'technician'},{u:'director_johnson',n:'Robert Johnson',r:'director'},
+            {u:'operator_brown',n:'Lisa Brown',r:'operator'},{u:'engineer_martinez',n:'Carlos Martinez',r:'engineer'},
+            {u:'analyst_taylor',n:'Jessica Taylor',r:'analyst'},{u:'dispatcher_harris',n:'Kevin Harris',r:'dispatcher'},
+            {u:'technician_clark',n:'Amanda Clark',r:'technician'},{u:'manager_lewis',n:'Thomas Lewis',r:'manager'},
+            {u:'operator_robinson',n:'Nicole Robinson',r:'operator'}
+        ];
+        fallback.forEach(u => {
+            const opt = document.createElement('option');
+            opt.value = u.u;
+            opt.textContent = `${u.n} (${u.r})`;
+            select.appendChild(opt);
+        });
+    }
+}
+
+window.selectDemoUser = function(username) {
+    if (!username) return;
+    document.getElementById('login-username').value = username;
+    document.getElementById('login-password').value = 'demo';
 }
 
 window.doLogin = async function() {
@@ -349,7 +391,8 @@ async function fetchPricing() {
             ].join('');
         }
         const rateList = rates?.rateClasses || rates?.rates || (Array.isArray(rates) ? rates : []);
-        const regionList = regions?.regions || (Array.isArray(regions) ? regions : []);
+        const regionsObj = regions?.regions || {};
+        const regionList = Array.isArray(regionsObj) ? regionsObj : Object.entries(regionsObj).map(([name, data]) => ({ name, id: name, ...(typeof data === 'object' ? data : {}) }));
         container.innerHTML = `<div class="grid-2">
             <div class="panel"><div class="panel-header"><h3>Rate Classes</h3></div><div class="panel-body">
                 <table><tr><th>Class</th><th>Name</th><th>Base</th><th>Peak</th><th>Off-Peak</th></tr>
@@ -596,8 +639,8 @@ function loadSettings() {
     // Wait for the inline script to have run and defined fetchData
     const origFetchData = window.fetchData;
     if (typeof origFetchData === 'function') {
-        window.fetchData = function() {
-            origFetchData();
+        window.fetchData = async function() {
+            await origFetchData();
             const section = typeof currentSection !== 'undefined' ? currentSection : '';
             fetchExtendedData(section);
         };

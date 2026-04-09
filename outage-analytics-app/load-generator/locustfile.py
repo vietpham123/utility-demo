@@ -1,7 +1,8 @@
 """
-Load Generator — Simulates realistic user traffic for Dynatrace RUM + distributed traces.
-Mimics user behavior: login → browse dashboard → search outages → create work orders → export reports.
-Uses Locust for continuous traffic generation (like AstroShop/EasyTrade load generators).
+GenericUtility UI Navigation Simulator — Locust-based traffic generator.
+Emulates real users navigating through the web UI: logging in, clicking tabs,
+browsing data, using search, and interacting with UI elements.
+Each tab click triggers the same API calls the browser makes.
 """
 import json
 import random
@@ -10,234 +11,295 @@ import logging
 from locust import HttpUser, task, between, SequentialTaskSet
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("loadgen")
+logger = logging.getLogger("ui-nav")
 
+# All 15 demo users
 DEMO_USERS = [
-    {"username": "operator_jones", "password": "utility2026", "name": "Sarah Jones", "role": "operator"},
-    {"username": "engineer_chen", "password": "utility2026", "name": "David Chen", "role": "engineer"},
-    {"username": "manager_smith", "password": "utility2026", "name": "Michael Smith", "role": "manager"},
-    {"username": "analyst_garcia", "password": "utility2026", "name": "Maria Garcia", "role": "analyst"},
-    {"username": "dispatcher_lee", "password": "utility2026", "name": "James Lee", "role": "dispatcher"},
+    {"username": "operator_jones", "password": "demo"},
+    {"username": "engineer_chen", "password": "demo"},
+    {"username": "manager_smith", "password": "demo"},
+    {"username": "analyst_garcia", "password": "demo"},
+    {"username": "dispatcher_lee", "password": "demo"},
+    {"username": "supervisor_patel", "password": "demo"},
+    {"username": "technician_wong", "password": "demo"},
+    {"username": "director_johnson", "password": "demo"},
+    {"username": "operator_brown", "password": "demo"},
+    {"username": "engineer_martinez", "password": "demo"},
+    {"username": "analyst_taylor", "password": "demo"},
+    {"username": "dispatcher_harris", "password": "demo"},
+    {"username": "technician_clark", "password": "demo"},
+    {"username": "manager_lewis", "password": "demo"},
+    {"username": "operator_robinson", "password": "demo"},
 ]
 
-SEARCH_TERMS = ["chicago", "baltimore", "philadelphia", "washington", "atlantic", "wilmington",
-                "transformer", "feeder", "substation", "critical", "high", "storm"]
+SEARCH_TERMS = ["chicago", "baltimore", "philadelphia", "washington", "atlantic",
+                "wilmington", "transformer", "feeder", "substation", "outage",
+                "storm", "repair", "emergency"]
 
-REGIONS = ["Chicago-Metro", "Baltimore-Metro", "Philadelphia-Metro", "DC-Metro",
-           "Atlantic-Coast", "Delaware-Valley"]
+REGIONS = ["Chicago-Metro", "Baltimore-Metro", "Philadelphia-Metro",
+           "DC-Metro", "Atlantic-Coast", "Delaware-Valley"]
+
+RATE_CLASSES = ["R-1", "R-2", "C-1", "C-2", "I-1"]
 
 
-class DashboardBrowsingFlow(SequentialTaskSet):
-    """Simulates a user logging in and browsing the dashboard"""
+def think(low=1, high=4):
+    """Simulate user reading/thinking time between actions."""
+    time.sleep(random.uniform(low, high))
+
+
+class UISession(SequentialTaskSet):
+    """
+    Simulates a full user session: open app → login → browse tabs → logout.
+    Each tab triggers the exact same API calls the browser UI makes on navigation.
+    """
+    token = ""
+    user_info = None
 
     def on_start(self):
+        """User opens the app in their browser."""
+        self.client.get("/", name="[Page] Load index.html")
+        self.client.get("/extensions.js", name="[Page] Load extensions.js")
+        think(1, 2)
+
+    # --- Login ---
+    @task
+    def login(self):
         self.user_info = random.choice(DEMO_USERS)
-        # Login
-        resp = self.client.post("/api/auth/login", json={
+        with self.client.post("/api/auth/login", json={
             "username": self.user_info["username"],
             "password": self.user_info["password"]
-        }, name="/api/auth/login", catch_response=True)
-        if resp.status_code == 200:
-            try:
-                data = resp.json()
-                self.token = data.get("token", "")
-                resp.success()
-            except Exception:
+        }, name="[Login] POST /api/auth/login", catch_response=True) as resp:
+            if resp.status_code == 200:
+                try:
+                    self.token = resp.json().get("token", "")
+                    resp.success()
+                except Exception:
+                    self.token = ""
+                    resp.failure("Bad login response")
+            else:
                 self.token = ""
-                resp.success()
-        else:
-            self.token = ""
-            resp.success()
+                resp.failure(f"Login HTTP {resp.status_code}")
+        think(1, 2)
 
+    # --- Tab: Overview (default landing) ---
     @task
-    def view_dashboard(self):
-        """Phase 1: Load main dashboard (aggregated view)"""
-        headers = {"Authorization": f"Bearer {self.token}"} if self.token else {}
-        self.client.get("/api/aggregate/dashboard", headers=headers, name="/api/aggregate/dashboard")
-        time.sleep(random.uniform(1, 3))
+    def tab_overview(self):
+        h = self._headers()
+        self.client.get("/api/dashboard", headers=h, name="[Overview] GET /api/dashboard")
+        self.client.get("/api/outages/active", headers=h, name="[Overview] GET /api/outages/active")
+        self.client.get("/api/scada/alerts", headers=h, name="[Overview] GET /api/scada/alerts")
+        self.client.get("/api/weather/conditions", headers=h, name="[Overview] GET /api/weather/conditions")
+        self.client.get("/api/weather/forecast", headers=h, name="[Overview] GET /api/weather/forecast")
+        self.client.get("/api/crew/crews", headers=h, name="[Overview] GET /api/crew/crews")
+        self.client.get("/api/crew/dispatches/active", headers=h, name="[Overview] GET /api/crew/dispatches/active")
+        think(3, 7)
 
+    # --- Tab: SCADA Telemetry ---
     @task
-    def view_outages(self):
-        """Phase 2: Check active outages"""
-        self.client.get("/api/outages/active", name="/api/outages/active")
-        self.client.get("/api/outages/stats/summary", name="/api/outages/stats/summary")
-        time.sleep(random.uniform(0.5, 2))
+    def tab_scada(self):
+        h = self._headers()
+        self.client.get("/api/scada/summary", headers=h, name="[SCADA] GET /api/scada/summary")
+        self.client.get("/api/scada/readings/latest", headers=h, name="[SCADA] GET /api/scada/readings/latest")
+        self.client.get("/api/scada/alerts?limit=30", headers=h, name="[SCADA] GET /api/scada/alerts?limit=30")
+        think(3, 8)
 
+    # --- Tab: Outage Management ---
     @task
-    def view_scada(self):
-        """Phase 3: Check SCADA telemetry"""
-        self.client.get("/api/scada/summary", name="/api/scada/summary")
-        self.client.get("/api/scada/readings/latest", name="/api/scada/readings/latest")
-        self.client.get("/api/scada/alerts?limit=20", name="/api/scada/alerts")
-        time.sleep(random.uniform(0.5, 1.5))
-
-    @task
-    def view_weather(self):
-        """Phase 4: Check weather conditions"""
-        self.client.get("/api/weather/summary", name="/api/weather/summary")
-        self.client.get("/api/weather/conditions", name="/api/weather/conditions")
-        self.client.get("/api/weather/forecast", name="/api/weather/forecast")
-        time.sleep(random.uniform(1, 2))
-
-    @task
-    def check_crew(self):
-        """Phase 5: Check crew status"""
-        self.client.get("/api/crew/stats", name="/api/crew/stats")
-        self.client.get("/api/crew/crews", name="/api/crew/crews")
-        self.client.get("/api/crew/dispatches/active", name="/api/crew/dispatches/active")
-        time.sleep(random.uniform(0.5, 1.5))
-
-    @task
-    def stop(self):
-        self.interrupt()
-
-
-class SearchAndDrilldownFlow(SequentialTaskSet):
-    """Simulates searching for outages and drilling into details"""
-
-    @task
-    def search_outages(self):
-        term = random.choice(SEARCH_TERMS)
-        self.client.get(f"/api/search?q={term}&type=outages", name="/api/search")
-        time.sleep(random.uniform(1, 2))
-
-    @task
-    def search_customers(self):
-        term = random.choice(SEARCH_TERMS)
-        self.client.get(f"/api/search?q={term}&type=customers", name="/api/search")
-        time.sleep(random.uniform(0.5, 1.5))
-
-    @task
-    def view_outage_enriched(self):
-        """Deep enrichment — triggers 6-hop trace through aggregator"""
-        # Get outages first, then drill into one
-        resp = self.client.get("/api/outages/active", name="/api/outages/active")
+    def tab_outages(self):
+        h = self._headers()
+        self.client.get("/api/outages/stats/summary", headers=h, name="[Outages] GET /api/outages/stats/summary")
+        resp = self.client.get("/api/outages", headers=h, name="[Outages] GET /api/outages")
+        think(2, 5)
+        # User clicks on an outage row to view details
         if resp.status_code == 200:
             try:
                 outages = resp.json()
                 if outages and len(outages) > 0:
-                    outage_id = random.choice(outages).get("id", "OUT-001")
-                    self.client.get(f"/api/aggregate/outage/{outage_id}",
-                                    name="/api/aggregate/outage/[id]")
-                    time.sleep(random.uniform(1, 3))
+                    o = random.choice(outages)
+                    oid = o.get("id", "OUT-001")
+                    self.client.get(f"/api/outages/{oid}", headers=h,
+                                    name="[Outages] GET /api/outages/[id]")
+                    think(2, 4)
             except Exception:
                 pass
 
+    # --- Tab: Meter Data ---
     @task
-    def view_correlation(self):
-        """Full correlation — 7-service sequential chain"""
-        self.client.get("/api/aggregate/correlation", name="/api/aggregate/correlation")
-        time.sleep(random.uniform(2, 4))
+    def tab_metering(self):
+        h = self._headers()
+        self.client.get("/api/meter-data/summary", headers=h, name="[Metering] GET /api/meter-data/summary")
+        self.client.get("/api/meter-data/readings?limit=50", headers=h, name="[Metering] GET /api/meter-data/readings")
+        self.client.get("/api/meter-data/anomalies?limit=30", headers=h, name="[Metering] GET /api/meter-data/anomalies")
+        think(3, 6)
 
+    # --- Tab: Grid Topology ---
     @task
-    def stop(self):
-        self.interrupt()
+    def tab_grid(self):
+        h = self._headers()
+        self.client.get("/api/grid/stats", headers=h, name="[Grid] GET /api/grid/stats")
+        self.client.get("/api/grid/topology", headers=h, name="[Grid] GET /api/grid/topology")
+        think(3, 6)
 
-
-class WorkOrderFlow(SequentialTaskSet):
-    """Simulates creating and managing work orders"""
-
+    # --- Tab: Reliability Indices ---
     @task
-    def get_work_orders(self):
-        self.client.get("/api/work-orders", name="/api/work-orders")
-        time.sleep(random.uniform(1, 2))
+    def tab_reliability(self):
+        h = self._headers()
+        self.client.get("/api/reliability/indices", headers=h, name="[Reliability] GET /api/reliability/indices")
+        self.client.get("/api/reliability/history?days=30", headers=h, name="[Reliability] GET /api/reliability/history")
+        think(2, 5)
 
+    # --- Tab: Demand Forecast ---
     @task
-    def create_work_order(self):
+    def tab_forecast(self):
+        h = self._headers()
+        self.client.get("/api/forecast/summary", headers=h, name="[Forecast] GET /api/forecast/summary")
+        self.client.get("/api/forecast/current", headers=h, name="[Forecast] GET /api/forecast/current")
+        self.client.get("/api/forecast/peak-demand", headers=h, name="[Forecast] GET /api/forecast/peak-demand")
+        think(2, 5)
+
+    # --- Tab: Crew Dispatch ---
+    @task
+    def tab_crew(self):
+        h = self._headers()
+        self.client.get("/api/crew/stats", headers=h, name="[Crew] GET /api/crew/stats")
+        self.client.get("/api/crew/crews", headers=h, name="[Crew] GET /api/crew/crews")
+        self.client.get("/api/crew/dispatches/active", headers=h, name="[Crew] GET /api/crew/dispatches/active")
+        self.client.get("/api/crew/dispatches?limit=30", headers=h, name="[Crew] GET /api/crew/dispatches")
+        think(3, 6)
+
+    # --- Tab: Notifications ---
+    @task
+    def tab_notifications(self):
+        h = self._headers()
+        self.client.get("/api/notifications/stats", headers=h, name="[Notifications] GET /api/notifications/stats")
+        self.client.get("/api/notifications/log?limit=50", headers=h, name="[Notifications] GET /api/notifications/log")
+        think(2, 5)
+
+    # --- Tab: Weather ---
+    @task
+    def tab_weather(self):
+        h = self._headers()
+        self.client.get("/api/weather/summary", headers=h, name="[Weather] GET /api/weather/summary")
+        self.client.get("/api/weather/conditions", headers=h, name="[Weather] GET /api/weather/conditions")
+        self.client.get("/api/weather/forecast", headers=h, name="[Weather] GET /api/weather/forecast")
+        self.client.get("/api/weather/alerts?limit=30", headers=h, name="[Weather] GET /api/weather/alerts")
+        self.client.get("/api/weather/correlations", headers=h, name="[Weather] GET /api/weather/correlations")
+        think(3, 6)
+
+    # --- Tab: Customers ---
+    @task
+    def tab_customers(self):
+        h = self._headers()
+        page = random.randint(1, 5)
+        self.client.get(f"/api/customers?page={page}&limit=20", headers=h,
+                        name="[Customers] GET /api/customers")
+        self.client.get("/api/customers/stats", headers=h,
+                        name="[Customers] GET /api/customers/stats")
+        think(2, 4)
+        # User searches for a customer
+        term = random.choice(SEARCH_TERMS[:6])
+        self.client.get(f"/api/customers/search?q={term}", headers=h,
+                        name="[Customers] GET /api/customers/search")
+        think(2, 4)
+
+    # --- Tab: Pricing ---
+    @task
+    def tab_pricing(self):
+        h = self._headers()
+        self.client.get("/api/pricing/current", headers=h, name="[Pricing] GET /api/pricing/current")
+        self.client.get("/api/pricing/rates", headers=h, name="[Pricing] GET /api/pricing/rates")
+        self.client.get("/api/pricing/regions", headers=h, name="[Pricing] GET /api/pricing/regions")
+        think(2, 5)
+        # User calculates a rate
+        rc = random.choice(RATE_CLASSES)
         region = random.choice(REGIONS)
-        self.client.post("/api/work-orders", json={
-            "outageId": f"OUT-{random.randint(1, 50):03d}",
-            "type": random.choice(["repair", "inspection", "maintenance", "emergency"]),
-            "priority": random.choice(["critical", "high", "medium", "low"]),
-            "region": region,
-            "description": f"Work order for {region} area",
-            "estimatedHours": random.randint(1, 8)
-        }, name="/api/work-orders [POST]")
-        time.sleep(random.uniform(1, 3))
+        kwh = random.randint(200, 3000)
+        self.client.get(f"/api/pricing/calculate?rateClass={rc}&region={region}&kwh={kwh}",
+                        headers=h, name="[Pricing] GET /api/pricing/calculate")
+        think(2, 4)
 
+    # --- Tab: Work Orders ---
     @task
-    def stop(self):
+    def tab_workorders(self):
+        h = self._headers()
+        page = random.randint(1, 5)
+        self.client.get(f"/api/work-orders?page={page}&limit=20", headers=h,
+                        name="[WorkOrders] GET /api/work-orders")
+        self.client.get("/api/work-orders/stats", headers=h,
+                        name="[WorkOrders] GET /api/work-orders/stats")
+        think(3, 6)
+
+    # --- Tab: Audit Log ---
+    @task
+    def tab_auditlog(self):
+        h = self._headers()
+        page = random.randint(1, 5)
+        self.client.get(f"/api/audit/log?page={page}&limit=30", headers=h,
+                        name="[AuditLog] GET /api/audit/log")
+        self.client.get("/api/audit/stats", headers=h,
+                        name="[AuditLog] GET /api/audit/stats")
+        think(2, 5)
+
+    # --- Tab: Alert Correlation ---
+    @task
+    def tab_alertcorrelation(self):
+        h = self._headers()
+        self.client.get("/api/alerts/correlated?limit=30", headers=h,
+                        name="[Alerts] GET /api/alerts/correlated")
+        self.client.get("/api/alerts/stats", headers=h,
+                        name="[Alerts] GET /api/alerts/stats")
+        think(3, 6)
+
+    # --- Tab: Service Health ---
+    @task
+    def tab_health(self):
+        h = self._headers()
+        self.client.get("/api/health", headers=h, name="[Health] GET /api/health")
+        think(2, 4)
+
+    # --- Use global search ---
+    @task
+    def use_search(self):
+        h = self._headers()
+        term = random.choice(SEARCH_TERMS)
+        self.client.get(f"/api/search?q={term}", headers=h,
+                        name="[Search] GET /api/search")
+        think(2, 5)
+
+    # --- Logout and end session ---
+    @task
+    def logout(self):
+        if self.token:
+            self.client.post("/api/auth/logout",
+                             headers=self._headers(),
+                             name="[Logout] POST /api/auth/logout")
+            self.token = ""
         self.interrupt()
 
-
-class ReportExportFlow(SequentialTaskSet):
-    """Simulates generating and exporting reports"""
-
-    @task
-    def generate_outage_report(self):
-        self.client.get("/api/aggregate/report/outages", name="/api/aggregate/report/outages")
-        time.sleep(random.uniform(2, 4))
-
-    @task
-    def generate_reliability_report(self):
-        self.client.get("/api/aggregate/report/reliability", name="/api/aggregate/report/reliability")
-        time.sleep(random.uniform(2, 4))
-
-    @task
-    def generate_crew_report(self):
-        self.client.get("/api/aggregate/report/crew", name="/api/aggregate/report/crew")
-        time.sleep(random.uniform(1, 3))
-
-    @task
-    def stop(self):
-        self.interrupt()
+    def _headers(self):
+        return {"Authorization": f"Bearer {self.token}"} if self.token else {}
 
 
-class HealthCheckFlow(SequentialTaskSet):
-    """Periodically checks service health"""
+# ============================================================
+# User Classes — different browsing patterns
+# ============================================================
 
-    @task
-    def check_health(self):
-        self.client.get("/api/health", name="/api/health")
-        time.sleep(random.uniform(3, 5))
-
-    @task
-    def check_fault_status(self):
-        self.client.get("/api/fault/status", name="/api/fault/status")
-        time.sleep(random.uniform(2, 3))
-
-    @task
-    def check_pricing(self):
-        self.client.get("/api/pricing/current", name="/api/pricing/current")
-        time.sleep(random.uniform(1, 2))
-
-    @task
-    def stop(self):
-        self.interrupt()
-
-
-class OperatorUser(HttpUser):
-    """Primary user type — browses dashboard, searches, manages work orders"""
-    wait_time = between(2, 8)
-    weight = 5
-
-    tasks = {
-        DashboardBrowsingFlow: 4,
-        SearchAndDrilldownFlow: 3,
-        WorkOrderFlow: 2,
-        ReportExportFlow: 1,
-    }
-
-
-class AnalystUser(HttpUser):
-    """Analyst user — focuses on reports and correlations"""
-    wait_time = between(3, 10)
-    weight = 3
-
-    tasks = {
-        DashboardBrowsingFlow: 2,
-        SearchAndDrilldownFlow: 4,
-        ReportExportFlow: 3,
-        HealthCheckFlow: 1,
-    }
-
-
-class MonitorUser(HttpUser):
-    """Passive monitoring user — checks health and dashboards"""
+class CasualBrowser(HttpUser):
+    """Casual user — browses a few tabs per session, longer think times."""
     wait_time = between(5, 15)
-    weight = 2
+    weight = 5
+    tasks = {UISession: 1}
 
-    tasks = {
-        DashboardBrowsingFlow: 5,
-        HealthCheckFlow: 3,
-    }
+
+class ActiveOperator(HttpUser):
+    """Operator actively monitoring — faster tab switching."""
+    wait_time = between(2, 6)
+    weight = 3
+    tasks = {UISession: 1}
+
+
+class PowerUser(HttpUser):
+    """Power user — rapid navigation through many tabs."""
+    wait_time = between(1, 3)
+    weight = 2
+    tasks = {UISession: 1}

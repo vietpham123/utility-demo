@@ -1,9 +1,8 @@
-# Node.js Express Backend
+# Outage Analytics Backend (Node.js)
 
-This backend provides RESTful APIs for outage and energy usage analytics.
+RESTful backend providing outage and energy usage analytics APIs.
 
-## Sample Endpoints
-- `GET /api/outages` - List outages
-- `POST /api/outages` - Report outage
-- `GET /api/usage` - List energy usage
-- `POST /api/usage` - Add usage record
+## Structure
+- Express-based REST API
+- TimescaleDB for persistence
+- Kafka and RabbitMQ for event streaming

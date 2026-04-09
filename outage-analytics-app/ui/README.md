@@ -1,11 +1,10 @@
-# Outage Analytics UI
+# Analytics Dashboard (HTML/JavaScript)
 
-React web frontend for the Outage and Energy Usage Analytics App.
+Single-page application for the utility analytics platform.
 
 ## Features
-- Outage list
-- Energy usage list
-- Simple navigation
-
-## Structure
-- Standard React project
+- 18 navigable sections (Overview, SCADA, Outages, Metering, Grid, etc.)
+- Real-time auto-refresh (15-second polling)
+- Drill-down navigation and modal detail views
+- Global search
+- Feature flag toggles for fault injection

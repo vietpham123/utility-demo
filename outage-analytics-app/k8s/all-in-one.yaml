@@ -40,7 +40,7 @@ spec:
         - name: POSTGRES_USER
           value: utilityuser
         - name: POSTGRES_PASSWORD
-          value: utility2026!
+          value: <DB_PASSWORD>
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
         volumeMounts:
@@ -156,10 +156,10 @@ spec:
         app: kafka
     spec:
       imagePullSecrets:
-      - name: acr-secret
+      - name: <REGISTRY_SECRET>
       containers:
       - name: kafka
-        image: vietregistry.azurecr.io/kafka:latest
+        image: <YOUR_REGISTRY>/kafka:latest
         ports:
         - containerPort: 9092
         env:
@@ -250,7 +250,7 @@ spec:
         - name: RABBITMQ_DEFAULT_USER
           value: "utility"
         - name: RABBITMQ_DEFAULT_PASS
-          value: "utility2026!"
+          value: "<DB_PASSWORD>"
         resources:
           requests:
             memory: "128Mi"
@@ -306,15 +306,15 @@ spec:
         app: outage-service
     spec:
       imagePullSecrets:
-      - name: acr-secret
+      - name: <REGISTRY_SECRET>
       containers:
       - name: outage-service
-        image: vietregistry.azurecr.io/outage-service:latest
+        image: <YOUR_REGISTRY>/outage-service:latest
         ports:
         - containerPort: 3000
         env:
         - name: DATABASE_URL
-          value: "postgresql://utilityuser:utility2026!@timescaledb:5432/utilitydb"
+          value: "postgresql://utilityuser:<DB_PASSWORD>@timescaledb:5432/utilitydb"
         - name: KAFKA_BROKERS
           value: "kafka:9092"
         - name: REDIS_URL
@@ -371,10 +371,10 @@ spec:
         app: usage-service
     spec:
       imagePullSecrets:
-      - name: acr-secret
+      - name: <REGISTRY_SECRET>
       containers:
       - name: usage-service
-        image: vietregistry.azurecr.io/usage-service:latest
+        image: <YOUR_REGISTRY>/usage-service:latest
         ports:
         - containerPort: 3000
         env:
@@ -432,10 +432,10 @@ spec:
         app: scada-service
     spec:
       imagePullSecrets:
-      - name: acr-secret
+      - name: <REGISTRY_SECRET>
       containers:
       - name: scada-service
-        image: vietregistry.azurecr.io/scada-service:latest
+        image: <YOUR_REGISTRY>/scada-service:latest
         ports:
         - containerPort: 80
         env:
@@ -444,7 +444,7 @@ spec:
         - name: ASPNETCORE_URLS
           value: "http://+:80"
         - name: ConnectionStrings__TimescaleDb
-          value: "Host=timescaledb;Port=5432;Database=utilitydb;Username=utilityuser;Password=utility2026!"
+          value: "Host=timescaledb;Port=5432;Database=utilitydb;Username=utilityuser;Password=<DB_PASSWORD>"
         - name: Kafka__BootstrapServers
           value: "kafka:9092"
         - name: Redis__ConnectionString
@@ -499,10 +499,10 @@ spec:
         app: meter-data-service
     spec:
       imagePullSecrets:
-      - name: acr-secret
+      - name: <REGISTRY_SECRET>
       containers:
       - name: meter-data-service
-        image: vietregistry.azurecr.io/meter-data-service:latest
+        image: <YOUR_REGISTRY>/meter-data-service:latest
         ports:
         - containerPort: 8080
         env:
@@ -511,7 +511,7 @@ spec:
         - name: SPRING_DATASOURCE_USERNAME
           value: "utilityuser"
         - name: SPRING_DATASOURCE_PASSWORD
-          value: "utility2026!"
+          value: "<DB_PASSWORD>"
         - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
           value: "kafka:9092"
         - name: SPRING_DATA_REDIS_HOST
@@ -570,15 +570,15 @@ spec:
         app: grid-topology-service
     spec:
       imagePullSecrets:
-      - name: acr-secret
+      - name: <REGISTRY_SECRET>
       containers:
       - name: grid-topology-service
-        image: vietregistry.azurecr.io/grid-topology-service:latest
+        image: <YOUR_REGISTRY>/grid-topology-service:latest
         ports:
         - containerPort: 3000
         env:
         - name: DATABASE_URL
-          value: "postgresql://utilityuser:utility2026!@timescaledb:5432/utilitydb"
+          value: "postgresql://utilityuser:<DB_PASSWORD>@timescaledb:5432/utilitydb"
         - name: REDIS_URL
           value: "redis://redis:6379"
         - name: KAFKA_BROKERS
@@ -633,15 +633,15 @@ spec:
         app: reliability-service
     spec:
       imagePullSecrets:
-      - name: acr-secret
+      - name: <REGISTRY_SECRET>
       containers:
       - name: reliability-service
-        image: vietregistry.azurecr.io/reliability-service:latest
+        image: <YOUR_REGISTRY>/reliability-service:latest
         ports:
         - containerPort: 5000
         env:
         - name: DATABASE_URL
-          value: "postgresql://utilityuser:utility2026!@timescaledb:5432/utilitydb"
+          value: "postgresql://utilityuser:<DB_PASSWORD>@timescaledb:5432/utilitydb"
         - name: KAFKA_BROKERS
           value: "kafka:9092"
         - name: REDIS_URL
@@ -696,15 +696,15 @@ spec:
         app: demand-forecast-service
     spec:
       imagePullSecrets:
-      - name: acr-secret
+      - name: <REGISTRY_SECRET>
       containers:
       - name: demand-forecast-service
-        image: vietregistry.azurecr.io/demand-forecast-service:latest
+        image: <YOUR_REGISTRY>/demand-forecast-service:latest
         ports:
         - containerPort: 3000
         env:
         - name: DATABASE_URL
-          value: "postgresql://utilityuser:utility2026!@timescaledb:5432/utilitydb"
+          value: "postgresql://utilityuser:<DB_PASSWORD>@timescaledb:5432/utilitydb"
         - name: KAFKA_BROKERS
           value: "kafka:9092"
         - name: REDIS_URL
@@ -759,10 +759,10 @@ spec:
         app: crew-dispatch-service
     spec:
       imagePullSecrets:
-      - name: acr-secret
+      - name: <REGISTRY_SECRET>
       containers:
       - name: crew-dispatch-service
-        image: vietregistry.azurecr.io/crew-dispatch-service:latest
+        image: <YOUR_REGISTRY>/crew-dispatch-service:latest
         ports:
         - containerPort: 3001
         env:
@@ -775,9 +775,9 @@ spec:
         - name: DB_USER
           value: "utilityuser"
         - name: DB_PASSWORD
-          value: "utility2026!"
+          value: "<DB_PASSWORD>"
         - name: RABBITMQ_URL
-          value: "amqp://utility:utility2026!@rabbitmq:5672"
+          value: "amqp://utility:<RABBITMQ_PASSWORD>@rabbitmq:5672"
         - name: OUTAGE_SERVICE_URL
           value: "http://outage-service:3000"
         - name: NOTIFICATION_SERVICE_URL
@@ -832,10 +832,10 @@ spec:
         app: notification-service
     spec:
       imagePullSecrets:
-      - name: acr-secret
+      - name: <REGISTRY_SECRET>
       containers:
       - name: notification-service
-        image: vietregistry.azurecr.io/notification-service:latest
+        image: <YOUR_REGISTRY>/notification-service:latest
         ports:
         - containerPort: 5001
         env:
@@ -848,9 +848,9 @@ spec:
         - name: DB_USER
           value: "utilityuser"
         - name: DB_PASSWORD
-          value: "utility2026!"
+          value: "<DB_PASSWORD>"
         - name: RABBITMQ_URL
-          value: "amqp://utility:utility2026!@rabbitmq:5672"
+          value: "amqp://utility:<RABBITMQ_PASSWORD>@rabbitmq:5672"
         resources:
           requests:
             memory: "64Mi"
@@ -904,10 +904,10 @@ spec:
         app: weather-service
     spec:
       imagePullSecrets:
-      - name: acr-secret
+      - name: <REGISTRY_SECRET>
       containers:
       - name: weather-service
-        image: vietregistry.azurecr.io/weather-service:latest
+        image: <YOUR_REGISTRY>/weather-service:latest
         ports:
         - containerPort: 8080
           name: http
@@ -923,9 +923,9 @@ spec:
         - name: DB_USER
           value: "utilityuser"
         - name: DB_PASSWORD
-          value: "utility2026!"
+          value: "<DB_PASSWORD>"
         - name: RABBITMQ_URL
-          value: "amqp://utility:utility2026!@rabbitmq:5672"
+          value: "amqp://utility:<RABBITMQ_PASSWORD>@rabbitmq:5672"
         - name: HTTP_PORT
           value: "8080"
         - name: GRPC_PORT
@@ -987,10 +987,10 @@ spec:
         app: analytics-gateway
     spec:
       imagePullSecrets:
-      - name: acr-secret
+      - name: <REGISTRY_SECRET>
       containers:
       - name: analytics-gateway
-        image: vietregistry.azurecr.io/analytics-gateway:latest
+        image: <YOUR_REGISTRY>/analytics-gateway:latest
         ports:
         - containerPort: 3000
         env:
@@ -1076,10 +1076,10 @@ spec:
         app: analytics-ui
     spec:
       imagePullSecrets:
-      - name: acr-secret
+      - name: <REGISTRY_SECRET>
       containers:
       - name: analytics-ui
-        image: vietregistry.azurecr.io/analytics-ui:latest
+        image: <YOUR_REGISTRY>/analytics-ui:latest
         ports:
         - containerPort: 80
         resources:
@@ -1136,10 +1136,10 @@ spec:
         app: aggregator-service
     spec:
       imagePullSecrets:
-      - name: acr-secret
+      - name: <REGISTRY_SECRET>
       containers:
       - name: aggregator-service
-        image: vietregistry.azurecr.io/aggregator-service:latest
+        image: <YOUR_REGISTRY>/aggregator-service:latest
         ports:
         - containerPort: 3002
         env:
@@ -1212,10 +1212,10 @@ spec:
         app: customer-service
     spec:
       imagePullSecrets:
-      - name: acr-secret
+      - name: <REGISTRY_SECRET>
       containers:
       - name: customer-service
-        image: vietregistry.azurecr.io/customer-service:latest
+        image: <YOUR_REGISTRY>/customer-service:latest
         ports:
         - containerPort: 4567
         resources:
@@ -1263,10 +1263,10 @@ spec:
         app: audit-service
     spec:
       imagePullSecrets:
-      - name: acr-secret
+      - name: <REGISTRY_SECRET>
       containers:
       - name: audit-service
-        image: vietregistry.azurecr.io/audit-service:latest
+        image: <YOUR_REGISTRY>/audit-service:latest
         ports:
         - containerPort: 8090
         env:
@@ -1317,10 +1317,10 @@ spec:
         app: pricing-service
     spec:
       imagePullSecrets:
-      - name: acr-secret
+      - name: <REGISTRY_SECRET>
       containers:
       - name: pricing-service
-        image: vietregistry.azurecr.io/pricing-service:latest
+        image: <YOUR_REGISTRY>/pricing-service:latest
         ports:
         - containerPort: 8000
         resources:
@@ -1368,10 +1368,10 @@ spec:
         app: work-order-service
     spec:
       imagePullSecrets:
-      - name: acr-secret
+      - name: <REGISTRY_SECRET>
       containers:
       - name: work-order-service
-        image: vietregistry.azurecr.io/work-order-service:latest
+        image: <YOUR_REGISTRY>/work-order-service:latest
         ports:
         - containerPort: 4000
         env:
@@ -1424,10 +1424,10 @@ spec:
         app: alert-correlation-service
     spec:
       imagePullSecrets:
-      - name: acr-secret
+      - name: <REGISTRY_SECRET>
       containers:
       - name: alert-correlation-service
-        image: vietregistry.azurecr.io/alert-correlation-service:latest
+        image: <YOUR_REGISTRY>/alert-correlation-service:latest
         ports:
         - containerPort: 8070
         env:
@@ -1480,10 +1480,10 @@ spec:
         app: reverse-proxy
     spec:
       imagePullSecrets:
-      - name: acr-secret
+      - name: <REGISTRY_SECRET>
       containers:
       - name: reverse-proxy
-        image: vietregistry.azurecr.io/reverse-proxy:latest
+        image: <YOUR_REGISTRY>/reverse-proxy:latest
         ports:
         - containerPort: 80
         resources:
@@ -1513,7 +1513,7 @@ spec:
   - port: 80
     targetPort: 80
 ---
-# Load Generator (Python/Locust) — continuous traffic generation
+# Load Generator (Python/Locust) — web UI traffic generator
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1532,21 +1532,47 @@ spec:
         app: load-generator
     spec:
       imagePullSecrets:
-      - name: acr-secret
+      - name: <REGISTRY_SECRET>
       containers:
       - name: load-generator
-        image: vietregistry.azurecr.io/load-generator:latest
+        image: <YOUR_REGISTRY>/load-generator:latest
+        ports:
+        - containerPort: 8089
+          name: web
         env:
         - name: LOCUST_HOST
           value: "http://reverse-proxy"
-        - name: LOCUST_USERS
-          value: "5"
-        - name: LOCUST_SPAWN_RATE
-          value: "1"
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8089
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8089
+          initialDelaySeconds: 10
+          periodSeconds: 30
         resources:
           requests:
             memory: "128Mi"
             cpu: "100m"
           limits:
-            memory: "256Mi"
-            cpu: "250m"
+            memory: "512Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: load-generator
+  namespace: utility-outage-analytics
+  labels:
+    app: load-generator
+spec:
+  selector:
+    app: load-generator
+  ports:
+  - port: 8089
+    targetPort: 8089
+    name: web

@@ -1,7 +1,9 @@
-# API Gateway (Node.js)
+# API Gateway (Node.js/Express)
 
-Aggregates endpoints from outage and usage services for the UI.
+Central API gateway that aggregates and routes requests to backend microservices.
 
-## Example Endpoints
-- /api/outages
-- /api/usage
+## Features
+- Route aggregation for all 16 backend services
+- Authentication middleware
+- WebSocket support for live data feeds
+- Global search across services

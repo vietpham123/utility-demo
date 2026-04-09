@@ -12,7 +12,7 @@ const pool = new Pool({
   port: parseInt(process.env.DB_PORT || '5432'),
   database: process.env.DB_NAME || 'utilitydb',
   user: process.env.DB_USER || 'utilityuser',
-  password: process.env.DB_PASSWORD || 'utility2026!',
+  password: process.env.DB_PASSWORD || process.env.DB_PASSWORD,
   max: 10
 });
 

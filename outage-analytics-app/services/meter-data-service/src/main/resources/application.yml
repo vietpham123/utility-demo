@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:postgresql://${DB_HOST:timescaledb}:${DB_PORT:5432}/${DB_NAME:utilitydb}
     username: ${DB_USER:utilityuser}
-    password: ${DB_PASSWORD:utility2026!}
+    password: ${DB_PASSWORD:<DB_PASSWORD>}
     hikari:
       maximum-pool-size: 10
       minimum-idle: 2

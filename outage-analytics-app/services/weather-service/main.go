@@ -164,7 +164,7 @@ func connectDB() {
 	port := getEnv("DB_PORT", "5432")
 	dbname := getEnv("DB_NAME", "utilitydb")
 	user := getEnv("DB_USER", "utilityuser")
-	password := getEnv("DB_PASSWORD", "utility2026!")
+	password := getEnv("DB_PASSWORD", "<DB_PASSWORD>")
 
 	connStr := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=disable", host, port, dbname, user, password)
 	var err error
@@ -211,7 +211,7 @@ func connectDB() {
 }
 
 func connectRabbitMQ() {
-	url := getEnv("RABBITMQ_URL", "amqp://utility:utility2026!@rabbitmq:5672")
+	url := getEnv("RABBITMQ_URL", "amqp://utility:<DB_PASSWORD>@rabbitmq:5672")
 	var err error
 	rabbitConn, err = amqp.Dial(url)
 	if err != nil {

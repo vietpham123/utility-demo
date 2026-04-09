@@ -17,9 +17,9 @@ DB_CONFIG = {
     'port': int(os.getenv('DB_PORT', '5432')),
     'dbname': os.getenv('DB_NAME', 'utilitydb'),
     'user': os.getenv('DB_USER', 'utilityuser'),
-    'password': os.getenv('DB_PASSWORD', 'utility2026!')
+    'password': os.getenv('DB_PASSWORD', os.getenv('DB_PASSWORD'))
 }
-RABBITMQ_URL = os.getenv('RABBITMQ_URL', 'amqp://utility:utility2026!@rabbitmq:5672')
+RABBITMQ_URL = os.getenv('RABBITMQ_URL', os.getenv('RABBITMQ_URL'))
 
 # Celery configuration
 celery_app = Celery('notifications', broker=RABBITMQ_URL, backend='rpc://')

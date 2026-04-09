@@ -18,7 +18,7 @@ DB_CONFIG = {
     'port': int(os.getenv('DB_PORT', '5432')),
     'dbname': os.getenv('DB_NAME', 'utilitydb'),
     'user': os.getenv('DB_USER', 'utilityuser'),
-    'password': os.getenv('DB_PASSWORD', 'utility2026!')
+    'password': os.getenv('DB_PASSWORD', os.getenv('DB_PASSWORD'))
 }
 KAFKA_BROKER = os.getenv('KAFKA_BROKER', 'kafka:9092')
 TOTAL_CUSTOMERS = 30

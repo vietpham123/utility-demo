@@ -334,6 +334,7 @@ app.post('/api/auth/login', proxy(CUSTOMER_URL));
 app.post('/api/auth/register', proxy(CUSTOMER_URL));
 app.post('/api/auth/logout', proxy(CUSTOMER_URL));
 app.get('/api/auth/me', proxy(CUSTOMER_URL));
+app.get('/api/auth/users', proxy(CUSTOMER_URL));
 app.put('/api/auth/preferences', proxy(CUSTOMER_URL));
 app.get('/api/customers', proxy(CUSTOMER_URL));
 app.get('/api/customers/search', proxy(CUSTOMER_URL));

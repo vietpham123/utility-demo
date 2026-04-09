@@ -18,13 +18,13 @@ const pool = new Pool({
   port: parseInt(process.env.DB_PORT || '5432'),
   database: process.env.DB_NAME || 'utilitydb',
   user: process.env.DB_USER || 'utilityuser',
-  password: process.env.DB_PASSWORD || 'utility2026!',
+  password: process.env.DB_PASSWORD || process.env.DB_PASSWORD,
   max: 10
 });
 
 const OUTAGE_URL = process.env.OUTAGE_SERVICE_URL || 'http://outage-service:3000';
 const NOTIFICATION_URL = process.env.NOTIFICATION_SERVICE_URL || 'http://notification-service:5001';
-const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://utility:utility2026!@rabbitmq:5672';
+const RABBITMQ_URL = process.env.RABBITMQ_URL || process.env.RABBITMQ_URL;
 
 // ============================================================
 // Crew & Dispatch State
