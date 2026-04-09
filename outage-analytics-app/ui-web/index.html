@@ -70,6 +70,35 @@
         @keyframes glow { from { background: #1f6feb30; } to { background: transparent; } }
         .error-msg { color: #f85149; font-size: 12px; padding: 12px; }
 
+        /* Feature Flags */
+        .ff-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin-bottom: 16px; }
+        .ff-card { background: #161b22; border: 1px solid #21262d; border-radius: 10px; padding: 20px; transition: border-color 0.3s; }
+        .ff-card.active-fault { border-color: #f85149; box-shadow: 0 0 20px rgba(248,81,73,0.15); }
+        .ff-card-title { font-size: 15px; font-weight: 700; color: #f0f6fc; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+        .ff-card-desc { font-size: 12px; color: #8b949e; margin-bottom: 14px; line-height: 1.5; }
+        .ff-services { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 14px; }
+        .ff-svc-tag { font-size: 10px; padding: 2px 8px; border-radius: 10px; background: #21262d; color: #8b949e; }
+        .ff-card.active-fault .ff-svc-tag { background: #f8514920; color: #f85149; }
+        .ff-rate { font-size: 12px; color: #8b949e; margin-bottom: 14px; }
+        .ff-rate strong { color: #d29922; }
+        .ff-toggle { position: relative; display: inline-block; width: 52px; height: 28px; }
+        .ff-toggle input { opacity: 0; width: 0; height: 0; }
+        .ff-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #30363d; border-radius: 28px; transition: 0.3s; }
+        .ff-slider:before { content: ''; position: absolute; height: 22px; width: 22px; left: 3px; bottom: 3px; background: #8b949e; border-radius: 50%; transition: 0.3s; }
+        .ff-toggle input:checked + .ff-slider { background: #f85149; }
+        .ff-toggle input:checked + .ff-slider:before { transform: translateX(24px); background: #fff; }
+        .ff-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .ff-status-bar { background: #0d1117; border: 1px solid #21262d; border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+        .ff-status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+        .ff-status-dot.green { background: #3fb950; }
+        .ff-status-dot.red { background: #f85149; animation: pulse 1.5s infinite; }
+        .ff-clear-btn { background: #238636; color: #fff; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; }
+        .ff-clear-btn:hover { background: #2ea043; }
+        .ff-clear-btn.danger { background: #da3633; }
+        .ff-clear-btn.danger:hover { background: #f85149; }
+        .ff-stats { display: flex; gap: 24px; font-size: 13px; color: #8b949e; }
+        .ff-stats span strong { color: #f0f6fc; }
+
         /* Service Territory Map */
         .map-container { position: relative; width: 100%; background: #0d1117; border-radius: 8px; overflow: hidden; }
         .map-svg { width: 100%; height: auto; display: block; }
@@ -172,6 +201,7 @@
         <button onclick="showSection('notifications')">Notifications</button>
         <button onclick="showSection('weather')">Weather</button>
         <button onclick="showSection('health')">Service Health</button>
+        <button onclick="showSection('featureflags')" style="border-color:#f85149;color:#f85149">⚙ Feature Flags</button>
     </div>
 
     <div class="breadcrumb" id="breadcrumb"></div>
@@ -397,6 +427,30 @@
                 <div class="panel-body" id="health-status"><div class="loading">Loading...</div></div>
             </div>
         </div>
+
+        <!-- FEATURE FLAGS -->
+        <div id="featureflags" class="section">
+            <div class="ff-status-bar" id="ff-status-bar">
+                <div style="display:flex;align-items:center;">
+                    <span class="ff-status-dot green" id="ff-dot"></span>
+                    <span id="ff-status-text" style="font-size:14px;font-weight:600;color:#3fb950;">All Systems Normal</span>
+                </div>
+                <div class="ff-stats" id="ff-stats"></div>
+                <button class="ff-clear-btn" id="ff-clear-all" onclick="clearAllFaults()" style="display:none">Clear All Faults</button>
+            </div>
+            <div class="ff-grid" id="ff-cards"><div class="loading">Loading fault scenarios...</div></div>
+            <div class="panel" style="margin-top:16px;">
+                <div class="panel-header"><h3>curl / API Reference</h3></div>
+                <div class="panel-body" style="font-size:12px;color:#8b949e;line-height:1.8;">
+                    <div style="margin-bottom:8px;"><strong style="color:#c9d1d9;">Enable a scenario:</strong></div>
+                    <code style="display:block;background:#0d1117;padding:8px 12px;border-radius:6px;color:#79c0ff;margin-bottom:12px;word-break:break-all;">curl -X POST http://20.165.22.240/api/fault/inject -H "Content-Type: application/json" -d '{"scenario":"database-outage"}'</code>
+                    <div style="margin-bottom:8px;"><strong style="color:#c9d1d9;">Clear all faults:</strong></div>
+                    <code style="display:block;background:#0d1117;padding:8px 12px;border-radius:6px;color:#79c0ff;margin-bottom:12px;word-break:break-all;">curl -X POST http://20.165.22.240/api/fault/clear -H "Content-Type: application/json" -d '{}'</code>
+                    <div style="margin-bottom:8px;"><strong style="color:#c9d1d9;">Check status:</strong></div>
+                    <code style="display:block;background:#0d1117;padding:8px 12px;border-radius:6px;color:#79c0ff;">curl http://20.165.22.240/api/fault/status</code>
+                </div>
+            </div>
+        </div>
     </div>
 
 <script>
@@ -411,7 +465,7 @@ const SECTION_LABELS = {
     overview: 'Overview', scada: 'SCADA Telemetry', outages: 'Outage Management',
     metering: 'Meter Data (MDMS)', grid: 'Grid Topology', reliability: 'Reliability Indices',
     forecast: 'Demand Forecast', crew: 'Crew Dispatch', notifications: 'Notifications',
-    weather: 'Weather', health: 'Service Health'
+    weather: 'Weather', health: 'Service Health', featureflags: 'Feature Flags'
 };
 
 function showSection(name) {
@@ -1543,6 +1597,96 @@ async function fetchHealth() {
     }
 }
 
+// ============================================================
+// Feature Flags — Fault Injection UI
+// ============================================================
+const SCENARIO_ICONS = {
+    'database-outage': '🗄️',
+    'cascade-failure': '🔗',
+    'resource-exhaustion': '💾',
+    'network-partition': '🌐'
+};
+
+async function fetchFeatureFlags() {
+    const data = await fetchJSON(`${API}/fault/status`);
+    if (!data) return;
+
+    // Status bar
+    const dot = document.getElementById('ff-dot');
+    const statusText = document.getElementById('ff-status-text');
+    const clearBtn = document.getElementById('ff-clear-all');
+    const statsEl = document.getElementById('ff-stats');
+
+    if (data.enabled) {
+        dot.className = 'ff-status-dot red';
+        statusText.style.color = '#f85149';
+        statusText.textContent = `FAULT ACTIVE: ${data.scenario}`;
+        clearBtn.style.display = 'inline-block';
+        clearBtn.className = 'ff-clear-btn danger';
+        const elapsed = data.startedAt ? Math.round((Date.now() - new Date(data.startedAt).getTime()) / 1000) : 0;
+        const mins = Math.floor(elapsed / 60);
+        const secs = elapsed % 60;
+        statsEl.innerHTML = `<span>Errors: <strong style="color:#f85149">${data.errorCount}</strong></span><span>Requests: <strong>${data.requestCount}</strong></span><span>Elapsed: <strong>${mins}m ${secs}s</strong></span><span>Rate: <strong style="color:#d29922">${Math.round(data.failureRate * 100)}%</strong></span>`;
+    } else {
+        dot.className = 'ff-status-dot green';
+        statusText.style.color = '#3fb950';
+        statusText.textContent = 'All Systems Normal';
+        clearBtn.style.display = 'none';
+        statsEl.innerHTML = '';
+    }
+
+    // Scenario cards
+    const scenarios = data.availableScenarios || [];
+    document.getElementById('ff-cards').innerHTML = scenarios.map(s => {
+        const isActive = data.enabled && data.scenario === s.name;
+        return `
+        <div class="ff-card ${isActive ? 'active-fault' : ''}" id="ff-card-${s.name}">
+            <div class="ff-card-title">
+                <span>${SCENARIO_ICONS[s.name] || '⚠️'}</span>
+                ${s.name.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                ${isActive ? '<span class="badge badge-red" style="font-size:10px;">ACTIVE</span>' : ''}
+            </div>
+            <div class="ff-card-desc">${s.description}</div>
+            <div class="ff-services">${s.services.map(svc => `<span class="ff-svc-tag">${svc}</span>`).join('')}</div>
+            <div class="ff-rate">Default failure rate: <strong>${Math.round(s.defaultRate * 100)}%</strong></div>
+            <div class="ff-row">
+                <span style="font-size:12px;color:${isActive ? '#f85149' : '#8b949e'};font-weight:600;">${isActive ? 'Injecting Faults...' : 'Disabled'}</span>
+                <label class="ff-toggle">
+                    <input type="checkbox" ${isActive ? 'checked' : ''} onchange="toggleFault('${s.name}', this.checked)">
+                    <span class="ff-slider"></span>
+                </label>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+async function toggleFault(scenario, enable) {
+    if (enable) {
+        await fetch(`${API}/fault/inject`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ scenario })
+        });
+    } else {
+        await fetch(`${API}/fault/clear`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({})
+        });
+    }
+    // Brief delay then refresh UI
+    setTimeout(() => fetchFeatureFlags(), 300);
+}
+
+async function clearAllFaults() {
+    await fetch(`${API}/fault/clear`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+    });
+    setTimeout(() => fetchFeatureFlags(), 300);
+}
+
 async function fetchData() {
     document.getElementById('clock').textContent = new Date().toLocaleTimeString();
     switch(currentSection) {
@@ -1557,6 +1701,7 @@ async function fetchData() {
         case 'notifications': await fetchNotifications(); break;
         case 'weather': await fetchWeather(); break;
         case 'health': await fetchHealth(); break;
+        case 'featureflags': await fetchFeatureFlags(); break;
     }
 }
 

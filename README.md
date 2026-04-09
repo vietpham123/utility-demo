@@ -142,3 +142,50 @@ kubectl exec deploy/analytics-gateway -n utility-outage-analytics -- \
 │
 └── README.md              # This file
 ```
+
+## Fault Injection / Feature Flags
+
+The platform includes a built-in fault injection engine for creating Dynatrace problems on demand. Faults can be toggled via the **Feature Flags** tab in the Analytics UI or via curl.
+
+### Available Scenarios
+
+| Scenario | Failure Rate | Affected Services | Description |
+|---|---|---|---|
+| `database-outage` | 80% | outage, usage, reliability, meter-data | TimescaleDB connection pool exhausted |
+| `cascade-failure` | 70% | scada, outage, grid, reliability, crew | SCADA timeout cascading across services |
+| `resource-exhaustion` | 65% | meter-data, reliability, forecast, weather | OOM / thread pool exhaustion on Java/Python services |
+| `network-partition` | 85% | crew, notifications, scada, outage | Kafka + RabbitMQ broker connectivity lost |
+
+### UI Toggle
+
+1. Open the Analytics UI at http://20.165.22.240
+2. Click the **⚙ Feature Flags** tab in the navigation bar
+3. Toggle any scenario on/off — the status bar shows live error counts and elapsed time
+4. Click **Clear All Faults** to return to normal
+
+### curl / API
+
+```bash
+# Enable a fault scenario
+curl -X POST http://20.165.22.240/api/fault/inject \
+  -H "Content-Type: application/json" \
+  -d '{"scenario":"database-outage"}'
+
+# Enable with custom failure rate (0.0 – 1.0)
+curl -X POST http://20.165.22.240/api/fault/inject \
+  -H "Content-Type: application/json" \
+  -d '{"scenario":"cascade-failure", "failureRate": 0.90}'
+
+# Check current status
+curl http://20.165.22.240/api/fault/status
+
+# Clear all faults
+curl -X POST http://20.165.22.240/api/fault/clear \
+  -H "Content-Type: application/json" -d '{}'
+```
+
+### How It Works
+
+When enabled, the gateway middleware intercepts requests to affected service routes and returns real HTTP 500/502/503/504 errors with infrastructure-realistic error messages. The gateway also propagates fault mode to the outage-service and usage-service processes so Dynatrace sees failures at both the gateway and individual service levels.
+
+Dynatrace Davis AI typically detects the failure rate increase and creates a **Problem card** within 2–5 minutes of enabling a scenario.
