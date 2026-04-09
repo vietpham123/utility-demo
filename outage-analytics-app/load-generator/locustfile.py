@@ -1,16 +1,15 @@
 """
 GenericUtility UI Navigation Simulator — Locust-based traffic generator.
-Emulates real users navigating through the web UI: logging in, clicking tabs,
-browsing data, using search, and interacting with UI elements.
-Each tab click triggers the same API calls the browser makes.
+Emulates real users: login → navigate 10 random pages → logout.
+Each page navigation triggers the same API calls the browser makes.
 
 Dynatrace RUM Integration:
 - Real browser User-Agent strings so Dynatrace classifies traffic as real users
-- Referer headers on every request to enable Dynatrace user-action detection
+- Referer headers chain correctly from page to page for user-action detection
 - Proper Accept/Accept-Language headers matching browser fingerprints
-- HTML page loads that trigger Dynatrace JS agent injection (Set-Cookie: dtCookie)
 - Cookie persistence per session for Dynatrace session correlation
-- Unique x-session-id header per session for server-side session grouping
+- Unique X-Session-Id header per session for server-side session grouping
+- X-Forwarded-For for geo-location simulation
 """
 import json
 import os
@@ -18,7 +17,7 @@ import random
 import time
 import uuid
 import logging
-from locust import HttpUser, task, between, SequentialTaskSet
+from locust import HttpUser, task, between, TaskSet
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("ui-nav")
@@ -45,25 +44,15 @@ RATE_CLASSES = ["R-1", "R-2", "C-1", "C-2", "I-1"]
 
 # --- Real browser User-Agent strings for Dynatrace RUM detection ---
 BROWSER_USER_AGENTS = [
-    # Chrome on Windows
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-    # Chrome on Mac
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-    # Firefox on Windows
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
-    # Firefox on Mac
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:125.0) Gecko/20100101 Firefox/125.0",
-    # Safari on Mac
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15",
-    # Edge on Windows
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0",
-    # Chrome on Linux
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-    # Chrome on Android
     "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36",
-    # Safari on iPhone
     "Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1",
-    # Chrome on iPad
     "Mozilla/5.0 (iPad; CPU OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/124.0.6367.88 Mobile/15E148 Safari/604.1",
 ]
 
@@ -81,8 +70,9 @@ CLIENT_IPS = [
     "69.142.88.160",   # Charlotte residential
 ]
 
-# Base URL for Referer header (set at runtime from host)
 APP_BASE_URL = os.getenv("LOCUST_HOST", "http://analytics-gateway:3000")
+
+MAX_NAVIGATIONS = 10
 
 
 def think(low=1, high=4):
@@ -90,49 +80,27 @@ def think(low=1, high=4):
     time.sleep(random.uniform(low, high))
 
 
-class UISession(SequentialTaskSet):
+class UISession(TaskSet):
     """
-    Simulates a full user session: open app → login → browse tabs → logout.
-    Each tab triggers the exact same API calls the browser UI makes on navigation.
-
-    Dynatrace-aware: sends real browser headers, maintains session cookies,
-    includes Referer for user-action detection, and sets x-forwarded-for
-    for geo-location.
+    Simulates a user session: login → navigate 10 random pages → logout.
+    Starts at the login page. Each navigation picks a random tab and fires
+    the API calls the browser would make. Referer chains correctly from
+    page to page for Dynatrace user-action detection.
     """
-    token = ""
-    user_info = None
-    session_id = ""
-    username = ""
-    current_page = "/"
 
     def on_start(self):
-        """User opens the app in their browser — full page load triggers DT RUM."""
+        """User starts at the login page and authenticates."""
         self.session_id = str(uuid.uuid4())
         self.username = random.choice(DEMO_USERNAMES)
-        self.current_page = "/"
-
-        # Load the main HTML page — Dynatrace OneAgent injects JS here
-        # and sets dtCookie via Set-Cookie. Locust client persists cookies.
-        self.client.get("/", headers=self._browser_headers("/"),
-                        name="[Page] Load index.html")
-        think(0.3, 0.8)
-        # Browser loads JS bundles
-        self.client.get("/static/js/main.js",
-                        headers=self._browser_headers("/", accept="application/javascript"),
-                        name="[Page] Load main.js")
-        self.client.get("/static/css/main.css",
-                        headers=self._browser_headers("/", accept="text/css"),
-                        name="[Page] Load main.css")
-        think(1, 2)
-
-    # --- Login ---
-    @task
-    def login(self):
         self.current_page = "/login"
+        self.nav_count = 0
+        self.token = ""
+
+        # POST login — first action in the session
         with self.client.post("/api/auth/login", json={
             "username": self.username,
             "password": DEMO_PASSWORD
-        }, headers=self._browser_headers("/login"),
+        }, headers=self._browser_headers(),
            name="[Login] POST /api/auth/login", catch_response=True) as resp:
             if resp.status_code == 200:
                 try:
@@ -146,11 +114,35 @@ class UISession(SequentialTaskSet):
                 resp.failure(f"Login HTTP {resp.status_code}")
         think(1, 2)
 
-    # --- Tab: Overview (default landing) ---
     @task
-    def tab_overview(self):
-        self.current_page = "/overview"
-        h = self._browser_headers("/overview")
+    def navigate_page(self):
+        """Navigate to a random page. After 10 navigations, logout and end session."""
+        if self.nav_count >= MAX_NAVIGATIONS:
+            if self.token:
+                self.client.post("/api/auth/logout",
+                                 headers=self._browser_headers(),
+                                 name="[Logout] POST /api/auth/logout")
+            self.interrupt()
+            return
+
+        handler = random.choice([
+            self._nav_overview, self._nav_scada, self._nav_outages,
+            self._nav_metering, self._nav_grid, self._nav_reliability,
+            self._nav_forecast, self._nav_crew, self._nav_notifications,
+            self._nav_weather, self._nav_customers, self._nav_pricing,
+            self._nav_workorders, self._nav_auditlog, self._nav_alerts,
+            self._nav_health, self._nav_search,
+        ])
+        handler()
+        self.nav_count += 1
+
+    # ---- Tab navigation methods ----
+    # Each method fires the API calls the browser makes when clicking that tab.
+    # Referer is set to self.current_page (the previous page) automatically.
+    # current_page is updated AFTER requests so the next navigation has correct Referer.
+
+    def _nav_overview(self):
+        h = self._browser_headers()
         self.client.get("/api/dashboard", headers=h, name="[Overview] GET /api/dashboard")
         self.client.get("/api/outages/active", headers=h, name="[Overview] GET /api/outages/active")
         self.client.get("/api/scada/alerts", headers=h, name="[Overview] GET /api/scada/alerts")
@@ -158,211 +150,148 @@ class UISession(SequentialTaskSet):
         self.client.get("/api/weather/forecast", headers=h, name="[Overview] GET /api/weather/forecast")
         self.client.get("/api/crew/crews", headers=h, name="[Overview] GET /api/crew/crews")
         self.client.get("/api/crew/dispatches/active", headers=h, name="[Overview] GET /api/crew/dispatches/active")
-        think(3, 7)
+        self.current_page = "/overview"
 
-    # --- Tab: SCADA Telemetry ---
-    @task
-    def tab_scada(self):
-        self.current_page = "/scada"
-        h = self._browser_headers("/scada")
+    def _nav_scada(self):
+        h = self._browser_headers()
         self.client.get("/api/scada/summary", headers=h, name="[SCADA] GET /api/scada/summary")
         self.client.get("/api/scada/readings/latest", headers=h, name="[SCADA] GET /api/scada/readings/latest")
         self.client.get("/api/scada/alerts?limit=30", headers=h, name="[SCADA] GET /api/scada/alerts?limit=30")
-        think(3, 8)
+        self.current_page = "/scada"
 
-    # --- Tab: Outage Management ---
-    @task
-    def tab_outages(self):
-        self.current_page = "/outages"
-        h = self._browser_headers("/outages")
+    def _nav_outages(self):
+        h = self._browser_headers()
         self.client.get("/api/outages/stats/summary", headers=h, name="[Outages] GET /api/outages/stats/summary")
         resp = self.client.get("/api/outages", headers=h, name="[Outages] GET /api/outages")
-        think(2, 5)
-        # User clicks on an outage row to view details
+        self.current_page = "/outages"
         if resp.status_code == 200:
             try:
                 outages = resp.json()
-                if outages and len(outages) > 0:
-                    o = random.choice(outages)
-                    oid = o.get("id", "OUT-001")
-                    self.current_page = f"/outages/{oid}"
+                if outages:
+                    oid = random.choice(outages).get("id", "OUT-001")
                     self.client.get(f"/api/outages/{oid}",
-                                    headers=self._browser_headers(f"/outages/{oid}"),
+                                    headers=self._browser_headers(),
                                     name="[Outages] GET /api/outages/[id]")
-                    think(2, 4)
             except Exception:
                 pass
 
-    # --- Tab: Meter Data ---
-    @task
-    def tab_metering(self):
-        self.current_page = "/metering"
-        h = self._browser_headers("/metering")
+    def _nav_metering(self):
+        h = self._browser_headers()
         self.client.get("/api/meter-data/summary", headers=h, name="[Metering] GET /api/meter-data/summary")
         self.client.get("/api/meter-data/readings?limit=50", headers=h, name="[Metering] GET /api/meter-data/readings")
         self.client.get("/api/meter-data/anomalies?limit=30", headers=h, name="[Metering] GET /api/meter-data/anomalies")
-        think(3, 6)
+        self.current_page = "/metering"
 
-    # --- Tab: Grid Topology ---
-    @task
-    def tab_grid(self):
-        self.current_page = "/grid"
-        h = self._browser_headers("/grid")
+    def _nav_grid(self):
+        h = self._browser_headers()
         self.client.get("/api/grid/stats", headers=h, name="[Grid] GET /api/grid/stats")
         self.client.get("/api/grid/topology", headers=h, name="[Grid] GET /api/grid/topology")
-        think(3, 6)
+        self.current_page = "/grid"
 
-    # --- Tab: Reliability Indices ---
-    @task
-    def tab_reliability(self):
-        self.current_page = "/reliability"
-        h = self._browser_headers("/reliability")
+    def _nav_reliability(self):
+        h = self._browser_headers()
         self.client.get("/api/reliability/indices", headers=h, name="[Reliability] GET /api/reliability/indices")
         self.client.get("/api/reliability/history?days=30", headers=h, name="[Reliability] GET /api/reliability/history")
-        think(2, 5)
+        self.current_page = "/reliability"
 
-    # --- Tab: Demand Forecast ---
-    @task
-    def tab_forecast(self):
-        self.current_page = "/forecast"
-        h = self._browser_headers("/forecast")
+    def _nav_forecast(self):
+        h = self._browser_headers()
         self.client.get("/api/forecast/summary", headers=h, name="[Forecast] GET /api/forecast/summary")
         self.client.get("/api/forecast/current", headers=h, name="[Forecast] GET /api/forecast/current")
         self.client.get("/api/forecast/peak-demand", headers=h, name="[Forecast] GET /api/forecast/peak-demand")
-        think(2, 5)
+        self.current_page = "/forecast"
 
-    # --- Tab: Crew Dispatch ---
-    @task
-    def tab_crew(self):
-        self.current_page = "/crew"
-        h = self._browser_headers("/crew")
+    def _nav_crew(self):
+        h = self._browser_headers()
         self.client.get("/api/crew/stats", headers=h, name="[Crew] GET /api/crew/stats")
         self.client.get("/api/crew/crews", headers=h, name="[Crew] GET /api/crew/crews")
         self.client.get("/api/crew/dispatches/active", headers=h, name="[Crew] GET /api/crew/dispatches/active")
         self.client.get("/api/crew/dispatches?limit=30", headers=h, name="[Crew] GET /api/crew/dispatches")
-        think(3, 6)
+        self.current_page = "/crew"
 
-    # --- Tab: Notifications ---
-    @task
-    def tab_notifications(self):
-        self.current_page = "/notifications"
-        h = self._browser_headers("/notifications")
+    def _nav_notifications(self):
+        h = self._browser_headers()
         self.client.get("/api/notifications/stats", headers=h, name="[Notifications] GET /api/notifications/stats")
         self.client.get("/api/notifications/log?limit=50", headers=h, name="[Notifications] GET /api/notifications/log")
-        think(2, 5)
+        self.current_page = "/notifications"
 
-    # --- Tab: Weather ---
-    @task
-    def tab_weather(self):
-        self.current_page = "/weather"
-        h = self._browser_headers("/weather")
+    def _nav_weather(self):
+        h = self._browser_headers()
         self.client.get("/api/weather/summary", headers=h, name="[Weather] GET /api/weather/summary")
         self.client.get("/api/weather/conditions", headers=h, name="[Weather] GET /api/weather/conditions")
         self.client.get("/api/weather/forecast", headers=h, name="[Weather] GET /api/weather/forecast")
         self.client.get("/api/weather/alerts?limit=30", headers=h, name="[Weather] GET /api/weather/alerts")
         self.client.get("/api/weather/correlations", headers=h, name="[Weather] GET /api/weather/correlations")
-        think(3, 6)
+        self.current_page = "/weather"
 
-    # --- Tab: Customers ---
-    @task
-    def tab_customers(self):
-        self.current_page = "/customers"
-        h = self._browser_headers("/customers")
+    def _nav_customers(self):
+        h = self._browser_headers()
         page = random.randint(1, 5)
         self.client.get(f"/api/customers?page={page}&limit=20", headers=h,
                         name="[Customers] GET /api/customers")
         self.client.get("/api/customers/stats", headers=h,
                         name="[Customers] GET /api/customers/stats")
-        think(2, 4)
-        # User searches for a customer
+        self.current_page = "/customers"
         term = random.choice(SEARCH_TERMS[:6])
-        self.client.get(f"/api/customers/search?q={term}", headers=h,
+        self.client.get(f"/api/customers/search?q={term}",
+                        headers=self._browser_headers(),
                         name="[Customers] GET /api/customers/search")
-        think(2, 4)
 
-    # --- Tab: Pricing ---
-    @task
-    def tab_pricing(self):
-        self.current_page = "/pricing"
-        h = self._browser_headers("/pricing")
+    def _nav_pricing(self):
+        h = self._browser_headers()
         self.client.get("/api/pricing/current", headers=h, name="[Pricing] GET /api/pricing/current")
         self.client.get("/api/pricing/rates", headers=h, name="[Pricing] GET /api/pricing/rates")
         self.client.get("/api/pricing/regions", headers=h, name="[Pricing] GET /api/pricing/regions")
-        think(2, 5)
-        # User calculates a rate
+        self.current_page = "/pricing"
         rc = random.choice(RATE_CLASSES)
         region = random.choice(REGIONS)
         kwh = random.randint(200, 3000)
         self.client.get(f"/api/pricing/calculate?rateClass={rc}&region={region}&kwh={kwh}",
-                        headers=h, name="[Pricing] GET /api/pricing/calculate")
-        think(2, 4)
+                        headers=self._browser_headers(),
+                        name="[Pricing] GET /api/pricing/calculate")
 
-    # --- Tab: Work Orders ---
-    @task
-    def tab_workorders(self):
-        self.current_page = "/work-orders"
-        h = self._browser_headers("/work-orders")
+    def _nav_workorders(self):
+        h = self._browser_headers()
         page = random.randint(1, 5)
         self.client.get(f"/api/work-orders?page={page}&limit=20", headers=h,
                         name="[WorkOrders] GET /api/work-orders")
         self.client.get("/api/work-orders/stats", headers=h,
                         name="[WorkOrders] GET /api/work-orders/stats")
-        think(3, 6)
+        self.current_page = "/work-orders"
 
-    # --- Tab: Audit Log ---
-    @task
-    def tab_auditlog(self):
-        self.current_page = "/audit"
-        h = self._browser_headers("/audit")
+    def _nav_auditlog(self):
+        h = self._browser_headers()
         page = random.randint(1, 5)
         self.client.get(f"/api/audit/log?page={page}&limit=30", headers=h,
                         name="[AuditLog] GET /api/audit/log")
         self.client.get("/api/audit/stats", headers=h,
                         name="[AuditLog] GET /api/audit/stats")
-        think(2, 5)
+        self.current_page = "/audit"
 
-    # --- Tab: Alert Correlation ---
-    @task
-    def tab_alertcorrelation(self):
-        self.current_page = "/alerts"
-        h = self._browser_headers("/alerts")
+    def _nav_alerts(self):
+        h = self._browser_headers()
         self.client.get("/api/alerts/correlated?limit=30", headers=h,
                         name="[Alerts] GET /api/alerts/correlated")
         self.client.get("/api/alerts/stats", headers=h,
                         name="[Alerts] GET /api/alerts/stats")
-        think(3, 6)
+        self.current_page = "/alerts"
 
-    # --- Tab: Service Health ---
-    @task
-    def tab_health(self):
-        self.current_page = "/health"
-        h = self._browser_headers("/health")
+    def _nav_health(self):
+        h = self._browser_headers()
         self.client.get("/api/health", headers=h, name="[Health] GET /api/health")
-        think(2, 4)
+        self.current_page = "/health"
 
-    # --- Use global search ---
-    @task
-    def use_search(self):
-        h = self._browser_headers(self.current_page)
+    def _nav_search(self):
+        h = self._browser_headers()
         term = random.choice(SEARCH_TERMS)
         self.client.get(f"/api/search?q={term}", headers=h,
                         name="[Search] GET /api/search")
-        think(2, 5)
 
-    # --- Logout and end session ---
-    @task
-    def logout(self):
-        if self.token:
-            self.client.post("/api/auth/logout",
-                             headers=self._browser_headers("/logout"),
-                             name="[Logout] POST /api/auth/logout")
-            self.token = ""
-        self.interrupt()
-
-    def _browser_headers(self, page="/", accept="application/json, text/plain, */*"):
+    def _browser_headers(self, accept="application/json, text/plain, */*"):
         """
         Build headers that match a real browser request so Dynatrace
         detects this as a genuine user session.
+        Referer is set to current_page (the page the user is coming FROM).
         """
         h = {
             "User-Agent": self.user.ua,
@@ -376,10 +305,8 @@ class UISession(SequentialTaskSet):
             "Sec-Fetch-Mode": "cors",
             "Sec-Fetch-Site": "same-origin",
             "X-Requested-With": "XMLHttpRequest",
-            # Session identification for Dynatrace server-side session grouping
             "X-Session-Id": self.session_id,
             "X-Username": self.username,
-            # Simulated client IP for Dynatrace geo-location detection
             "X-Forwarded-For": self.user.client_ip,
         }
         if self.token:
@@ -388,14 +315,15 @@ class UISession(SequentialTaskSet):
 
 
 # ============================================================
-# User Classes — different browsing patterns
-# Each user gets a persistent browser UA + client IP to ensure
+# User Classes — different browsing speeds
+# Each user gets a persistent browser UA + client IP so
 # Dynatrace groups all their requests into one session.
+# wait_time controls pause between page navigations.
 # ============================================================
 
 class CasualBrowser(HttpUser):
-    """Casual user — browses a few tabs per session, longer think times."""
-    wait_time = between(5, 15)
+    """Casual user — browses slowly, longer pauses between pages."""
+    wait_time = between(3, 8)
     weight = 5
     tasks = {UISession: 1}
 
@@ -405,8 +333,8 @@ class CasualBrowser(HttpUser):
 
 
 class ActiveOperator(HttpUser):
-    """Operator actively monitoring — faster tab switching."""
-    wait_time = between(2, 6)
+    """Operator actively monitoring — moderate pace."""
+    wait_time = between(2, 5)
     weight = 3
     tasks = {UISession: 1}
 
@@ -416,7 +344,7 @@ class ActiveOperator(HttpUser):
 
 
 class PowerUser(HttpUser):
-    """Power user — rapid navigation through many tabs."""
+    """Power user — rapid navigation through pages."""
     wait_time = between(1, 3)
     weight = 2
     tasks = {UISession: 1}
