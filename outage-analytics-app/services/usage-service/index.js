@@ -14,8 +14,21 @@ redis.on('error', () => {});
 
 // ============================================================
 // Sporadic error injection & request logging
+// Includes togglable high-failure mode for Dynatrace problem detection
 // ============================================================
 let usageRequestCount = 0;
+let usageFaultMode = false;
+
+app.post('/api/usage/fault/enable', (req, res) => {
+  usageFaultMode = true;
+  logger.error('🔴 USAGE SERVICE FAULT MODE ENABLED — Redis + data pipeline errors will spike');
+  res.json({ status: 'Fault mode ENABLED', service: 'usage-service' });
+});
+app.post('/api/usage/fault/disable', (req, res) => {
+  usageFaultMode = false;
+  logger.info('🟢 USAGE SERVICE FAULT MODE DISABLED');
+  res.json({ status: 'Fault mode DISABLED', service: 'usage-service' });
+});
 
 app.use((req, res, next) => {
   usageRequestCount++;
@@ -31,6 +44,25 @@ app.use((req, res, next) => {
       logger.debug('Request completed', meta);
     }
   });
+
+  // Fault mode: 70% of non-health/non-fault requests return Redis/pipeline error
+  if (usageFaultMode && !req.path.includes('/health') && !req.path.includes('/fault/') && Math.random() < 0.70) {
+    const cacheErrors = [
+      'Error: connect ECONNREFUSED 10.0.0.8:6379 — Redis connection pool exhausted',
+      'ReplyError: OOM command not allowed when used memory > maxmemory — Redis eviction failed',
+      'Error: Kafka consumer disconnected — usage event stream interrupted, lag: 45000 messages',
+      'AbortError: Redis connection lost — socket closed unexpectedly during pipeline flush'
+    ];
+    const errMsg = cacheErrors[Math.floor(Math.random() * cacheErrors.length)];
+    logger.error('CACHE/PIPELINE FAILURE in usage-service', {
+      error: errMsg,
+      path: req.path,
+      redisStatus: 'disconnected',
+      kafkaLag: Math.floor(Math.random() * 50000)
+    });
+    return res.status(500).json({ error: errMsg, service: 'usage-service', timestamp: new Date().toISOString() });
+  }
+
   next();
 });
 

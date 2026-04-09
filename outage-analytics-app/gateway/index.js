@@ -16,6 +16,141 @@ const NOTIFICATION_URL = process.env.NOTIFICATION_SERVICE_URL || 'http://notific
 const WEATHER_URL = process.env.WEATHER_SERVICE_URL || 'http://weather-service:8080';
 
 // ============================================================
+// Fault Injection Engine — togglable failure scenarios for Dynatrace demos
+// Injects real HTTP 500 errors with exception traces that Davis AI detects
+// ============================================================
+const faultState = {
+  enabled: false,
+  scenario: null,         // 'database-outage', 'cascade-failure', 'resource-exhaustion', 'network-partition'
+  startedAt: null,
+  errorCount: 0,
+  requestCount: 0,
+  affectedServices: [],   // which service routes are affected
+  failureRate: 0.75       // % of requests that fail (default 75%)
+};
+
+const FAULT_SCENARIOS = {
+  'database-outage': {
+    description: 'TimescaleDB connection pool exhausted — outage + usage + reliability services fail',
+    affectedServices: ['outage', 'usage', 'reliability', 'meter-data'],
+    failureRate: 0.80,
+    errors: [
+      { status: 500, message: 'FATAL: remaining connection slots are reserved for superuser connections', code: 'ECONNREFUSED' },
+      { status: 500, message: 'Error: connect ECONNREFUSED 10.0.0.5:5432 - PostgreSQL connection pool exhausted', code: 'POOL_EXHAUSTED' },
+      { status: 500, message: 'TimeoutError: ResourceRequest timed out - pg pool max connections (10) reached', code: 'TIMEOUT' },
+      { status: 503, message: 'ServiceUnavailableError: Database health check failed after 3 retries', code: 'DB_HEALTH_FAILED' }
+    ]
+  },
+  'cascade-failure': {
+    description: 'SCADA service timeout causes cascading failures across outage detection + grid + reliability',
+    affectedServices: ['scada', 'outage', 'grid', 'reliability', 'crew'],
+    failureRate: 0.70,
+    errors: [
+      { status: 500, message: 'Error: socket hang up - SCADA telemetry stream interrupted', code: 'ECONNRESET' },
+      { status: 504, message: 'GatewayTimeoutError: upstream SCADA service did not respond within 8000ms', code: 'GATEWAY_TIMEOUT' },
+      { status: 500, message: 'Error: SCADA data pipeline stalled — no readings received in 30s, triggering failover', code: 'PIPELINE_STALL' },
+      { status: 502, message: 'BadGatewayError: SCADA service returned malformed response (truncated JSON)', code: 'BAD_GATEWAY' }
+    ]
+  },
+  'resource-exhaustion': {
+    description: 'Memory pressure + thread pool exhaustion across Java/Python services',
+    affectedServices: ['meter-data', 'reliability', 'forecast', 'weather'],
+    failureRate: 0.65,
+    errors: [
+      { status: 500, message: 'java.lang.OutOfMemoryError: GC overhead limit exceeded - HikariPool connection leak detected', code: 'OOM' },
+      { status: 500, message: 'MemoryError: Unable to allocate 256 MiB for reliability matrix computation', code: 'MEMORY_ERROR' },
+      { status: 500, message: 'Error: worker_threads pool exhausted - all 4 workers busy processing forecast models', code: 'THREAD_POOL' },
+      { status: 503, message: 'ServiceUnavailableError: Container memory limit (512Mi) approaching — 498Mi used', code: 'RESOURCE_LIMIT' }
+    ]
+  },
+  'network-partition': {
+    description: 'Kafka + RabbitMQ broker connectivity lost — async messaging fails, crew dispatch + notifications impacted',
+    affectedServices: ['crew', 'notifications', 'scada', 'outage'],
+    failureRate: 0.85,
+    errors: [
+      { status: 500, message: 'KafkaJSConnectionError: Connection timeout to kafka:9092 — broker unreachable', code: 'KAFKA_CONN' },
+      { status: 500, message: 'Error: Channel closed by server: 320 (CONNECTION-FORCED) — RabbitMQ node unreachable', code: 'AMQP_CLOSED' },
+      { status: 500, message: 'Error: connect ETIMEDOUT 10.0.0.12:9092 — network partition detected between AZ-1 and AZ-2', code: 'ETIMEDOUT' },
+      { status: 502, message: 'BadGatewayError: Message broker health check failed — 0 of 3 brokers responding', code: 'BROKER_DOWN' }
+    ]
+  }
+};
+
+// Fault injection API endpoints
+app.post('/api/fault/inject', (req, res) => {
+  const scenario = req.body.scenario || 'database-outage';
+  const config = FAULT_SCENARIOS[scenario];
+  if (!config) {
+    return res.status(400).json({ error: `Unknown scenario. Available: ${Object.keys(FAULT_SCENARIOS).join(', ')}` });
+  }
+  faultState.enabled = true;
+  faultState.scenario = scenario;
+  faultState.startedAt = new Date().toISOString();
+  faultState.errorCount = 0;
+  faultState.requestCount = 0;
+  faultState.affectedServices = config.affectedServices;
+  faultState.failureRate = req.body.failureRate || config.failureRate;
+  logger.error(`🔴 FAULT INJECTION ENABLED: ${scenario}`, {
+    description: config.description,
+    affectedServices: config.affectedServices,
+    failureRate: faultState.failureRate
+  });
+
+  // Propagate fault mode to individual services (best-effort)
+  if (config.affectedServices.includes('outage')) {
+    axios.post(`${OUTAGE_URL}/api/outages/fault/enable`, {}, { timeout: 3000 }).catch(() => {});
+  }
+  if (config.affectedServices.includes('usage')) {
+    axios.post(`${USAGE_URL}/api/usage/fault/enable`, {}, { timeout: 3000 }).catch(() => {});
+  }
+
+  res.json({
+    status: 'Fault injection ENABLED',
+    scenario,
+    description: config.description,
+    affectedServices: config.affectedServices,
+    failureRate: faultState.failureRate,
+    startedAt: faultState.startedAt,
+    note: 'Dynatrace should detect failure rate increase within 2-5 minutes'
+  });
+});
+
+app.post('/api/fault/clear', (req, res) => {
+  const summary = {
+    scenario: faultState.scenario,
+    duration: faultState.startedAt ? `${Math.round((Date.now() - new Date(faultState.startedAt).getTime()) / 1000)}s` : null,
+    totalErrors: faultState.errorCount,
+    totalRequests: faultState.requestCount
+  };
+  faultState.enabled = false;
+  faultState.scenario = null;
+  faultState.startedAt = null;
+  faultState.affectedServices = [];
+  logger.info('🟢 FAULT INJECTION CLEARED', summary);
+
+  // Propagate fault clear to individual services (best-effort)
+  axios.post(`${OUTAGE_URL}/api/outages/fault/disable`, {}, { timeout: 3000 }).catch(() => {});
+  axios.post(`${USAGE_URL}/api/usage/fault/disable`, {}, { timeout: 3000 }).catch(() => {});
+
+  res.json({ status: 'Fault injection CLEARED', summary });
+});
+
+app.get('/api/fault/status', (req, res) => {
+  res.json({
+    enabled: faultState.enabled,
+    scenario: faultState.scenario,
+    startedAt: faultState.startedAt,
+    affectedServices: faultState.affectedServices,
+    failureRate: faultState.failureRate,
+    errorCount: faultState.errorCount,
+    requestCount: faultState.requestCount,
+    availableScenarios: Object.entries(FAULT_SCENARIOS).map(([k, v]) => ({
+      name: k, description: v.description, services: v.affectedServices, defaultRate: v.failureRate
+    }))
+  });
+});
+
+// ============================================================
 // Request logging middleware — debug/info/error for every request
 // ============================================================
 app.use((req, res, next) => {
@@ -36,8 +171,42 @@ app.use((req, res, next) => {
     }
   });
 
+  // ---- FAULT INJECTION MIDDLEWARE ----
+  if (faultState.enabled && req.path !== '/api/health' && !req.path.startsWith('/api/fault/')) {
+    faultState.requestCount++;
+    // Check if this request's service route is affected
+    const matchedService = faultState.affectedServices.find(svc =>
+      req.path.includes(`/api/${svc}`) ||
+      (svc === 'outage' && req.path.includes('/api/outages')) ||
+      (svc === 'notifications' && req.path.includes('/api/notifications')) ||
+      (svc === 'crew' && req.path.includes('/api/crew'))
+    );
+    if (matchedService && Math.random() < faultState.failureRate) {
+      faultState.errorCount++;
+      const scenario = FAULT_SCENARIOS[faultState.scenario];
+      const errorTemplate = scenario.errors[Math.floor(Math.random() * scenario.errors.length)];
+      // Throw a real error so Dynatrace captures the exception
+      const err = new Error(errorTemplate.message);
+      err.code = errorTemplate.code;
+      err.service = matchedService;
+      err.scenario = faultState.scenario;
+      logger.error(`FAULT INJECTED: ${errorTemplate.code}`, {
+        path: req.path,
+        service: matchedService,
+        scenario: faultState.scenario,
+        errorMessage: errorTemplate.message
+      });
+      return res.status(errorTemplate.status).json({
+        error: errorTemplate.message,
+        code: errorTemplate.code,
+        service: matchedService,
+        timestamp: new Date().toISOString()
+      });
+    }
+  }
+
   // ~2% chance: sporadic gateway timeout simulation
-  if (Math.random() < 0.02 && req.path !== '/api/health' && req.path !== '/api/simulate/cycle') {
+  if (Math.random() < 0.02 && req.path !== '/api/health' && req.path !== '/api/simulate/cycle' && !req.path.startsWith('/api/fault/')) {
     const delayMs = 3000 + Math.floor(Math.random() * 5000);
     logger.warn('Simulating gateway slowdown', { path: req.path, delayMs });
     setTimeout(() => next(), delayMs);

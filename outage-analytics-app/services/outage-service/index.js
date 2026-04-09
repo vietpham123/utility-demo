@@ -27,9 +27,22 @@ const GRID_SERVICE_URL = process.env.GRID_SERVICE_URL || 'http://grid-topology-s
 
 // ============================================================
 // Sporadic error injection & request logging
+// Includes togglable high-failure mode for Dynatrace problem detection
 // ============================================================
 let requestCount = 0;
 let errorCount = 0;
+let faultMode = false;  // toggled via POST /api/outages/fault/enable
+
+app.post('/api/outages/fault/enable', (req, res) => {
+  faultMode = true;
+  logger.error('🔴 OUTAGE SERVICE FAULT MODE ENABLED — database connection errors will spike');
+  res.json({ status: 'Fault mode ENABLED', service: 'outage-service' });
+});
+app.post('/api/outages/fault/disable', (req, res) => {
+  faultMode = false;
+  logger.info('🟢 OUTAGE SERVICE FAULT MODE DISABLED');
+  res.json({ status: 'Fault mode DISABLED', service: 'outage-service' });
+});
 
 app.use((req, res, next) => {
   requestCount++;
@@ -48,6 +61,26 @@ app.use((req, res, next) => {
       logger.debug('Request completed', meta);
     }
   });
+
+  // Fault mode: 70% of non-health/non-fault requests return database error
+  if (faultMode && !req.path.includes('/health') && !req.path.includes('/fault/') && Math.random() < 0.70) {
+    const dbErrors = [
+      'FATAL: remaining connection slots are reserved for superuser connections',
+      'Error: connect ECONNREFUSED 10.0.0.5:5432 — TimescaleDB unreachable',
+      'TimeoutError: ResourceRequest timed out after 5000ms — pg pool exhausted (10/10 connections in use)',
+      'Error: Connection terminated unexpectedly during query execution'
+    ];
+    const errMsg = dbErrors[Math.floor(Math.random() * dbErrors.length)];
+    logger.error('DATABASE CONNECTION FAILURE in outage-service', {
+      error: errMsg,
+      path: req.path,
+      activeConnections: 10,
+      maxConnections: 10,
+      waitingClients: requestCount % 20
+    });
+    return res.status(500).json({ error: errMsg, service: 'outage-service', timestamp: new Date().toISOString() });
+  }
+
   next();
 });
 
