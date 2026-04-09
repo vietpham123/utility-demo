@@ -348,8 +348,8 @@ async function fetchPricing() {
                 kpi('Rate Classes', rates?.length || current.rateClasses || '5', 'available', 'info')
             ].join('');
         }
-        const rateList = rates?.rates || rates || [];
-        const regionList = regions?.regions || regions || [];
+        const rateList = rates?.rateClasses || rates?.rates || (Array.isArray(rates) ? rates : []);
+        const regionList = regions?.regions || (Array.isArray(regions) ? regions : []);
         container.innerHTML = `<div class="grid-2">
             <div class="panel"><div class="panel-header"><h3>Rate Classes</h3></div><div class="panel-body">
                 <table><tr><th>Class</th><th>Name</th><th>Base</th><th>Peak</th><th>Off-Peak</th></tr>
@@ -591,12 +591,18 @@ function loadSettings() {
 }
 
 // --- Hook into existing fetchData ---
-const origFetchData = window.fetchData;
-window.fetchData = function() {
-    if (origFetchData) origFetchData();
-    const section = typeof currentSection !== 'undefined' ? currentSection : '';
-    fetchExtendedData(section);
-};
+// The inline <script> fetchData is local scope, so we patch it via the global fetchData call chain
+(function patchFetchData() {
+    // Wait for the inline script to have run and defined fetchData
+    const origFetchData = window.fetchData;
+    if (typeof origFetchData === 'function') {
+        window.fetchData = function() {
+            origFetchData();
+            const section = typeof currentSection !== 'undefined' ? currentSection : '';
+            fetchExtendedData(section);
+        };
+    }
+})();
 
 // --- Init ---
 document.addEventListener('DOMContentLoaded', () => {

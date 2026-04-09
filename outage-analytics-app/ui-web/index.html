@@ -589,12 +589,13 @@ const SECTION_LABELS = {
 function showSection(name) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.getElementById(name).classList.add('active');
-    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
+    document.querySelectorAll('.nav button').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-section') === name);
+    });
     currentSection = name;
     drillStack = [];
     updateBreadcrumb();
-    fetchData();
+    if (window.fetchData) window.fetchData(); else fetchData();
 }
 
 function drillTo(target, from) {
@@ -1805,7 +1806,8 @@ async function clearAllFaults() {
     setTimeout(() => fetchFeatureFlags(), 300);
 }
 
-async function fetchData() {
+// Expose fetchData globally so extensions.js can hook into it
+window.fetchData = async function fetchData() {
     document.getElementById('clock').textContent = new Date().toLocaleTimeString();
     switch(currentSection) {
         case 'overview': await fetchOverview(); break;
@@ -1821,11 +1823,12 @@ async function fetchData() {
         case 'health': await fetchHealth(); break;
         case 'featureflags': await fetchFeatureFlags(); break;
     }
-}
+};
+var fetchData = window.fetchData;
 
 // Initial load + auto-refresh
 fetchData();
-setInterval(fetchData, 15000);
+setInterval(() => { if (window.fetchData) window.fetchData(); else fetchData(); }, 15000);
 setInterval(() => { document.getElementById('clock').textContent = new Date().toLocaleTimeString(); }, 1000);
 </script>
 <script src="extensions.js"></script>
