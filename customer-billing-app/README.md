@@ -1,9 +1,6 @@
 # Customer Billing Platform
 
-A .NET 6 microservices application for utility customer billing, invoice management, and payment processing. Deployed on AKS with Dynatrace OneAgent.
-
-**Access:** http://40.124.209.164  
-**Namespace:** `utility-customer-billing`
+A .NET 6 microservices application for utility customer billing, invoice management, and payment processing. Deployed on Kubernetes with Dynatrace OneAgent.
 
 ## Architecture
 
@@ -52,22 +49,17 @@ All services use in-memory data (no external database).
 ## Build and Deploy
 
 ```bash
-ssh -i ~/.ssh/VPET_key.pem azureuser@52.248.43.42
-cd ~/customer-billing-app
-ACR=vietregistry.azurecr.io
+# Set your registry
+export REGISTRY=<your-registry>
 
 # Build all images
-docker build -t $ACR/customer-service:latest services/customer-service/
-docker build -t $ACR/invoice-service:latest services/invoice-service/
-docker build -t $ACR/payment-service:latest services/payment-service/
-docker build -t $ACR/billing-gateway:latest gateway/
-docker build -t $ACR/billing-ui:latest ui-web/
-
-# Push and deploy
-for img in customer-service invoice-service payment-service billing-gateway billing-ui; do
-  docker push $ACR/$img:latest
+for svc in customer-service invoice-service payment-service billing-gateway billing-ui; do
+  docker build -t $REGISTRY/$svc:latest services/$svc/ 2>/dev/null || \
+  docker build -t $REGISTRY/$svc:latest $svc/
+  docker push $REGISTRY/$svc:latest
 done
 
+# Deploy
 kubectl apply -f k8s/all-in-one.yaml
 ```
 

@@ -122,9 +122,9 @@ for cells in [hdr]:
                 run.bold = True
 
 rows_data = [
-    ('Customer Billing App', 'utility-customer-billing', '5', '40.124.209.164'),
-    ('Outage Analytics App', 'utility-outage-analytics', '16', '20.165.22.240'),
-    ('Total', '—', '21', '—'),
+    ('Customer Billing App', 'customer-billing', '5', '<app-endpoint>'),
+    ('Outage Analytics App', 'outage-analytics', '24', '<app-endpoint>'),
+    ('Total', '—', '29', '—'),
 ]
 for rd in rows_data:
     row = table.add_row().cells
@@ -237,13 +237,13 @@ for s_text in stores:
 doc.add_heading('7. Infrastructure & Deployment', level=1)
 
 infra_items = [
-    ('AKS Cluster', 'VPAKSeasytrade — Kubernetes 1.31.13, Standard_D4ds_v5 nodes'),
-    ('Azure Container Registry', 'vietregistry.azurecr.io — private Docker image registry'),
-    ('Build VM', '52.248.43.42 — Ubuntu VM for Docker builds via SSH'),
-    ('Namespaces', 'utility-outage-analytics (16 pods), utility-customer-billing (5 pods)'),
-    ('Image Pull Secret', 'acr-secret — Kubernetes secret for ACR authentication'),
-    ('Load Balancers', 'Azure LB on analytics-ui (20.165.22.240:80) and billing-ui (40.124.209.164:80)'),
-    ('Dynatrace OneAgent', 'Full-stack monitoring via DaemonSet on all AKS nodes'),
+    ('Kubernetes Cluster', 'AKS or equivalent — managed Kubernetes with autoscaling node pool'),
+    ('Container Registry', 'Private Docker image registry (ACR, Docker Hub, etc.)'),
+    ('Build Host', 'VM or CI server for Docker builds'),
+    ('Namespaces', 'outage-analytics (24 pods), customer-billing (5 pods)'),
+    ('Image Pull Secret', 'Kubernetes secret for registry authentication'),
+    ('Load Balancers / Ingress', 'L7 routing with TLS termination for both apps'),
+    ('Dynatrace OneAgent', 'Full-stack monitoring via DaemonSet on all nodes'),
 ]
 table = doc.add_table(rows=1, cols=2)
 table.style = 'Light Grid Accent 1'
@@ -348,13 +348,13 @@ for row_data in metrics:
 doc.add_heading('11. Build & Deployment Process', level=1)
 doc.add_paragraph('Each iteration followed a consistent build-deploy pipeline:')
 steps = [
-    'Code Development — Edit source files locally (macOS)',
-    'Transfer to Build VM — SCP files to Azure VM (52.248.43.42) via SSH',
-    'Docker Build — Multi-stage Docker builds on the VM (e.g., .NET SDK → runtime, Maven → JRE, Go → scratch)',
-    'Push to ACR — Docker push to vietregistry.azurecr.io',
+    'Code Development — Edit source files locally',
+    'Transfer to Build Host — SCP or CI pipeline to build server',
+    'Docker Build — Multi-stage Docker builds (e.g., .NET SDK → runtime, Maven → JRE, Go → scratch)',
+    'Push to Registry — Docker push to container registry',
     'Kubernetes Deploy — kubectl rollout restart deployment to pull latest images',
     'Verification — kubectl get pods to confirm all pods Running, test endpoints',
-    'Git Commit & Push — Commit changes to github.com/vietpham123/utility-demo (main branch)',
+    'Git Commit & Push — Commit changes to repository (main branch)',
 ]
 for i, step in enumerate(steps, 1):
     doc.add_paragraph(f'{i}. {step}')
@@ -379,13 +379,12 @@ for title, desc in iterations:
 doc.add_page_break()
 doc.add_heading('Document Information', level=1)
 info_items = [
-    ('Author', 'Viet Pham — Dynatrace'),
+    ('Author', 'Viet Pham'),
     ('Date', datetime.now().strftime('%B %d, %Y')),
-    ('Platform Version', 'v1.0 (commit a916d39)'),
-    ('GitHub Repository', 'https://github.com/vietpham123/utility-demo'),
-    ('Analytics UI', 'http://20.165.22.240'),
-    ('Billing UI', 'http://40.124.209.164'),
-    ('AKS Cluster', 'VPAKSeasytrade (Standard_D4ds_v5)'),
+    ('Platform Version', 'v1.0'),
+    ('Analytics UI', '<analytics-app-endpoint>'),
+    ('Billing UI', '<billing-app-endpoint>'),
+    ('Kubernetes Cluster', 'Managed Kubernetes'),
 ]
 table = doc.add_table(rows=1, cols=2)
 table.style = 'Light Grid Accent 1'

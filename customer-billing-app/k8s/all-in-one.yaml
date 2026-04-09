@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: customer-service
-        image: vietregistry.azurecr.io/customer-service:latest
+        image: <YOUR_REGISTRY>/customer-service:latest
         ports:
         - containerPort: 80
         resources:
@@ -71,7 +71,7 @@ spec:
     spec:
       containers:
       - name: invoice-service
-        image: vietregistry.azurecr.io/invoice-service:latest
+        image: <YOUR_REGISTRY>/invoice-service:latest
         ports:
         - containerPort: 80
         resources:
@@ -125,7 +125,7 @@ spec:
     spec:
       containers:
       - name: payment-service
-        image: vietregistry.azurecr.io/payment-service:latest
+        image: <YOUR_REGISTRY>/payment-service:latest
         ports:
         - containerPort: 80
         resources:
@@ -179,7 +179,7 @@ spec:
     spec:
       containers:
       - name: billing-gateway
-        image: vietregistry.azurecr.io/billing-gateway:latest
+        image: <YOUR_REGISTRY>/billing-gateway:latest
         ports:
         - containerPort: 80
         resources:
@@ -233,7 +233,7 @@ spec:
     spec:
       containers:
       - name: billing-ui
-        image: vietregistry.azurecr.io/billing-ui:latest
+        image: <YOUR_REGISTRY>/billing-ui:latest
         ports:
         - containerPort: 80
         resources:

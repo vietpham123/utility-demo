@@ -25,7 +25,7 @@ public class ScadaSimulatorService : BackgroundService
         var dbPort = Environment.GetEnvironmentVariable("DB_PORT") ?? "5432";
         var dbName = Environment.GetEnvironmentVariable("DB_NAME") ?? "utilitydb";
         var dbUser = Environment.GetEnvironmentVariable("DB_USER") ?? "utilityuser";
-        var dbPass = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "utility2026!";
+        var dbPass = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "<DB_PASSWORD>";
         _dbConn = $"Host={dbHost};Port={dbPort};Database={dbName};Username={dbUser};Password={dbPass}";
         _kafkaBroker = Environment.GetEnvironmentVariable("KAFKA_BROKER") ?? "kafka:9092";
         _redisConn = Environment.GetEnvironmentVariable("REDIS_HOST") ?? "redis";
