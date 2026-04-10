@@ -4,6 +4,63 @@ const logger = require('./logger');
 const app = express();
 app.use(express.json());
 
+// ============================================================
+// Dynatrace Business Events Integration
+// Sends CloudEvents to the Dynatrace Biz Events Ingest API
+// ============================================================
+const DT_TENANT_URL = process.env.DT_TENANT_URL || '';       // e.g. https://<tenant>.apps.dynatrace.com
+const DT_BIZEVENT_TOKEN = process.env.DT_BIZEVENT_TOKEN || ''; // API token with bizevents.ingest scope
+const DT_BIZEVENT_ENABLED = !!(DT_TENANT_URL && DT_BIZEVENT_TOKEN);
+const EVENT_PROVIDER = 'genericutility.event.provider';
+
+if (DT_BIZEVENT_ENABLED) {
+  logger.info('Dynatrace Business Events ENABLED', { tenant: DT_TENANT_URL });
+} else {
+  logger.info('Dynatrace Business Events DISABLED (set DT_TENANT_URL and DT_BIZEVENT_TOKEN to enable)');
+}
+
+/**
+ * Send a business event to Dynatrace Biz Events Ingest API.
+ * @param {string} eventType - CloudEvent type (e.g. 'outage.created')
+ * @param {object} data - Event payload
+ */
+async function sendBizEvent(eventType, data) {
+  if (!DT_BIZEVENT_ENABLED) return;
+  const cloudEvent = {
+    specversion: '1.0',
+    id: `${eventType}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    source: EVENT_PROVIDER,
+    type: eventType,
+    time: new Date().toISOString(),
+    data
+  };
+  try {
+    await axios.post(
+      `${DT_TENANT_URL}/api/v2/bizevents/ingest`,
+      cloudEvent,
+      {
+        headers: {
+          'Content-Type': 'application/cloudevent+json',
+          Authorization: `Api-Token ${DT_BIZEVENT_TOKEN}`
+        },
+        timeout: 5000
+      }
+    );
+    logger.debug('BizEvent sent', { type: eventType });
+  } catch (err) {
+    logger.warn('BizEvent send failed', { type: eventType, error: err.message });
+  }
+}
+
+/**
+ * Send multiple business events in a batch (fire-and-forget).
+ * @param {Array<{type: string, data: object}>} events
+ */
+function sendBizEvents(events) {
+  if (!DT_BIZEVENT_ENABLED) return;
+  events.forEach(e => sendBizEvent(e.type, e.data));
+}
+
 const OUTAGE_URL = process.env.OUTAGE_SERVICE_URL || 'http://outage-service:3000';
 const USAGE_URL = process.env.USAGE_SERVICE_URL || 'http://usage-service:3000';
 const SCADA_URL = process.env.SCADA_SERVICE_URL || 'http://scada-service';
@@ -489,7 +546,186 @@ app.post('/api/simulate/cycle', async (req, res) => {
 
   const durationMs = Date.now() - cycleStart;
   logger.info('Simulation cycle complete', { durationMs, waves: 6, services: Object.keys(results).length });
-  res.json({ status: 'Cycle complete', durationMs, results });
+
+  // ---- Dynatrace Business Events: emit events from simulation results ----
+  const bizEvents = [];
+  const region = ['northeast', 'southeast', 'midwest', 'southwest', 'northwest', 'central'][Math.floor(Math.random() * 6)];
+
+  // SCADA telemetry event
+  if (results.scada && !results.scada.error) {
+    const s = results.scada;
+    bizEvents.push({ type: 'scada.telemetry.received', data: {
+      'event.provider': EVENT_PROVIDER,
+      region,
+      sensors: s.sensorsGenerated || s.sensors || 1,
+      alerts: s.alertsGenerated || s.alerts || 0,
+      status: s.status || 'ok',
+      timestamp: new Date().toISOString()
+    }});
+  }
+
+  // Weather observation event
+  if (results.weather && !results.weather.error) {
+    const w = results.weather;
+    bizEvents.push({ type: 'weather.observation.recorded', data: {
+      'event.provider': EVENT_PROVIDER,
+      region,
+      'temperature.f': w.temperatureF || w.temperature || null,
+      'wind.speed.mph': w.windSpeedMph || w.windSpeed || null,
+      severity: w.severity || 'none',
+      condition: w.condition || 'clear',
+      'storm.mode': w.stormModeActive || false,
+      timestamp: new Date().toISOString()
+    }});
+  }
+
+  // Weather correlation event
+  if (results.weatherCorrelation && !results.weatherCorrelation.error) {
+    const wc = results.weatherCorrelation;
+    bizEvents.push({ type: 'weather.correlation.completed', data: {
+      'event.provider': EVENT_PROVIDER,
+      region,
+      'correlation.score': wc.correlationScore || wc.score || null,
+      'weather.related': wc.weatherRelated || false,
+      'risk.level': wc.riskLevel || 'low',
+      timestamp: new Date().toISOString()
+    }});
+  }
+
+  // Outage event
+  if (results.outage && !results.outage.error) {
+    const o = results.outage;
+    const outageData = o.outage || o;
+    bizEvents.push({ type: 'outage.detected', data: {
+      'event.provider': EVENT_PROVIDER,
+      'outage.id': outageData.id || o.outageId || `OUT-${Date.now()}`,
+      region,
+      cause: outageData.cause || o.cause || 'unknown',
+      'customers.affected': outageData.affectedCustomers || outageData.customersAffected || o.customersAffected || 0,
+      priority: outageData.priority || o.priority || 'medium',
+      'equipment.type': outageData.equipmentType || o.equipmentType || 'unknown',
+      status: outageData.status || 'Active',
+      timestamp: new Date().toISOString()
+    }});
+  }
+
+  // Usage event
+  if (results.usage && !results.usage.error) {
+    const u = results.usage;
+    bizEvents.push({ type: 'usage.reading.recorded', data: {
+      'event.provider': EVENT_PROVIDER,
+      region,
+      'customer.id': u.customerId || 'CUST-sim',
+      'usage.kwh': u.usageKWh || u.totalKWh || 0,
+      'peak.kw': u.peakKW || 0,
+      'total.readings': u.totalReadings || u.readingsCount || 1,
+      timestamp: new Date().toISOString()
+    }});
+  }
+
+  // Meter data event
+  if (results.meter && !results.meter.error) {
+    const m = results.meter;
+    bizEvents.push({ type: 'meter.reading.validated', data: {
+      'event.provider': EVENT_PROVIDER,
+      region,
+      'meter.id': m.meterId || 'MTR-sim',
+      'reading.kwh': m.readingKwh || m.totalKwh || 0,
+      'voltage.v': m.voltageV || 0,
+      'power.factor': m.powerFactor || 0,
+      'quality.flag': m.qualityFlag || 'normal',
+      anomalies: m.anomaliesDetected || m.anomalies || 0,
+      timestamp: new Date().toISOString()
+    }});
+    // Emit anomaly bizevent if detected
+    if ((m.anomaliesDetected || m.anomalies || 0) > 0) {
+      bizEvents.push({ type: 'meter.anomaly.detected', data: {
+        'event.provider': EVENT_PROVIDER,
+        region,
+        'meter.id': m.meterId || 'MTR-sim',
+        'anomaly.type': m.anomalyType || 'usage_spike',
+        severity: m.severity || 'medium',
+        timestamp: new Date().toISOString()
+      }});
+    }
+  }
+
+  // Forecast event
+  if (results.forecast && !results.forecast.error) {
+    const f = results.forecast;
+    bizEvents.push({ type: 'demand.forecast.generated', data: {
+      'event.provider': EVENT_PROVIDER,
+      region,
+      'peak.demand.mw': f.peakDemandMW || f.peakDemand || 0,
+      'forecast.confidence': f.confidence || 0,
+      'load.factor': f.loadFactor || 0,
+      timestamp: new Date().toISOString()
+    }});
+  }
+
+  // Reliability event
+  if (results.reliability && !results.reliability.error) {
+    const r = results.reliability;
+    bizEvents.push({ type: 'reliability.calculated', data: {
+      'event.provider': EVENT_PROVIDER,
+      region,
+      saidi: r.saidi || r.SAIDI || 0,
+      saifi: r.saifi || r.SAIFI || 0,
+      caidi: r.caidi || r.CAIDI || 0,
+      maifi: r.maifi || r.MAIFI || 0,
+      'total.interruptions': r.totalInterruptions || 0,
+      'total.customer.minutes': r.totalCustomerMinutes || 0,
+      timestamp: new Date().toISOString()
+    }});
+  }
+
+  // Crew dispatch event
+  if (results.crew && !results.crew.error) {
+    const c = results.crew;
+    const dispatch = c.dispatch || c;
+    bizEvents.push({ type: 'crew.dispatched', data: {
+      'event.provider': EVENT_PROVIDER,
+      'dispatch.id': dispatch.dispatchId || dispatch.id || `DSP-${Date.now()}`,
+      region,
+      'crew.name': dispatch.crewName || dispatch.crew || 'unknown',
+      priority: dispatch.priority || 'medium',
+      'affected.customers': dispatch.affectedCustomers || 0,
+      'etr.minutes': dispatch.etrMinutes || dispatch.etr || 0,
+      status: dispatch.status || 'Dispatched',
+      timestamp: new Date().toISOString()
+    }});
+  }
+
+  // Notification event
+  if (results.notifications && !results.notifications.error) {
+    const n = results.notifications;
+    bizEvents.push({ type: 'notification.sent', data: {
+      'event.provider': EVENT_PROVIDER,
+      region,
+      channel: n.channel || 'multi',
+      'total.sent': n.totalSent || n.sent || 1,
+      'delivery.success': n.deliverySuccess || n.delivered || 0,
+      'delivery.failed': n.deliveryFailed || n.failed || 0,
+      timestamp: new Date().toISOString()
+    }});
+  }
+
+  // Alert correlation event
+  if (results.alertCorrelation && !results.alertCorrelation.error) {
+    const ac = results.alertCorrelation;
+    bizEvents.push({ type: 'alert.correlated', data: {
+      'event.provider': EVENT_PROVIDER,
+      region,
+      'correlated.alerts': ac.correlatedAlerts || ac.total || 0,
+      'risk.score': ac.riskScore || 0,
+      timestamp: new Date().toISOString()
+    }});
+  }
+
+  // Fire all business events (non-blocking)
+  sendBizEvents(bizEvents);
+
+  res.json({ status: 'Cycle complete', durationMs, bizEventsSent: bizEvents.length, results });
 });
 
 // ============================================================

@@ -1,0 +1,1447 @@
+{
+  "version": 20,
+  "variables": [
+    {
+      "version": 2,
+      "key": "Namespace",
+      "type": "query",
+      "visible": true,
+      "editable": true,
+      "input": "fetch spans\n| filter k8s.namespace.name == \"utility-outage-analytics\" or k8s.namespace.name == \"utility-customer-billing\"\n| fields k8s.namespace.name\n| dedup k8s.namespace.name",
+      "multiple": false
+    }
+  ],
+  "tiles": {
+    "0": {
+      "title": "",
+      "type": "data",
+      "query": "data record(a=\"GenericUtility Platform\" )",
+      "visualization": "singleValue",
+      "visualizationSettings": {
+        "singleValue": {
+          "labelMode": "none",
+          "isIconVisible": true,
+          "prefixIcon": "FlashIcon",
+          "colorThresholdTarget": "background"
+        },
+        "autoSelectVisualization": false,
+        "thresholds": [
+          {
+            "id": 1,
+            "field": "a",
+            "title": "",
+            "isEnabled": true,
+            "rules": [
+              {
+                "id": 1,
+                "color": "#478ACA",
+                "comparator": "!=",
+                "label": "",
+                "value": "0"
+              }
+            ]
+          }
+        ]
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "1": {
+      "type": "markdown",
+      "content": "**GenericUtility Platform** — Polyglot microservices (20 services, 10 languages) running on AKS.\n\n**Apps:** Customer Billing (.NET 6) · Outage Analytics (Node.js, Java, Python, Go, Ruby, PHP, Elixir, Kotlin, Rust, .NET)\n\n**Namespaces:** `utility-customer-billing` · `utility-outage-analytics`"
+    },
+    "2": {
+      "title": "⚡ Total Requests - $Namespace",
+      "type": "data",
+      "query": "fetch spans\n| filter k8s.namespace.name == $Namespace\n| filter request.is_root_span == true\n| summarize totalRequests = count()",
+      "visualization": "singleValue",
+      "visualizationSettings": {
+        "singleValue": {
+          "label": "SERVICE KPI",
+          "recordField": "totalRequests",
+          "colorThresholdTarget": "background",
+          "sparklineSettings": {
+            "isVisible": false
+          },
+          "trend": {
+            "isVisible": false
+          }
+        },
+        "thresholds": [],
+        "unitsOverrides": [
+          {
+            "identifier": "totalRequests",
+            "unitCategory": "unspecified",
+            "baseUnit": "count",
+            "displayUnit": null,
+            "decimals": 0,
+            "suffix": "",
+            "delimiter": true,
+            "added": 1765396484477
+          }
+        ]
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "3": {
+      "title": "⏱️ Avg Response Time - $Namespace",
+      "type": "data",
+      "query": "fetch spans\n| filter k8s.namespace.name == $Namespace\n| filter request.is_root_span == true\n| summarize avgResponseTime = avg(duration)",
+      "visualization": "singleValue",
+      "visualizationSettings": {
+        "singleValue": {
+          "label": "SERVICE KPI",
+          "recordField": "avgResponseTime",
+          "colorThresholdTarget": "background"
+        },
+        "thresholds": [],
+        "unitsOverrides": [
+          {
+            "identifier": "avgResponseTime",
+            "unitCategory": "time",
+            "baseUnit": "nanosecond",
+            "displayUnit": null,
+            "decimals": 1,
+            "suffix": "",
+            "delimiter": true,
+            "added": 1765396484477
+          }
+        ]
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "4": {
+      "title": "🚨 Error Rate (%) - $Namespace",
+      "type": "data",
+      "query": "fetch spans\n| filter k8s.namespace.name == $Namespace\n| filter request.is_root_span == true\n| summarize total = count(), failed = countIf(request.is_failed == true)\n| fieldsAdd errorRate = (toDouble(failed) / toDouble(total)) * 100",
+      "visualization": "singleValue",
+      "visualizationSettings": {
+        "singleValue": {
+          "label": "SERVICE KPI",
+          "recordField": "errorRate",
+          "colorThresholdTarget": "background"
+        },
+        "thresholds": [
+          {
+            "id": 1,
+            "field": "errorRate",
+            "title": "",
+            "isEnabled": true,
+            "rules": [
+              {
+                "id": 1,
+                "color": {
+                  "Default": "var(--dt-colors-charts-status-critical-default, #c62239)"
+                },
+                "comparator": "≥",
+                "label": "Critical",
+                "value": 5
+              },
+              {
+                "id": 2,
+                "color": "#F8B000",
+                "comparator": "≥",
+                "label": "Warning",
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "unitsOverrides": [
+          {
+            "identifier": "errorRate",
+            "unitCategory": "percentage",
+            "baseUnit": "percent",
+            "displayUnit": null,
+            "decimals": 2,
+            "suffix": "%",
+            "delimiter": true,
+            "added": 1765396484477
+          }
+        ]
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "5": {
+      "title": "🏥 P95 Response Time - $Namespace",
+      "type": "data",
+      "query": "fetch spans\n| filter k8s.namespace.name == $Namespace\n| filter request.is_root_span == true\n| summarize p95ResponseTime = percentile(duration, 95)",
+      "visualization": "singleValue",
+      "visualizationSettings": {
+        "singleValue": {
+          "label": "SERVICE KPI",
+          "recordField": "p95ResponseTime",
+          "colorThresholdTarget": "background"
+        },
+        "thresholds": [],
+        "unitsOverrides": [
+          {
+            "identifier": "p95ResponseTime",
+            "unitCategory": "time",
+            "baseUnit": "nanosecond",
+            "displayUnit": null,
+            "decimals": 1,
+            "suffix": "",
+            "delimiter": true,
+            "added": 1765396484477
+          }
+        ]
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "6": {
+      "title": "📊 Request Throughput Over Time - $Namespace",
+      "type": "data",
+      "query": "fetch spans\n| filter k8s.namespace.name == $Namespace\n| filter request.is_root_span == true\n| makeTimeseries requests = count(), bins:50",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "chartSettings": {
+          "fieldMapping": {
+            "leftAxisValues": [
+              "requests"
+            ],
+            "timestamp": "timeframe"
+          },
+          "gapPolicy": "connect",
+          "seriesOverrides": [
+            {
+              "seriesId": [
+                "requests"
+              ],
+              "override": {
+                "color": "#478ACA"
+              }
+            }
+          ]
+        },
+        "thresholds": [],
+        "unitsOverrides": []
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "7": {
+      "title": "📈 Avg Response Time by Service - $Namespace",
+      "type": "data",
+      "query": "fetch spans\n| filter k8s.namespace.name == $Namespace\n| filter request.is_root_span == true\n| fieldsAdd service_name = entityName(dt.entity.service)\n| makeTimeseries avgDuration = avg(duration), by:{service_name}, bins:40",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "chartSettings": {
+          "fieldMapping": {
+            "leftAxisValues": [
+              "avgDuration"
+            ],
+            "timestamp": "timeframe"
+          },
+          "gapPolicy": "connect"
+        },
+        "thresholds": [],
+        "unitsOverrides": []
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "8": {
+      "title": "❌ Failed Requests by Service - $Namespace",
+      "type": "data",
+      "query": "fetch spans\n| filter k8s.namespace.name == $Namespace\n| filter request.is_root_span == true\n| fieldsAdd service_name = entityName(dt.entity.service)\n| makeTimeseries failed = countIf(request.is_failed == true), by:{service_name}, bins:40",
+      "visualization": "barChart",
+      "visualizationSettings": {
+        "chartSettings": {
+          "fieldMapping": {
+            "leftAxisValues": [
+              "failed"
+            ],
+            "timestamp": "timeframe"
+          },
+          "seriesOverrides": [
+            {
+              "seriesId": [
+                "failed"
+              ],
+              "override": {
+                "color": "#EB6823"
+              }
+            }
+          ]
+        },
+        "thresholds": [],
+        "unitsOverrides": []
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "9": {
+      "title": "🏗️ Service Health Assessment - $Namespace",
+      "type": "data",
+      "query": "fetch spans\n| filter k8s.namespace.name == $Namespace\n| filter request.is_root_span == true\n| fieldsAdd service_name = entityName(dt.entity.service)\n| summarize\n    total = count(),\n    errors = countIf(request.is_failed == true),\n    slow = countIf(duration > 3000000000),\n    avg_duration = avg(duration),\n    p95_duration = percentile(duration, 95),\n    by: {service_name}\n| fieldsAdd\n    error_rate = round((errors * 100.0) / total, decimals:2),\n    slow_rate = round((slow * 100.0) / total, decimals:2)\n| fieldsAdd\n    health = if(\n        error_rate < 1.0 and slow_rate < 5.0, \"✅ Healthy\",\n        else: if(error_rate < 5.0, \"⚠️ Degraded\", else: \"🔴 Critical\")\n    )\n| sort error_rate desc\n| fields service_name, health, total, errors, error_rate, p95_duration",
+      "visualization": "table",
+      "visualizationSettings": {
+        "thresholds": [],
+        "unitsOverrides": [
+          {
+            "identifier": "p95_duration",
+            "unitCategory": "time",
+            "baseUnit": "nanosecond",
+            "displayUnit": null,
+            "decimals": 1,
+            "suffix": "",
+            "delimiter": true,
+            "added": 1765396484478
+          }
+        ]
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "10": {
+      "title": "🔀 Requests by Endpoint - $Namespace",
+      "type": "data",
+      "query": "fetch spans\n| filter k8s.namespace.name == $Namespace\n| filter request.is_root_span == true\n| summarize `Request Count` = count(), by:{endpoint.name}\n| sort `Request Count` desc\n| limit 15",
+      "visualization": "donutChart",
+      "visualizationSettings": {
+        "chartSettings": {
+          "circleChartSettings": {
+            "valueType": "relative",
+            "showTotalValue": true,
+            "groupingThresholdType": "relative"
+          }
+        },
+        "legend": {
+          "ratio": 30
+        },
+        "thresholds": [],
+        "unitsOverrides": [
+          {
+            "identifier": "Request Count",
+            "unitCategory": "unspecified",
+            "baseUnit": "none",
+            "displayUnit": null,
+            "decimals": 0,
+            "suffix": "",
+            "delimiter": false,
+            "added": 1765396484478
+          }
+        ]
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "11": {
+      "title": "",
+      "type": "data",
+      "query": "data record(a=\"Service Performance\" )",
+      "visualization": "singleValue",
+      "visualizationSettings": {
+        "singleValue": {
+          "labelMode": "none",
+          "isIconVisible": true,
+          "prefixIcon": "RangeIcon",
+          "colorThresholdTarget": "background"
+        },
+        "autoSelectVisualization": false,
+        "thresholds": [
+          {
+            "id": 1,
+            "field": "a",
+            "title": "",
+            "isEnabled": true,
+            "rules": [
+              {
+                "id": 0,
+                "color": "#F8B000",
+                "comparator": "!=",
+                "label": "",
+                "value": "0"
+              }
+            ]
+          }
+        ]
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "12": {
+      "title": "",
+      "type": "data",
+      "query": "data record(a=\"Kubernetes Infrastructure\" )",
+      "visualization": "singleValue",
+      "visualizationSettings": {
+        "singleValue": {
+          "labelMode": "none",
+          "isIconVisible": true,
+          "prefixIcon": "ContainerIcon",
+          "colorThresholdTarget": "background"
+        },
+        "autoSelectVisualization": false,
+        "thresholds": [
+          {
+            "id": 1,
+            "field": "a",
+            "title": "",
+            "isEnabled": true,
+            "rules": [
+              {
+                "id": 0,
+                "color": "#F8B000",
+                "comparator": "!=",
+                "label": "",
+                "value": "0"
+              }
+            ]
+          }
+        ]
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "13": {
+      "title": "🖥️ CPU Usage by Workload - $Namespace",
+      "type": "data",
+      "query": "timeseries cpu_usage = avg(dt.kubernetes.container.cpu_usage),\n  by: {k8s.workload.name, k8s.namespace.name}\n| filter k8s.namespace.name == $Namespace",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "chartSettings": {
+          "fieldMapping": {
+            "leftAxisValues": [
+              "cpu_usage"
+            ],
+            "timestamp": "timeframe"
+          },
+          "gapPolicy": "connect"
+        },
+        "thresholds": [],
+        "unitsOverrides": []
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "14": {
+      "title": "💾 Memory Usage by Workload (MB) - $Namespace",
+      "type": "data",
+      "query": "timeseries memory = avg(dt.kubernetes.container.memory_working_set),\n  by: {k8s.workload.name, k8s.namespace.name}\n| filter k8s.namespace.name == $Namespace\n| fieldsAdd avg_memory_mb = arrayAvg(memory) / 1048576",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "chartSettings": {
+          "fieldMapping": {
+            "leftAxisValues": [
+              "memory"
+            ],
+            "timestamp": "timeframe"
+          },
+          "gapPolicy": "connect"
+        },
+        "thresholds": [],
+        "unitsOverrides": []
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "15": {
+      "title": "🔄 Container Restarts - $Namespace",
+      "type": "data",
+      "query": "timeseries restarts = max(dt.kubernetes.container.restarts),\n  by: {k8s.workload.name, k8s.namespace.name}\n| filter k8s.namespace.name == $Namespace\n| fieldsAdd restart_count = arrayMax(restarts)\n| filter restart_count > 0\n| sort restart_count desc",
+      "visualization": "table",
+      "visualizationSettings": {
+        "thresholds": [],
+        "unitsOverrides": []
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "16": {
+      "title": "📋 Error Logs by Deployment - $Namespace",
+      "type": "data",
+      "query": "fetch logs\n| filter k8s.namespace.name == $Namespace\n| filter severity == \"ERROR\"\n| summarize error_count = count(), by:{k8s.deployment.name}\n| sort error_count desc\n| limit 15",
+      "visualization": "barChart",
+      "visualizationSettings": {
+        "chartSettings": {
+          "fieldMapping": {
+            "leftAxisValues": [
+              "error_count"
+            ],
+            "categoryAxis": "k8s.deployment.name"
+          },
+          "seriesOverrides": [
+            {
+              "seriesId": [
+                "error_count"
+              ],
+              "override": {
+                "color": "#EB6823"
+              }
+            }
+          ]
+        },
+        "thresholds": [],
+        "unitsOverrides": []
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "17": {
+      "title": "📝 Log Volume by Severity - $Namespace",
+      "type": "data",
+      "query": "fetch logs\n| filter k8s.namespace.name == $Namespace\n| makeTimeseries errors = countIf(severity == \"ERROR\"), warnings = countIf(severity == \"WARN\"), info = countIf(severity == \"INFO\"), bins:40",
+      "visualization": "barChart",
+      "visualizationSettings": {
+        "chartSettings": {
+          "fieldMapping": {
+            "leftAxisValues": [
+              "errors",
+              "warnings",
+              "info"
+            ],
+            "timestamp": "timeframe"
+          },
+          "seriesOverrides": [
+            {
+              "seriesId": [
+                "errors"
+              ],
+              "override": {
+                "color": "#EB6823"
+              }
+            },
+            {
+              "seriesId": [
+                "warnings"
+              ],
+              "override": {
+                "color": "#F8B000"
+              }
+            },
+            {
+              "seriesId": [
+                "info"
+              ],
+              "override": {
+                "color": "#478ACA"
+              }
+            }
+          ]
+        },
+        "thresholds": [],
+        "unitsOverrides": []
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "18": {
+      "title": "",
+      "type": "data",
+      "query": "data record(a=\"Logs & Errors\" )",
+      "visualization": "singleValue",
+      "visualizationSettings": {
+        "singleValue": {
+          "labelMode": "none",
+          "isIconVisible": true,
+          "prefixIcon": "AlertIcon",
+          "colorThresholdTarget": "background"
+        },
+        "autoSelectVisualization": false,
+        "thresholds": [
+          {
+            "id": 1,
+            "field": "a",
+            "title": "",
+            "isEnabled": true,
+            "rules": [
+              {
+                "id": 0,
+                "color": "#F8B000",
+                "comparator": "!=",
+                "label": "",
+                "value": "0"
+              }
+            ]
+          }
+        ]
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "19": {
+      "title": "🔗 Top Slow Endpoints (P95) - $Namespace",
+      "type": "data",
+      "query": "fetch spans\n| filter k8s.namespace.name == $Namespace\n| filter request.is_root_span == true\n| summarize\n    requests = count(),\n    avg_duration = avg(duration),\n    p95_duration = percentile(duration, 95),\n    error_count = countIf(request.is_failed == true),\n    by: {endpoint.name}\n| fieldsAdd error_rate = round((error_count * 100.0) / requests, decimals:2)\n| sort p95_duration desc\n| limit 10\n| fields endpoint.name, requests, avg_duration, p95_duration, error_rate",
+      "visualization": "table",
+      "visualizationSettings": {
+        "thresholds": [],
+        "unitsOverrides": [
+          {
+            "identifier": "avg_duration",
+            "unitCategory": "time",
+            "baseUnit": "nanosecond",
+            "displayUnit": null,
+            "decimals": 1,
+            "suffix": "",
+            "delimiter": true,
+            "added": 1765396484478
+          },
+          {
+            "identifier": "p95_duration",
+            "unitCategory": "time",
+            "baseUnit": "nanosecond",
+            "displayUnit": null,
+            "decimals": 1,
+            "suffix": "",
+            "delimiter": true,
+            "added": 1765396484478
+          }
+        ]
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "20": {
+      "title": "🌡️ Service Response Time Heatmap - $Namespace",
+      "type": "data",
+      "query": "fetch spans\n| filter k8s.namespace.name == $Namespace\n| filter request.is_root_span == true\n| fieldsAdd service_name = entityName(dt.entity.service)\n| summarize\n    requests = count(),\n    avg_duration_ms = avg(duration) / 1000000,\n    p95_duration_ms = percentile(duration, 95) / 1000000,\n    error_count = countIf(request.is_failed == true),\n    by: {service_name}\n| fieldsAdd error_rate = round((error_count * 100.0) / requests, decimals:2)\n| sort requests desc",
+      "visualization": "table",
+      "visualizationSettings": {
+        "thresholds": [],
+        "unitsOverrides": []
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "21": {
+      "title": "🧵 Trace Depth Distribution - $Namespace",
+      "type": "data",
+      "query": "fetch spans\n| filter k8s.namespace.name == $Namespace\n| summarize span_count = count(), by:{trace.id}\n| summarize traces = count(), by:{bin(span_count, 5)}",
+      "visualization": "barChart",
+      "visualizationSettings": {
+        "chartSettings": {
+          "fieldMapping": {
+            "leftAxisValues": [
+              "traces"
+            ],
+            "categoryAxis": "bin(span_count, 5)"
+          },
+          "seriesOverrides": [
+            {
+              "seriesId": [
+                "traces"
+              ],
+              "override": {
+                "color": "#478ACA"
+              }
+            }
+          ]
+        },
+        "thresholds": [],
+        "unitsOverrides": []
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "22": {
+      "title": "🔍 Database Operation Performance - $Namespace",
+      "type": "data",
+      "query": "fetch spans\n| filter k8s.namespace.name == $Namespace\n| filter span.kind == \"client\" and isNotNull(db.system)\n| summarize\n    calls = count(),\n    avg_duration = avg(duration),\n    p95_duration = percentile(duration, 95),\n    by: {db.system, db.operation.name}\n| sort avg_duration desc\n| limit 15",
+      "visualization": "table",
+      "visualizationSettings": {
+        "thresholds": [],
+        "unitsOverrides": [
+          {
+            "identifier": "avg_duration",
+            "unitCategory": "time",
+            "baseUnit": "nanosecond",
+            "displayUnit": null,
+            "decimals": 1,
+            "suffix": "",
+            "delimiter": true,
+            "added": 1765396484478
+          },
+          {
+            "identifier": "p95_duration",
+            "unitCategory": "time",
+            "baseUnit": "nanosecond",
+            "displayUnit": null,
+            "decimals": 1,
+            "suffix": "",
+            "delimiter": true,
+            "added": 1765396484478
+          }
+        ]
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "23": {
+      "title": "",
+      "type": "data",
+      "query": "data record(a=\"Distributed Tracing\" )",
+      "visualization": "singleValue",
+      "visualizationSettings": {
+        "singleValue": {
+          "labelMode": "none",
+          "isIconVisible": true,
+          "prefixIcon": "WorkflowsIcon",
+          "colorThresholdTarget": "background"
+        },
+        "autoSelectVisualization": false,
+        "thresholds": [
+          {
+            "id": 1,
+            "field": "a",
+            "title": "",
+            "isEnabled": true,
+            "rules": [
+              {
+                "id": 0,
+                "color": "#F8B000",
+                "comparator": "!=",
+                "label": "",
+                "value": "0"
+              }
+            ]
+          }
+        ]
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "24": {
+      "title": "",
+      "type": "data",
+      "query": "data record(a=\"Business Events\" )",
+      "visualization": "singleValue",
+      "visualizationSettings": {
+        "singleValue": {
+          "labelMode": "none",
+          "isIconVisible": true,
+          "prefixIcon": "BusinessAnalyticsIcon",
+          "colorThresholdTarget": "background"
+        },
+        "autoSelectVisualization": false,
+        "thresholds": [
+          {
+            "id": 1,
+            "field": "a",
+            "title": "",
+            "isEnabled": true,
+            "rules": [
+              {
+                "id": 0,
+                "color": "#F8B000",
+                "comparator": "!=",
+                "label": "",
+                "value": "0"
+              }
+            ]
+          }
+        ]
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "25": {
+      "title": "⚡ Total Outages Detected",
+      "type": "data",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"outage.detected\"\n| summarize totalOutages = count()",
+      "visualization": "singleValue",
+      "visualizationSettings": {
+        "singleValue": {
+          "label": "BUSINESS KPI",
+          "recordField": "totalOutages",
+          "colorThresholdTarget": "background"
+        },
+        "thresholds": [
+          {
+            "id": 1,
+            "field": "totalOutages",
+            "title": "",
+            "isEnabled": true,
+            "rules": [
+              {
+                "id": 1,
+                "color": {
+                  "Default": "var(--dt-colors-charts-status-critical-default, #c62239)"
+                },
+                "comparator": "≥",
+                "label": "High",
+                "value": 50
+              },
+              {
+                "id": 2,
+                "color": "#F8B000",
+                "comparator": "≥",
+                "label": "Medium",
+                "value": 10
+              }
+            ]
+          }
+        ],
+        "unitsOverrides": [
+          {
+            "identifier": "totalOutages",
+            "unitCategory": "unspecified",
+            "baseUnit": "count",
+            "displayUnit": null,
+            "decimals": 0,
+            "suffix": "",
+            "delimiter": true,
+            "added": 1765396484478
+          }
+        ]
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "26": {
+      "title": "👥 Avg Customers Affected per Outage",
+      "type": "data",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"outage.detected\"\n| summarize avgCustomers = avg(customers.affected)",
+      "visualization": "singleValue",
+      "visualizationSettings": {
+        "singleValue": {
+          "label": "BUSINESS KPI",
+          "recordField": "avgCustomers",
+          "colorThresholdTarget": "background"
+        },
+        "thresholds": [],
+        "unitsOverrides": [
+          {
+            "identifier": "avgCustomers",
+            "unitCategory": "unspecified",
+            "baseUnit": "none",
+            "displayUnit": null,
+            "decimals": 0,
+            "suffix": "",
+            "delimiter": true,
+            "added": 1765396484478
+          }
+        ]
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "27": {
+      "title": "🚛 Crew Dispatches",
+      "type": "data",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"crew.dispatched\"\n| summarize totalDispatches = count()",
+      "visualization": "singleValue",
+      "visualizationSettings": {
+        "singleValue": {
+          "label": "BUSINESS KPI",
+          "recordField": "totalDispatches",
+          "colorThresholdTarget": "background"
+        },
+        "thresholds": [],
+        "unitsOverrides": [
+          {
+            "identifier": "totalDispatches",
+            "unitCategory": "unspecified",
+            "baseUnit": "count",
+            "displayUnit": null,
+            "decimals": 0,
+            "suffix": "",
+            "delimiter": true,
+            "added": 1765396484478
+          }
+        ]
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "28": {
+      "title": "📊 Reliability Index (SAIDI)",
+      "type": "data",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"reliability.calculated\"\n| summarize avgSAIDI = avg(saidi)",
+      "visualization": "singleValue",
+      "visualizationSettings": {
+        "singleValue": {
+          "label": "BUSINESS KPI",
+          "recordField": "avgSAIDI",
+          "colorThresholdTarget": "background"
+        },
+        "thresholds": [],
+        "unitsOverrides": [
+          {
+            "identifier": "avgSAIDI",
+            "unitCategory": "unspecified",
+            "baseUnit": "none",
+            "displayUnit": null,
+            "decimals": 2,
+            "suffix": " min",
+            "delimiter": true,
+            "added": 1765396484478
+          }
+        ]
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "29": {
+      "title": "📈 Outages & Crew Dispatches Over Time",
+      "type": "data",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\"\n| filter event.type == \"outage.detected\" or event.type == \"crew.dispatched\"\n| makeTimeseries outages = countIf(event.type == \"outage.detected\"), dispatches = countIf(event.type == \"crew.dispatched\"), bins:40",
+      "visualization": "barChart",
+      "visualizationSettings": {
+        "chartSettings": {
+          "fieldMapping": {
+            "leftAxisValues": [
+              "outages",
+              "dispatches"
+            ],
+            "timestamp": "timeframe"
+          },
+          "seriesOverrides": [
+            {
+              "seriesId": [
+                "outages"
+              ],
+              "override": {
+                "color": "#EB6823"
+              }
+            },
+            {
+              "seriesId": [
+                "dispatches"
+              ],
+              "override": {
+                "color": "#478ACA"
+              }
+            }
+          ]
+        },
+        "thresholds": [],
+        "unitsOverrides": []
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "30": {
+      "title": "🌩️ Weather Severity Distribution",
+      "type": "data",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"weather.observation.recorded\"\n| summarize `Observations` = count(), by:{severity}",
+      "visualization": "donutChart",
+      "visualizationSettings": {
+        "chartSettings": {
+          "circleChartSettings": {
+            "valueType": "relative",
+            "showTotalValue": true,
+            "groupingThresholdType": "relative"
+          },
+          "categoryOverrides": {
+            "none": { "color": "#478ACA" },
+            "low": { "color": "#F8B000" },
+            "medium": { "color": "#EB6823" },
+            "high": { "color": "#c62239" },
+            "critical": { "color": "#17213D" }
+          }
+        },
+        "legend": { "ratio": 27 },
+        "thresholds": [],
+        "unitsOverrides": []
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "31": {
+      "title": "⚡ Outages by Cause",
+      "type": "data",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"outage.detected\"\n| summarize `Outage Count` = count(), by:{cause}",
+      "visualization": "donutChart",
+      "visualizationSettings": {
+        "chartSettings": {
+          "circleChartSettings": {
+            "valueType": "relative",
+            "showTotalValue": true,
+            "groupingThresholdType": "relative"
+          }
+        },
+        "legend": { "ratio": 27 },
+        "thresholds": [],
+        "unitsOverrides": []
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "32": {
+      "title": "📊 Reliability Indices Trend (SAIDI/SAIFI)",
+      "type": "data",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"reliability.calculated\"\n| makeTimeseries avgSAIDI = avg(saidi), avgSAIFI = avg(saifi), bins:40",
+      "visualization": "lineChart",
+      "visualizationSettings": {
+        "chartSettings": {
+          "fieldMapping": {
+            "leftAxisValues": [
+              "avgSAIDI",
+              "avgSAIFI"
+            ],
+            "timestamp": "timeframe"
+          },
+          "gapPolicy": "connect",
+          "seriesOverrides": [
+            {
+              "seriesId": [
+                "avgSAIDI"
+              ],
+              "override": {
+                "color": "#EB6823"
+              }
+            },
+            {
+              "seriesId": [
+                "avgSAIFI"
+              ],
+              "override": {
+                "color": "#478ACA"
+              }
+            }
+          ]
+        },
+        "thresholds": [],
+        "unitsOverrides": []
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    },
+    "33": {
+      "title": "📋 All Business Events",
+      "type": "data",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\"\n| summarize `Event Count` = count(), by:{event.type}\n| sort `Event Count` desc",
+      "visualization": "barChart",
+      "visualizationSettings": {
+        "chartSettings": {
+          "fieldMapping": {
+            "leftAxisValues": [
+              "Event Count"
+            ],
+            "categoryAxis": "event.type"
+          },
+          "seriesOverrides": [
+            {
+              "seriesId": [
+                "Event Count"
+              ],
+              "override": {
+                "color": "#478ACA"
+              }
+            }
+          ]
+        },
+        "thresholds": [],
+        "unitsOverrides": []
+      },
+      "querySettings": {
+        "maxResultRecords": 1000,
+        "defaultScanLimitGbytes": 500,
+        "maxResultMegaBytes": 100,
+        "defaultSamplingRatio": 10,
+        "enableSampling": false
+      },
+      "davis": {
+        "enabled": false,
+        "davisVisualization": {
+          "isAvailable": true
+        }
+      }
+    }
+  },
+  "layouts": {
+    "0": { "x": 0, "y": 0, "w": 24, "h": 1 },
+    "1": { "x": 0, "y": 1, "w": 24, "h": 2 },
+    "2": { "x": 0, "y": 3, "w": 6, "h": 2 },
+    "3": { "x": 6, "y": 3, "w": 6, "h": 2 },
+    "4": { "x": 12, "y": 3, "w": 6, "h": 2 },
+    "5": { "x": 18, "y": 3, "w": 6, "h": 2 },
+    "11": { "x": 0, "y": 5, "w": 24, "h": 1 },
+    "6": { "x": 0, "y": 6, "w": 12, "h": 4 },
+    "7": { "x": 12, "y": 6, "w": 12, "h": 4 },
+    "8": { "x": 0, "y": 10, "w": 12, "h": 4 },
+    "10": { "x": 12, "y": 10, "w": 12, "h": 4 },
+    "9": { "x": 0, "y": 14, "w": 12, "h": 5 },
+    "19": { "x": 12, "y": 14, "w": 12, "h": 5 },
+    "20": { "x": 0, "y": 19, "w": 24, "h": 4 },
+    "23": { "x": 0, "y": 23, "w": 24, "h": 1 },
+    "21": { "x": 0, "y": 24, "w": 12, "h": 4 },
+    "22": { "x": 12, "y": 24, "w": 12, "h": 4 },
+    "12": { "x": 0, "y": 28, "w": 24, "h": 1 },
+    "13": { "x": 0, "y": 29, "w": 12, "h": 4 },
+    "14": { "x": 12, "y": 29, "w": 12, "h": 4 },
+    "15": { "x": 0, "y": 33, "w": 24, "h": 4 },
+    "18": { "x": 0, "y": 37, "w": 24, "h": 1 },
+    "16": { "x": 0, "y": 38, "w": 12, "h": 4 },
+    "17": { "x": 12, "y": 38, "w": 12, "h": 4 },
+    "24": { "x": 0, "y": 42, "w": 24, "h": 1 },
+    "25": { "x": 0, "y": 43, "w": 6, "h": 2 },
+    "26": { "x": 6, "y": 43, "w": 6, "h": 2 },
+    "27": { "x": 12, "y": 43, "w": 6, "h": 2 },
+    "28": { "x": 18, "y": 43, "w": 6, "h": 2 },
+    "29": { "x": 0, "y": 45, "w": 12, "h": 4 },
+    "30": { "x": 12, "y": 45, "w": 6, "h": 4 },
+    "31": { "x": 18, "y": 45, "w": 6, "h": 4 },
+    "32": { "x": 0, "y": 49, "w": 12, "h": 4 },
+    "33": { "x": 12, "y": 49, "w": 12, "h": 4 }
+  },
+  "importedWithCode": false,
+  "settings": {
+    "defaultTimeframe": {
+      "value": {
+        "from": "now()-1h",
+        "to": "now()"
+      },
+      "enabled": true
+    }
+  }
+}
