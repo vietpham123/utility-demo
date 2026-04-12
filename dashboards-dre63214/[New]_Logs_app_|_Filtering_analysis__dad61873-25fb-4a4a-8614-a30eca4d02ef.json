@@ -1,0 +1,17 @@
+{
+  "id": "dad61873-25fb-4a4a-8614-a30eca4d02ef",
+  "name": "[New] Logs app | Filtering analysis",
+  "type": "dashboard",
+  "version": 10,
+  "owner": "25870e6c-a26b-46e6-8f9a-a413df717057",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "25870e6c-a26b-46e6-8f9a-a413df717057",
+    "createdTime": "2025-05-23T08:49:57.264Z",
+    "lastModifiedBy": "25870e6c-a26b-46e6-8f9a-a413df717057",
+    "lastModifiedTime": "2025-10-02T12:51:06.9Z"
+  },
+  "access": [
+    "read"
+  ]
+}

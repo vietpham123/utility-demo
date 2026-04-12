@@ -1,0 +1,17 @@
+{
+  "id": "68229aa1-6b49-4e0b-9219-7fad65207098",
+  "name": "🚨 App anomaly detectors overview",
+  "type": "dashboard",
+  "version": 286,
+  "owner": "b6b61d03-0e7f-49ef-ab97-672edee5cfa5",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "b6b61d03-0e7f-49ef-ab97-672edee5cfa5",
+    "createdTime": "2025-10-28T10:08:20.26Z",
+    "lastModifiedBy": "b6b61d03-0e7f-49ef-ab97-672edee5cfa5",
+    "lastModifiedTime": "2026-02-11T09:43:47.286Z"
+  },
+  "access": [
+    "read"
+  ]
+}

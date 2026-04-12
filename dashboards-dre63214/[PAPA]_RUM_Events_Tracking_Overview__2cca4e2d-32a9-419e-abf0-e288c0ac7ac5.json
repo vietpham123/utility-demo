@@ -1,0 +1,17 @@
+{
+  "id": "2cca4e2d-32a9-419e-abf0-e288c0ac7ac5",
+  "name": "[PAPA] RUM Events Tracking Overview",
+  "type": "dashboard",
+  "version": 11,
+  "owner": "3c08b0da-29c5-44f8-a616-ab546a0dd062",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "3c08b0da-29c5-44f8-a616-ab546a0dd062",
+    "createdTime": "2026-04-01T12:58:06.721Z",
+    "lastModifiedBy": "ac6009c8-f83b-4bec-a07a-c61e3ce228ac",
+    "lastModifiedTime": "2026-04-03T09:07:42.234Z"
+  },
+  "access": [
+    "read"
+  ]
+}

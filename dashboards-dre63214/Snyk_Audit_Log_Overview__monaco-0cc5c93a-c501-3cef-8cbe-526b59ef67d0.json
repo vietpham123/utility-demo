@@ -1,0 +1,17 @@
+{
+  "id": "monaco-0cc5c93a-c501-3cef-8cbe-526b59ef67d0",
+  "name": "Snyk Audit Log Overview",
+  "type": "dashboard",
+  "version": 881,
+  "owner": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+    "createdTime": "2025-06-26T14:16:05.162Z",
+    "lastModifiedBy": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+    "lastModifiedTime": "2026-04-10T15:12:35.388Z"
+  },
+  "access": [
+    "read"
+  ]
+}

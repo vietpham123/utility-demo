@@ -1,0 +1,17 @@
+{
+  "id": "7eb63d0f-4e02-4558-954d-99c83be473ca",
+  "name": "[DTE] Kyverno - Errors",
+  "type": "dashboard",
+  "version": 2,
+  "owner": "6c5cca5c-1639-4896-8cbf-573633f8f974",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "6c5cca5c-1639-4896-8cbf-573633f8f974",
+    "createdTime": "2025-07-29T10:01:14.942Z",
+    "lastModifiedBy": "6c5cca5c-1639-4896-8cbf-573633f8f974",
+    "lastModifiedTime": "2025-07-29T11:47:52.779Z"
+  },
+  "access": [
+    "read"
+  ]
+}

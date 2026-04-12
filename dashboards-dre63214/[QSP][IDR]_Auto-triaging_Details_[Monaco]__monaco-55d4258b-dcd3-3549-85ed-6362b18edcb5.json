@@ -1,0 +1,17 @@
+{
+  "id": "monaco-55d4258b-dcd3-3549-85ed-6362b18edcb5",
+  "name": "[QSP][IDR] Auto-triaging Details [Monaco]",
+  "type": "dashboard",
+  "version": 380,
+  "owner": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+    "createdTime": "2025-12-04T15:30:56.308Z",
+    "lastModifiedBy": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+    "lastModifiedTime": "2026-04-10T15:12:34.598Z"
+  },
+  "access": [
+    "read"
+  ]
+}

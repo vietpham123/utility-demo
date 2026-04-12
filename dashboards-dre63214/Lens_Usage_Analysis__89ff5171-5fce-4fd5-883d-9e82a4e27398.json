@@ -1,0 +1,17 @@
+{
+  "id": "89ff5171-5fce-4fd5-883d-9e82a4e27398",
+  "name": "Lens Usage Analysis",
+  "type": "dashboard",
+  "version": 2,
+  "owner": "450b04d8-4c1b-4640-abec-d8a15b9d0591",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "450b04d8-4c1b-4640-abec-d8a15b9d0591",
+    "createdTime": "2025-10-09T09:11:55.883Z",
+    "lastModifiedBy": "450b04d8-4c1b-4640-abec-d8a15b9d0591",
+    "lastModifiedTime": "2025-10-09T09:12:14.671Z"
+  },
+  "access": [
+    "read"
+  ]
+}

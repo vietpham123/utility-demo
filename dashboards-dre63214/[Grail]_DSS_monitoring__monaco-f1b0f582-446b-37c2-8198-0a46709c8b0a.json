@@ -1,0 +1,17 @@
+{
+  "id": "monaco-f1b0f582-446b-37c2-8198-0a46709c8b0a",
+  "name": "[Grail] DSS monitoring",
+  "type": "dashboard",
+  "version": 1004,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-11-19T06:11:02.909Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:08.631Z"
+  },
+  "access": [
+    "read"
+  ]
+}

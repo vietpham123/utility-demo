@@ -1,0 +1,17 @@
+{
+  "id": "monaco-c222f856-d53b-3e49-9359-8bbc701af7bd",
+  "name": "[Platform-Services][Management-Service] Tenant phases",
+  "type": "dashboard",
+  "version": 362,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2026-02-25T10:03:45.544Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:08:48.158Z"
+  },
+  "access": [
+    "read"
+  ]
+}

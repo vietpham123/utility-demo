@@ -5,7 +5,7 @@ defmodule WorkOrderService.Store do
   @work_types ["repair", "inspection", "maintenance", "emergency", "vegetation", "equipment_replacement"]
   @priorities ["critical", "high", "medium", "low"]
   @statuses ["open", "assigned", "in_progress", "on_hold", "completed", "cancelled"]
-  @regions ["Chicago-Metro", "Baltimore-Metro", "Philadelphia-Metro", "DC-Metro", "Atlantic-Coast", "Delaware-Valley"]
+  @regions ["Chicago-Metro", "StLouis-Metro", "Minneapolis-Metro", "Detroit-Metro", "Cleveland-Metro", "Pittsburgh-Metro", "Philadelphia-Metro", "Baltimore-Metro", "DC-Metro", "NewYork-Metro", "Boston-Metro", "Atlanta-Metro", "Miami-Metro", "Dallas-Metro", "Houston-Metro", "Nashville-Metro", "Charlotte-Metro", "Orlando-Metro", "Atlantic-Coast", "Delaware-Valley"]
 
   def start_link(_opts) do
     Agent.start_link(fn -> generate_initial_orders() end, name: __MODULE__)

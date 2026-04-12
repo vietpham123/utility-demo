@@ -1,0 +1,17 @@
+{
+  "id": "121078fa-dcd6-4f2f-9656-63287efe21bc",
+  "name": "[New] Logs in context: Adoption tracking",
+  "type": "dashboard",
+  "version": 9,
+  "owner": "25870e6c-a26b-46e6-8f9a-a413df717057",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "25870e6c-a26b-46e6-8f9a-a413df717057",
+    "createdTime": "2025-05-23T08:48:54.204Z",
+    "lastModifiedBy": "25870e6c-a26b-46e6-8f9a-a413df717057",
+    "lastModifiedTime": "2025-10-02T12:51:04.512Z"
+  },
+  "access": [
+    "read"
+  ]
+}

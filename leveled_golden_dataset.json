@@ -1,0 +1,1640 @@
+{
+  "aws": {
+    "simple": [
+      {
+        "nl": "metric processor errors",
+        "intent": "service_metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "by"
+        ],
+        "dql": "timeseries failure_count = sum(dt.service.request.failure_count, scalar: true), by: { dt.entity.service}\n| fieldsAdd entityName(dt.entity.service)\n| limit 100",
+        "complexity_score": 2,
+        "dashboard": "Cloud Monitoring AWS: Metric Streams PROD",
+        "original_title": "Metric processor errors"
+      },
+      {
+        "nl": "records affected by scheduled jobs",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "by"
+        ],
+        "dql": "timeseries count = sum(`objectstore.service.api.scheduled-jobs.count`), by: { jobname }",
+        "complexity_score": 2,
+        "dashboard": "[Platform-Services][ObjectStore] overview",
+        "original_title": "Records affected by scheduled jobs"
+      },
+      {
+        "nl": "all topics consumer lag",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "filter"
+        ],
+        "dql": "timeseries { max(kafka_consumergroup_lag), value.A = max(kafka_consumergroup_lag, scalar: true) }, filter: { matchesValue(consumergroup, \"lima-usage-upload-RawUsageFileCscConsumer\") }",
+        "complexity_score": 2,
+        "dashboard": "Team Colipri Services Overview Dashboard",
+        "original_title": "All topics consumer lag"
+      },
+      {
+        "nl": "rabbitmq queue messages",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "filter",
+          "by"
+        ],
+        "dql": "timeseries max(rabbitmq_queue_messages), \nby: { queue }, \nfilter: { matchesValue(queue, \"dac-aws-metrics\") OR matchesValue(queue, \"dac-aws-metrics-batches\") }",
+        "complexity_score": 2,
+        "dashboard": "[DAC] Performance -- AWS metric poller",
+        "original_title": "RabbitMQ Queue Messages (Sum of ready and unacknowledged messages)"
+      },
+      {
+        "nl": "rabbitmq queue messages published total",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "filter",
+          "by"
+        ],
+        "dql": "timeseries max(rabbitmq_queue_messages_published_total), \nby: { queue }, \nfilter: { matchesValue(queue, \"dac-aws-metrics\") OR matchesValue(queue, \"dac-aws-metrics-batches\") }",
+        "complexity_score": 2,
+        "dashboard": "[DAC] Performance -- AWS metric poller",
+        "original_title": "RabbitMQ Queue Messages Published Total"
+      }
+    ],
+    "intermediate": [
+      {
+        "nl": "not stored records",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "avg(",
+          "by"
+        ],
+        "dql": "timeseries sum(dt.sfm.openpipeline.not_stored.records), by: { configuration }\n| fieldsAdd not_stored = arrayAvg(`sum(dt.sfm.openpipeline.not_stored.records)`)",
+        "complexity_score": 5,
+        "dashboard": "OpenPipeline usage overview",
+        "original_title": "Not stored records"
+      },
+      {
+        "nl": "dql daily unique users",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "avg(",
+          "filter",
+          "by"
+        ],
+        "dql": "timeseries max(dql_usage_stats.unique_users.by_record_type)\n, by: { record_type }\n, interval: toDuration(toLong($daysOfAggregatedMax)*1000*1000*1000*60*60*24)\n\n\n// exclude dt.system as it's such an outlier\n, filter: record_type != \"dt.system\" \n\n| sort arrayAvg(`max(dql_usage_stats.unique_users.by_record_type)`) desc",
+        "complexity_score": 5,
+        "dashboard": "[UX] User Adoption Platform",
+        "original_title": "DQL Daily Unique Users (all Apps including Dashboards, Notebooks, etc)"
+      },
+      {
+        "nl": "avg cache read tokens",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "avg(",
+          "filter"
+        ],
+        "dql": "// Retrieve the amount of token used for Cache Reading\ntimeseries t = avg(gen_ai.prompt.caching), filter: (gen_ai.system == \"amazon\" or gen_ai.provider.name == \"amazon\") and gen_ai.cache.type == \"read\"\n| fieldsAdd total = arraySum(t)",
+        "complexity_score": 5,
+        "dashboard": "Amazon Bedrock - AI Observability",
+        "original_title": "AVG Cache Read Tokens"
+      },
+      {
+        "nl": "avg cache write tokens",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "avg(",
+          "filter"
+        ],
+        "dql": "// Retrieve the amount of token used for Cache Writing\ntimeseries t = avg(gen_ai.prompt.caching), filter: (gen_ai.system == \"amazon\" or gen_ai.provider.name == \"amazon\") and gen_ai.cache.type == \"write\"\n| fieldsAdd total = arraySum(t)",
+        "complexity_score": 5,
+        "dashboard": "Amazon Bedrock - AI Observability",
+        "original_title": "AVG Cache Write Tokens"
+      },
+      {
+        "nl": "api gateway 5xx errors",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "by"
+        ],
+        "dql": "timeseries `5xx_error_sum` = sum(cloud.aws.api_gateway.5xx_error_sum), by: { dt.entity.custom_device }\n| fieldsAdd entityName(dt.entity.custom_device)\n| sort arraySum(`5xx_error_sum`) desc\n| limit 20",
+        "complexity_score": 6,
+        "dashboard": "Cloud Monitoring AWS: Metric Streams PROD",
+        "original_title": "API Gateway 5xx Errors"
+      }
+    ],
+    "complex": [
+      {
+        "nl": "cache hit ratio",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "avg(",
+          "filter",
+          "join",
+          "by"
+        ],
+        "dql": "timeseries avg(cloud.aws.eccustom.cache_hits_sum), by: { dt.entity.custom_device }, filter: { matchesValue(entityAttr(dt.entity.custom_device, \"entity.name\"), { $Instance }) AND matchesValue(dt.source_entity.type, \"cloud:aws:elasticachecustom\") }\n| fieldsAdd dt.entity.custom_device.name = entityName(dt.entity.custom_device)\n| limit 20\n| join [\n    timeseries avg(cloud.aws.eccustom.cache_misses_sum),\n    by: { dt.entity.custom_device },\n    filter: { matchesValue(entityAttr(dt.entity.custom_device, \"entity.name\"), { $Instance }) AND matchesValue(dt.source_entity.type, \"cloud:aws:elasticachecustom\") }\n    | fieldsAdd dt.entity.custom_device.name = entityName(dt.entity.custom_device)\n    | limit 20\n  ], on: { dt.entity.custom_device }, fields: { `avg(cloud.aws.eccustom.cache_misses_sum)` }\n| fieldsAdd CacheHitRatio = `avg(cloud.aws.eccustom.cache_hits_sum)`[]/(`avg(cloud.aws.eccustom.cache_hits_sum)`[]+`avg(cloud.aws.eccustom.cache_misses_sum)`[])*100\n| fieldsRemove `avg(cloud.aws.eccustom.cache_hits_sum)`, `avg(cloud.aws.eccustom.cache_misses_sum)`",
+        "complexity_score": 11,
+        "dashboard": "DTP AWS Elasticache",
+        "original_title": "Cache Hit Ratio"
+      },
+      {
+        "nl": "\ud83c\udfe2 tenants per version",
+        "intent": "events",
+        "expected_contains": [
+          "fetch events",
+          "timeseries",
+          "filter",
+          "by"
+        ],
+        "dql": "fetch events,  samplingRatio: 8\n| filter dt.system.bucket == \"strato_ui_events\"\n| filter in (bhv.app.id, \"dynatrace.dashboards\")\n| fieldsAdd incompatible=\"\u2705\"\n| makeTimeseries tenants = countDistinct(bhv.tenant.uuid, default:0),\n    by:{version=bhv.app.version,incompatible}, bins:60\n \n| append [\n  fetch events\n  | filter dt.system.bucket == \"default_davis_custom_events\"\n  | filter matchesPhrase(event.name, \"[Dtp][Platform-Services][Channels]\")\n  | filter `App-Id` == \"dynatrace.dashboards\"\n  | filter Compatibility == \"INCOMPATIBLE\"\n  | fieldsAdd incompatible=\"\ud83d\udeab incompatible\"\n  | fieldsRename Version, version\n  | makeTimeseries { incompatibleEnvironments=countDistinct(Environment)},\n      by: {version, incompatible}, bins:60\n]",
+        "complexity_score": 11,
+        "dashboard": "[PAPA] AppS Health",
+        "original_title": "\ud83c\udfe2 Tenants per version"
+      },
+      {
+        "nl": "number of errors per workflow",
+        "intent": "aws_query",
+        "expected_contains": [
+          "count()",
+          "filter",
+          "summarize",
+          "join",
+          "by"
+        ],
+        "dql": "// Number of errors per workflow\nfetch dt.system.events\n  | filter event.kind == \"BILLING_USAGE_EVENT\" and event.type == \"Automation Workflow\"\n  | dedup workflow.id\n  | filter in(workflow.actor, array(\"65aa761a-469c-43e6-afc3-5f2a72228f6b\", \"c30172b2-8a04-480a-8547-a2a556af803d\", \"b5ffa786-43e8-419f-b735-ccf2f5f8e1cc\", \"380ec254-d10c-4f82-b0f4-f346b3b9397e\", \"aa6800bd-66fe-4a41-922d-01c3a0e91710\", \"1aff8bf1-fd69-4647-ac64-0dc319111b25\", \"68b329f7-e950-43c3-b9bf-9a0ddc5c0d3b\", \"30472394-f7d1-45a6-8a20-16f0d0e40701\", \"bd245279-31f5-4d06-b631-3b51a33b2d22\", \"2195bfe4-8f41-420d-b597-f083e28ec520\", \"c5e7acb7-f51a-485d-8b60-c00f2f9c4d18\", \"0f9ecd77-c82c-44e0-83d3-60af7970d5a5\", \"2d3a7dd3-d0c9-4ea2-859c-55489fc9cd8c\", \"01ab23b1-edee-4ecf-9d47-a2d773a903e6\", \"57f7c7c1-bad5-48aa-a332-12077223e2ee\", \"f027f9e7-fbc7-4608-b2a2-2fa9da3d6505\", \"82c7e96e-32c6-461a-a0dd-7411b4c9e850\", \"046554fc-f7b8-41e9-9deb-38022a62e415\"))\n\n| join [fetch dt.system.events\n    | filter event.kind == \"WORKFLOW_EVENT\" and event.provider == \"AUTOMATION_ENGINE\" and event.type == $EventType],\n    on: {left[workflow.id] == right[dt.automation_engine.workflow.id]}\n\n| filter right.dt.automation_engine.state == \"ERROR\"\n| filter in(right.dt.automation_engine.workflow.title, array($Workflow))\n| filter isNull($ErrorMessageMatcher) \n    or contains(lower(right.dt.automation_engine.state_info), lower($ErrorMessageMatcher))\n\n| summarize by: {right.dt.automation_engine.workflow.title}, errors = count()\n| sort errors desc",
+        "complexity_score": 11,
+        "dashboard": "Workflow Ops Dashboard [Continuous Security]",
+        "original_title": "Number of errors per workflow"
+      },
+      {
+        "nl": "http apis error rate",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "avg(",
+          "filter",
+          "summarize"
+        ],
+        "dql": "timeseries error1=sum(cloud.aws.apigateway.4xx.By.ApiId.Stage),\n           error2=sum(cloud.aws.apigateway.5xx.By.ApiId.Stage),\n           count=sum(cloud.aws.apigateway.Count.By.ApiId.Stage),\n           by: {aws.account.id, aws.region, dt.smartscape_source.id},\n           filter:{in(aws.account.id, array($AccountId)) AND \n                   in(aws.region, array($Region)) AND\n                   (in(dt.smartscape_source.id, iCollectArray(toSmartscapeId(array($ApiGatewayInstanceId)[]))) OR matchesValue($ApiGatewayInstanceId, \"ALL\"))},\n           nonempty:true,\n           union: true\n| fieldsAdd errors = arraySum(error1) + arraySum(error2)\n| fieldsAdd count = arraySum(count) \n| fieldsAdd errorPercentage = errors / count * 100\n| summarize errorPercentage = avg(errorPercentage)",
+        "complexity_score": 11,
+        "dashboard": "AWS API",
+        "original_title": "HTTP APIs error rate"
+      },
+      {
+        "nl": "rest apis error rate",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "avg(",
+          "filter",
+          "summarize"
+        ],
+        "dql": "timeseries error1=sum(cloud.aws.apigateway.4XXError.By.ApiName.Stage),\n           error2=sum(cloud.aws.apigateway.5XXError.By.ApiName.Stage),\n           count=sum(cloud.aws.apigateway.Count.By.ApiName.Stage),\n           by: {aws.account.id, aws.region, dt.smartscape_source.id},\n           filter:{in(aws.account.id, array($AccountId)) AND \n                   in(aws.region, array($Region)) AND\n                   (in(dt.smartscape_source.id, iCollectArray(toSmartscapeId(array($ApiGatewayRestInstanceId)[]))) OR matchesValue($ApiGatewayRestInstanceId, \"ALL\"))},\n           nonempty:true,\n           union: true\n| fieldsAdd errors = arraySum(error1) + arraySum(error2)\n| fieldsAdd count = arraySum(count) \n| fieldsAdd errorPercentage = errors / count * 100\n| summarize errorPercentage = avg(errorPercentage)",
+        "complexity_score": 11,
+        "dashboard": "AWS API",
+        "original_title": "REST APIs error rate"
+      }
+    ]
+  },
+  "azure": {
+    "simple": [
+      {
+        "nl": "invocations per minute, azure openai",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "filter",
+          "summarize",
+          "by"
+        ],
+        "dql": "timeseries invocations = sum(copilot.worker.llm_invocations), \ninterval: 1m,\nby: {skill}\n| filter in(skill, $skill)\n| summarize `invocations` = sum(invocations[]), by:{timeframe, interval, skill}",
+        "complexity_score": 2,
+        "dashboard": "Davis CoPilot production",
+        "original_title": "Invocations per minute, Azure OpenAI"
+      },
+      {
+        "nl": "vm scale sets",
+        "intent": "azure_vm_scale_set_entity",
+        "expected_contains": [
+          "fetch dt.entity.azure_vm_scale_set",
+          "count()",
+          "summarize"
+        ],
+        "dql": "fetch dt.entity.azure_vm_scale_set \n| summarize  count()",
+        "complexity_score": 2,
+        "dashboard": "Classic Azure overview",
+        "original_title": "VM Scale Sets"
+      },
+      {
+        "nl": "azure operations bl call volume",
+        "intent": "azure_metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "filter",
+          "by"
+        ],
+        "dql": "timeseries {\n  requests = sum(dt.service.request.count)\n}, union: true, by: { endpoint.name },\nfilter: { dt.entity.service == $AZURE_OPERATIONS }",
+        "complexity_score": 2,
+        "dashboard": "BAS Connectors and Dependencies",
+        "original_title": "Azure Operations BL Call Volume"
+      },
+      {
+        "nl": "availability rate by kind",
+        "intent": "azure_metrics",
+        "expected_contains": [
+          "timeseries",
+          "summarize",
+          "by"
+        ],
+        "dql": "timeseries av = max(cloud.azure.microsoft_cognitiveservices.accounts.AzureOpenAIAvailabilityRate),\nby: {azure.resource.kind}\n| summarize arrayLast(takeLast(av)), by: {azure.resource.kind}",
+        "complexity_score": 2,
+        "dashboard": "Azure OpenAI",
+        "original_title": "Availability rate by kind"
+      },
+      {
+        "nl": "average blob availability",
+        "intent": "azure_metrics",
+        "expected_contains": [
+          "timeseries",
+          "avg("
+        ],
+        "dql": "timeseries avabil = avg(cloud.azure.microsoft_storage.storageaccounts.blobservices.Availability)\n| fieldsAdd Availability = arrayAvg(avabil)",
+        "complexity_score": 4,
+        "dashboard": "Azure Storage Accounts",
+        "original_title": "Average Blob availability"
+      }
+    ],
+    "intermediate": [
+      {
+        "nl": "avg cache read tokens",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "avg(",
+          "filter"
+        ],
+        "dql": "// Retrieve the amount of token used for Cache Reading\ntimeseries t = avg(gen_ai.prompt.caching), filter: (gen_ai.system == \"openai\" or gen_ai.provider.name == \"openai\") and gen_ai.cache.type == \"read\"\n| fieldsAdd total = arraySum(t)",
+        "complexity_score": 5,
+        "dashboard": "Azure AI Foundry - AI Observability",
+        "original_title": "AVG Cache Read Tokens"
+      },
+      {
+        "nl": "error rate %",
+        "intent": "network_metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "avg(",
+          "filter"
+        ],
+        "dql": "timeseries failed = sum(cloud.azure.microsoft_network.applicationgateways.FailedRequests, default:0),\n          total  = sum(cloud.azure.microsoft_network.applicationgateways.ResponseStatus,   default:0),\n  filter:{in(azure.subscription, array($Subscription)) AND in(azure.location, array($Location)) AND in(azure.resource.group, array($ResourceGroup))}\n| fieldsAdd rate = 100.0 * (failed[] / total[])\n| fieldsAdd avg_rate_pct = arrayAvg(rate)",
+        "complexity_score": 5,
+        "dashboard": "Azure Application Gateway",
+        "original_title": "Error rate %"
+      },
+      {
+        "nl": "gc suspension time",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "avg(",
+          "filter",
+          "by"
+        ],
+        "dql": "timeseries { max(dt.runtime.jvm.gc.suspension_time), value.A = avg(dt.runtime.jvm.gc.suspension_time, scalar: true) }, by: { dt.entity.process_group }, filter: { matchesValue(entityAttr(dt.entity.process_group_instance, \"tags\"), { \"LIMA Rating\" }) }\n| fieldsAdd dt.entity.process_group.name = entityName(dt.entity.process_group)\n| sort value.A desc\n| limit 100",
+        "complexity_score": 5,
+        "dashboard": "Team Lisuma | LIMA Rating Service Overview",
+        "original_title": "GC Suspension Time"
+      },
+      {
+        "nl": "avg request duration",
+        "intent": "service_latency",
+        "expected_contains": [
+          "fetch spans",
+          "timeseries",
+          "avg(",
+          "filter"
+        ],
+        "dql": "// compute the average request duration\nfetch spans, samplingRatio:toLong($Data_Sampling)\n| filter lower(coalesce(gen_ai.system, gen_ai.provider.name)) == \"openai\"\n| makeTimeseries requests=avg(duration)\n| fieldsAdd value=arrayAvg(requests)",
+        "complexity_score": 6,
+        "dashboard": "Azure AI Foundry - AI Observability",
+        "original_title": "AVG Request Duration"
+      },
+      {
+        "nl": "error count by title",
+        "intent": "security",
+        "expected_contains": [
+          "count()",
+          "filter",
+          "summarize",
+          "by"
+        ],
+        "dql": "fetch security.events\n| filter event.type == \"DETECTION_EXECUTION_SUMMARY\"\n| filter execution.result.status == \"FAILURE\"\n| filter contains(detection.title, \"[QSP][IDR][Azure]\")\n| fields title = replaceString(detection.title, \"[QSP][IDR][Azure]\", \"\")\n| summarize error_count = count(), by: title\n| sort error_count desc",
+        "complexity_score": 6,
+        "dashboard": "[QSP][IDR] Threat Detection Ruleset Evaluation [Monaco]",
+        "original_title": "Error Count By Title"
+      }
+    ],
+    "complex": [
+      {
+        "nl": "avg time saved",
+        "intent": "service_latency",
+        "expected_contains": [
+          "fetch spans",
+          "count()",
+          "filter",
+          "summarize"
+        ],
+        "dql": "// Compute the average time saved serving prompts from a cache\nfetch spans, samplingRatio:toLong($Data_Sampling)\n| filter coalesce(gen_ai.system, gen_ai.provider.name) == \"openai\" and gen_ai.prompt_caching == \"read\"\n| summarize read=count(), read_duration = takeMax(duration)\n| append [\n  fetch spans, samplingRatio: toLong($Data_Sampling)\n  | filter coalesce(gen_ai.system, gen_ai.provider.name) == \"openai\" and isTrueOrNull(gen_ai.prompt_caching != \"read\")\n  | summarize total=count(), rnd_duration = takeMax(duration)\n]\n| summarize {\n  read = takeMax(read_duration),\n  normal = takeMax(rnd_duration)\n}\n| fieldsAdd time_saved = normal-read",
+        "complexity_score": 11,
+        "dashboard": "Azure AI Foundry - AI Observability",
+        "original_title": "AVG Time Saved"
+      },
+      {
+        "nl": "cache hit ratio",
+        "intent": "azure_metrics",
+        "expected_contains": [
+          "timeseries",
+          "avg(",
+          "filter",
+          "join",
+          "by"
+        ],
+        "dql": "timeseries avg(dt.cloud.azure.redis.cache.hits), by: { dt.entity.azure_redis_cache }, filter: { matchesValue(dt.source_entity.type, \"azure_redis_cache\") AND matchesValue(entityAttr(dt.entity.azure_redis_cache, \"entity.name\"), { $Instance }) }\n| fieldsAdd dt.entity.azure_redis_cache.name = entityName(dt.entity.azure_redis_cache)\n| limit 20\n| join [\n    timeseries avg(dt.cloud.azure.redis.cache.misses),\n    by: { dt.entity.azure_redis_cache },\n    filter: { matchesValue(dt.source_entity.type, \"azure_redis_cache\") AND matchesValue(entityAttr(dt.entity.azure_redis_cache, \"entity.name\"), { $Instance }) }\n    | fieldsAdd dt.entity.azure_redis_cache.name = entityName(dt.entity.azure_redis_cache)\n    | limit 20\n  ], on: { dt.entity.azure_redis_cache }, fields: { `avg(dt.cloud.azure.redis.cache.misses)` }\n| fieldsAdd C = `avg(dt.cloud.azure.redis.cache.hits)`[]/(`avg(dt.cloud.azure.redis.cache.hits)`[]+`avg(dt.cloud.azure.redis.cache.misses)`[])*100\n| fieldsRemove `avg(dt.cloud.azure.redis.cache.hits)`, `avg(dt.cloud.azure.redis.cache.misses)`",
+        "complexity_score": 11,
+        "dashboard": "DTP Azure Cache",
+        "original_title": "Cache Hit Ratio"
+      },
+      {
+        "nl": "tenant - local dev",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "summarize",
+          "by"
+        ],
+        "dql": "timeseries CREATE_DEFAULT = sum(platform.settings.service.api.localdevmode.create_schema_default.count), by:{ dt.tenant.uuid }\n| fieldsAdd CREATE_DEFAULT = arraySum(CREATE_DEFAULT)\n| append [timeseries VALIDATE_MOCK_DATA = sum(platform.settings.service.api.localdevmode.validate_mock_data.count), by:{ dt.tenant.uuid }\n         | fieldsAdd VALIDATE_MOCK_DATA = arraySum(VALIDATE_MOCK_DATA)]\n| append [timeseries VALIDATE_SCHEMA = sum(platform.settings.service.api.localdevmode.validate_schema.count), by:{ dt.tenant.uuid }\n         | fieldsAdd VALIDATE_SCHEMA = arraySum(VALIDATE_SCHEMA)]\n| summarize { CREATE_DEFAULT = takeAny(CREATE_DEFAULT), VALIDATE_MOCK_DATA = takeAny(VALIDATE_MOCK_DATA), VALIDATE_SCHEMA = takeAny(VALIDATE_SCHEMA) }, \n  by: { dt.tenant.uuid }\n| sort { VALIDATE_SCHEMA desc, VALIDATE_MOCK_DATA desc, CREATE_DEFAULT desc }",
+        "complexity_score": 12,
+        "dashboard": "[Platform-Services][Settings-Service] overview",
+        "original_title": "Tenant - Local Dev"
+      },
+      {
+        "nl": "azure untagged cost",
+        "intent": "events",
+        "expected_contains": [
+          "fetch events",
+          "sum(",
+          "filter",
+          "summarize"
+        ],
+        "dql": "fetch events, from: now()-1095d\n| filter dt.system.bucket == \"custom_sen_critical_events_finops_final_nonprod\"\nAND event.type == \"BillingDataAggregate\"\nAND event.provider == \"rnd.data.preaggregation.workflow\"\n| filter dt_CloudProvider == \"Microsoft\"\n\n// only show cost without Capability information tagged\n| filter isNull(dt_Capability)\n\n| filter in(SubAccountName, $AzureSubscription)\n\n| filter substring(dt_UsageDay, to:7) >= $from AND\nsubstring(dt_UsageDay, to:7) <= $to\n\n// do a fallback cost assignment based on the account owners capability\n| lookup[\nfetch events, from: now()-1d\n| filter dt.system.bucket == \"custom_sen_critical_events_finops_organization_data\"\n| filter event.provider == \"Microsoft\" AND event.type == \"OrganizationData\"\n| fields SubAccountName, dt_Capability\n],sourceField:SubAccountName,lookupField:SubAccountName,prefix:\"lup.\"\n\n| filter in(lup.dt_Capability,$Capability)\n\n| summarize {cost = sum(EffectiveCost)}",
+        "complexity_score": 12,
+        "dashboard": "[FinOps] Capability Cost Split - monthly overview",
+        "original_title": "Azure untagged cost"
+      },
+      {
+        "nl": "azure untagged cost split by account",
+        "intent": "events",
+        "expected_contains": [
+          "fetch events",
+          "sum(",
+          "filter",
+          "summarize",
+          "by"
+        ],
+        "dql": "fetch events, from: now()-1095d\n| filter dt.system.bucket == \"custom_sen_critical_events_finops_final_nonprod\"\nAND event.type == \"BillingDataAggregate\"\nAND event.provider == \"rnd.data.preaggregation.workflow\"\n| filter dt_CloudProvider == \"Microsoft\"\n\n// only show cost without Capability information tagged\n| filter isNull(dt_Capability)\n\n| filter in(SubAccountName, $AzureSubscription)\n\n| filter substring(dt_UsageDay, to:7) >= $from AND\nsubstring(dt_UsageDay, to:7) <= $to\n\n// do a fallback cost assignment based on the account owners capability\n| lookup[\nfetch events, from: now()-1d\n| filter dt.system.bucket == \"custom_sen_critical_events_finops_organization_data\"\n| filter event.provider == \"Microsoft\" AND event.type == \"OrganizationData\"\n| fields SubAccountName, dt_Capability\n],sourceField:SubAccountName,lookupField:SubAccountName,prefix:\"lup.\"\n\n| filter in(lup.dt_Capability,$Capability)\n\n| summarize {cost = sum(EffectiveCost)},by:{SubAccountName}\n| sort cost desc",
+        "complexity_score": 12,
+        "dashboard": "[FinOps] Capability Cost Split - monthly overview",
+        "original_title": "Azure untagged cost split by account"
+      }
+    ]
+  },
+  "events": {
+    "simple": [
+      {
+        "nl": "test runs / sdlc events",
+        "intent": "data_record",
+        "expected_contains": [],
+        "dql": "data record(\ntest1 =1,\ntest2 =2,\ntest3 =4)",
+        "complexity_score": 1,
+        "dashboard": "SHS Test",
+        "original_title": "Test runs / SDLC events"
+      },
+      {
+        "nl": "user type test",
+        "intent": "events",
+        "expected_contains": [
+          "fetch events",
+          "filter"
+        ],
+        "dql": "fetch events\n| filter 113000046@bancobcr.com",
+        "complexity_score": 1,
+        "dashboard": "Oleg Playground Usage Overview",
+        "original_title": "User type test"
+      },
+      {
+        "nl": "playground only users on this launchpad",
+        "intent": "events",
+        "expected_contains": [
+          "fetch events",
+          "filter",
+          "summarize"
+        ],
+        "dql": "fetch events\n| filter in(bhv.user.id,$PlaygroundOnly_InfraObs)\n\n| summarize PlaygroundUsersWithTrialAndPay = countDistinct(bhv.user.id)",
+        "complexity_score": 1,
+        "dashboard": "Oleg Playground Launcher pages Usage Overview",
+        "original_title": "Playground only users on this launchpad"
+      }
+    ],
+    "intermediate": [
+      {
+        "nl": "top 10 root cause entities",
+        "intent": "events",
+        "expected_contains": [
+          "fetch events",
+          "filter",
+          "summarize",
+          "by"
+        ],
+        "dql": "fetch events\n| filter in(event.category, array($category))\n| filter in (labels.alerting_profile, array($alerting_profile))\n| filter in (entity_tags, array($tags))\n| filter event.kind == \"DAVIS_PROBLEM\" and isNotNull(root_cause_entity_name)\n| expand root_cause_entity_name\n| summarize problemCount=countDistinct(event.id), by: {root_cause_entity_name}\n| sort problemCount desc\n| fields Name=root_cause_entity_name, Count=problemCount\n| limit 10",
+        "complexity_score": 5,
+        "dashboard": "Problem Analysis & Forecasts  v2",
+        "original_title": "Top 10 root cause entities"
+      },
+      {
+        "nl": "affected entities types",
+        "intent": "events",
+        "expected_contains": [
+          "fetch events",
+          "filter",
+          "summarize",
+          "by"
+        ],
+        "dql": "fetch events\n| filter in(event.category, array($category))\n| filter in (labels.alerting_profile, array($alerting_profile))\n| filter in (entity_tags, array($tags))\n| filter event.kind == \"DAVIS_PROBLEM\"\n| expand entityId = affected_entity_ids\n| expand entityType = affected_entity_types\n| summarize problemCount=countDistinct(event.id), by: {entityType}\n| sort problemCount desc\n| fields entityType, Count=problemCount",
+        "complexity_score": 5,
+        "dashboard": "Problem Analysis & Forecasts  v2",
+        "original_title": "Affected entities types"
+      },
+      {
+        "nl": "events on root cause entities",
+        "intent": "events",
+        "expected_contains": [
+          "fetch events",
+          "filter",
+          "summarize",
+          "by"
+        ],
+        "dql": "fetch events\n| filter in(event.category, array($category))\n| filter in (labels.alerting_profile, array($alerting_profile))\n| filter in (entity_tags, array($tags))\n| filter event.kind == \"DAVIS_PROBLEM\" and isNotNull(root_cause_entity_name)\n| expand root_cause_entity_name\n| summarize problemCount=countDistinct(event.id), by: {root_cause_entity_name}\n| sort problemCount desc\n| fields Name=root_cause_entity_name, Count=problemCount",
+        "complexity_score": 5,
+        "dashboard": "Problem Analysis & Forecasts  v2",
+        "original_title": "Events on root cause entities"
+      }
+    ],
+    "complex": [
+      {
+        "nl": "job queue time",
+        "intent": "events",
+        "expected_contains": [
+          "fetch events",
+          "filter",
+          "summarize",
+          "by"
+        ],
+        "dql": "fetch events \n| filter event.kind == \"SDLC_EVENT\" \n| filter event.provider == \"github.com\"\n| filter (event.category == \"task\" and event.status == \"started\") \n  or\n  ( event.category == \"pipeline\" and event.type == \"run\" and event.status == \"started\" \n    and in(vcs.repository.name, $Repository) \n    and in(cicd.pipeline.name, $Workflow) \n    and in(cicd.pipeline.run.trigger, $Trigger)\n  )\n| summarize { \n  tasks = arrayRemoveNulls(collectArray(if(event.category == \"task\", record(task.name, start_time, task.run.attempt), else: null))),\n  pipeline_run = arrayRemoveNulls(collectArray(if(event.category == \"pipeline\", record(pipeline.name, start_time, cicd.pipeline.run.attempt), else: null))),\n  has_matching_pipeline = countif(event.category == \"pipeline\")\n}, by: { cicd.pipeline.run.id }\n| expand tasks\n| expand pipeline_run\n| filterOut has_matching_pipeline == 0\n| filterOut tasks[task.run.attempt] != pipeline_run[cicd.pipeline.run.attempt]\n| fieldsAdd queueTime = tasks[start_time] - pipeline_run[start_time], startTime = pipeline_run[start_time]\n| sort queueTime",
+        "complexity_score": 11,
+        "dashboard": "GitHub Workflow Pulse",
+        "original_title": "Job Queue Time"
+      },
+      {
+        "nl": "copy interaction breakdown",
+        "intent": "rum",
+        "expected_contains": [
+          "count()",
+          "filter",
+          "summarize",
+          "by"
+        ],
+        "dql": "fetch user.events, bucket:{\"default_user_events\"}\n| filter interaction.name == \"click\"\n| filter startsWith(ui_element.custom_name, \"Copy tooltip \")\n| fieldsKeep ui_element.properties, ui_element.custom_name\n| fieldsAdd ui_element.properties = if(ui_element.custom_name == \"Copy tooltip property\", ui_element.properties, else: {\"fieldLabel: Name\"})\n| expand ui_element.properties\n| parse ui_element.properties, \"'fieldLabel:' LD:label\"\n| filter isNotNull(label)\n| summarize count = count(), by:{label}\n| sort count desc",
+        "complexity_score": 11,
+        "dashboard": "[PAPA][Smartscape] App analytics",
+        "original_title": "Copy interaction breakdown"
+      },
+      {
+        "nl": "job runners | top 5",
+        "intent": "events",
+        "expected_contains": [
+          "fetch events",
+          "count()",
+          "filter",
+          "summarize",
+          "by"
+        ],
+        "dql": "fetch events \n| filter event.kind == \"SDLC_EVENT\" \n| filter event.provider == \"github.com\"\n| filter (event.category == \"task\" and event.status == \"finished\") \n  or\n  ( event.category == \"pipeline\" and event.type == \"run\" and event.status == \"finished\" \n    and in(vcs.repository.name, $Repository) \n    and in(cicd.pipeline.name, $Workflow) \n    and in(cicd.pipeline.run.trigger, $Trigger)\n  )\n| summarize { \n  tasks = arrayRemoveNulls(collectArray(if(event.category == \"task\", record(task.name, task.runner.name), else: null))),\n  has_matching_runs = countif(event.category == \"pipeline\")\n}, by: { cicd.pipeline.run.id }\n| expand tasks\n| filterOut has_matching_runs == 0 \n| summarize Count=count(), by:{tasks[task.runner.name]} \n| sort Count desc",
+        "complexity_score": 12,
+        "dashboard": "GitHub Workflow Pulse",
+        "original_title": "Job Runners | Top 5"
+      }
+    ]
+  },
+  "grail": {
+    "simple": [
+      {
+        "nl": "duplicates",
+        "intent": "data_record",
+        "expected_contains": [],
+        "dql": "data record()\n| fieldsAdd duplicates=splitString(splitString($incidents, \"|\")[6], \",\")",
+        "complexity_score": 1,
+        "dashboard": "GRAIL-39885 Research possibilities to reduce QGW alert noise level",
+        "original_title": "Duplicates"
+      }
+    ],
+    "intermediate": [
+      {
+        "nl": "description",
+        "intent": "data_record",
+        "expected_contains": [],
+        "dql": "data record()\n| fieldsAdd ID=splitString($incidents, \"|\")[4]\n| fieldsAdd description=splitString($incidents, \"|\")[7]\n| fieldsAdd detail=splitString($incidents, \"|\")[5]",
+        "complexity_score": 5,
+        "dashboard": "GRAIL-39885 Research possibilities to reduce QGW alert noise level",
+        "original_title": "Description"
+      }
+    ],
+    "complex": []
+  },
+  "hosts": {
+    "simple": [
+      {
+        "nl": "producer record error rate",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "avg(",
+          "filter"
+        ],
+        "dql": "timeseries {\n  Avg=avg(deus.dpsIngest.kafka.producer.record.error.rate)\n  }, \nfilter: {\ndt.host_group.id == $host_group\nAND startsWith(client.id, \"dps-ingest-durability-ingestor\")\n}",
+        "complexity_score": 2,
+        "dashboard": "[OpenPipeline][ppx-service] Kafka Dashboard",
+        "original_title": "Producer record error rate"
+      },
+      {
+        "nl": "producer request throttling time",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "avg(",
+          "filter"
+        ],
+        "dql": "timeseries {\n  Avg=avg(deus.dpsIngest.kafka.producer.produce.throttle.time.avg)\n  }, \nfilter: {\ndt.host_group.id == $host_group\nAND startsWith(client.id, \"dps-ingest-durability-ingestor\")\n}",
+        "complexity_score": 2,
+        "dashboard": "[OpenPipeline][ppx-service] Kafka Dashboard",
+        "original_title": "Producer Request Throttling Time"
+      },
+      {
+        "nl": "producer in-flight requests",
+        "intent": "service_metrics",
+        "expected_contains": [
+          "timeseries",
+          "avg(",
+          "filter"
+        ],
+        "dql": "timeseries {\n  Avg=avg(deus.dpsIngest.kafka.producer.requests.in.flight)\n  }, \nfilter: {\ndt.host_group.id == $host_group\nAND startsWith(client.id, \"dps-ingest-durability-ingestor\")\n}",
+        "complexity_score": 2,
+        "dashboard": "[OpenPipeline][ppx-service] Kafka Dashboard",
+        "original_title": "Producer in-flight requests"
+      }
+    ],
+    "intermediate": [
+      {
+        "nl": "pipeline output bytes [sum]",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "filter",
+          "by"
+        ],
+        "dql": "timeseries {\n  outputBytes=sum(platform.ppx_service.isfm.pipeline.execution.output_bytes, default:0, rollup:sum)\n},\nfilter: {dt.host_group.id  == $host_group and in(dt.tenant.uuid, $tenant) and in(table, $table)},\nby:{dt.tenant.uuid, table}\n| sort arrayMax(outputBytes) desc | limit toLong($limit)",
+        "complexity_score": 5,
+        "dashboard": "[OpenPipeline][ppx-service] Pipeline Processing Dashboard",
+        "original_title": "Pipeline output bytes [sum]"
+      },
+      {
+        "nl": "enrichment tables requested [sum]",
+        "intent": "service_metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "filter",
+          "by"
+        ],
+        "dql": "timeseries {\n  sum=sum(platform.ppx_service.enrichment_table.get_request.count, default:0)\n},\nfilter: { dt.host_group.id == $host_group and in(dt.tenant.uuid, $tenant) and in(table, $table) },\nby:{dt.tenant.uuid, table}\n| sort arrayMax(sum) desc | limit toLong($limit)",
+        "complexity_score": 5,
+        "dashboard": "[OpenPipeline][ppx-service] Pipeline Processing Dashboard",
+        "original_title": "Enrichment Tables requested [sum]"
+      },
+      {
+        "nl": "template requests [sum]",
+        "intent": "service_metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "filter",
+          "by"
+        ],
+        "dql": "timeseries {\n  sum=sum(platform.ppx_service.ppx.embedding_layer.davis_events.template_requests)\n},\nfilter: { dt.host_group.id == $host_group and in(dt.tenant.uuid, $tenant) and in(table, $table) },\nby:{dt.tenant.uuid, table}\n| sort arrayMax(sum) desc | limit toLong($limit)",
+        "complexity_score": 5,
+        "dashboard": "[OpenPipeline][ppx-service] Pipeline Processing Dashboard",
+        "original_title": "Template requests [sum]"
+      }
+    ],
+    "complex": [
+      {
+        "nl": "agent modules connected",
+        "intent": "network_metrics",
+        "expected_contains": [
+          "timeseries",
+          "avg(",
+          "filter",
+          "summarize",
+          "by"
+        ],
+        "dql": "timeseries agent_modules.connected = max(dt.sfm.active_gate.communication.agent_modules.connected)\n,by: {\n   dt.network_zone.id, dt.active_gate.group.name, dt.active_gate.id, host.name\n }\n\n| fieldsAdd instance= if($SplitByInstance == \"Yes\", dt.active_gate.id, else: null)\n| fieldsAdd host= if($SplitByInstance == \"Yes\", host.name, else: null)\n\n// replace null dimensions with 'default' \n| fieldsAdd networkzone = if(isNull(dt.network_zone.id), \"default\", else: dt.network_zone.id)\n| fieldsAdd group = if(isNull(dt.active_gate.group.name), \"default\", else: dt.active_gate.group.name)\n| fieldsRemove dt.network_zone.id, dt.active_gate.group.name, dt.active_gate.id, host.name\n\n// apply filtering by variables\n| filter isNull(host) or in(host, $HostName)\n| filter isNull(instance) or in(instance, {$InstanceId})\n| filter isNull(networkzone) or in(networkzone, $NetworkZone)\n| filter isNull(group) or in(group, {$Group})\n\n| summarize avg(agent_modules.connected[]), by: {timeframe,interval, host, instance, networkzone, group}",
+        "complexity_score": 11,
+        "dashboard": "ActiveGate diagnostic overview",
+        "original_title": "Agent modules connected"
+      },
+      {
+        "nl": "thread pool busy threads",
+        "intent": "network_metrics",
+        "expected_contains": [
+          "timeseries",
+          "avg(",
+          "filter",
+          "summarize",
+          "by"
+        ],
+        "dql": "timeseries {\n  busythreads = max(dt.sfm.active_gate.thread_pool.busy_threads)\n}, by: {\n  dt.network_zone.id, dt.active_gate.group.name, dt.active_gate.id, thread_pool_name, host.name\n}\n\n| fieldsAdd instance= if($SplitByInstance == \"Yes\", dt.active_gate.id, else: null)\n| fieldsAdd host= if($SplitByInstance == \"Yes\", host.name, else: null)\n\n// replace null dimensions with 'default' \n| fieldsAdd networkzone = if(isNull(dt.network_zone.id), \"default\", else: dt.network_zone.id)\n| fieldsAdd group = if(isNull(dt.active_gate.group.name), \"default\", else: dt.active_gate.group.name)\n| fieldsRemove dt.network_zone.id, dt.active_gate.group.name, dt.active_gate.id, host.name\n\n// apply filtering by variables\n| filter isNull(host) or in(host, $HostName)\n| filter isNull(instance) or in(instance, {$InstanceId})\n| filter isNull(networkzone) or in(networkzone, $NetworkZone)\n| filter isNull(group) or in(group, {$Group})\n\n| summarize avg(busythreads[]), by: {timeframe,interval, host, instance, networkzone, group, thread_pool_name}",
+        "complexity_score": 11,
+        "dashboard": "ActiveGate diagnostic overview",
+        "original_title": "Thread pool busy threads"
+      },
+      {
+        "nl": "thread pool queues sizes",
+        "intent": "network_metrics",
+        "expected_contains": [
+          "timeseries",
+          "avg(",
+          "filter",
+          "summarize",
+          "by"
+        ],
+        "dql": "timeseries {\n  queue_size = max(dt.sfm.active_gate.thread_pool.queue_size)\n}, by: {\n  dt.network_zone.id, dt.active_gate.group.name, dt.active_gate.id, thread_pool_name, host.name\n}\n\n| fieldsAdd instance= if($SplitByInstance == \"Yes\", dt.active_gate.id, else: null)\n| fieldsAdd host= if($SplitByInstance == \"Yes\", host.name, else: null)\n\n// replace null dimensions with 'default' \n| fieldsAdd networkzone = if(isNull(dt.network_zone.id), \"default\", else: dt.network_zone.id)\n| fieldsAdd group = if(isNull(dt.active_gate.group.name), \"default\", else: dt.active_gate.group.name)\n| fieldsRemove dt.network_zone.id, dt.active_gate.group.name, dt.active_gate.id, host.name\n\n// apply filtering by variables\n| filter isNull(host) or in(host, $HostName)\n| filter isNull(instance) or in(instance, {$InstanceId})\n| filter isNull(networkzone) or in(networkzone, $NetworkZone)\n| filter isNull(group) or in(group, {$Group})\n\n| summarize avg(queue_size[]), by: {timeframe,interval, host, instance, networkzone, group, thread_pool_name}",
+        "complexity_score": 11,
+        "dashboard": "ActiveGate diagnostic overview",
+        "original_title": "Thread pool queues sizes"
+      }
+    ]
+  },
+  "kubernetes": {
+    "simple": [
+      {
+        "nl": "mid sized raw response",
+        "intent": "host_entity",
+        "expected_contains": [
+          "fetch dt.entity.host"
+        ],
+        "dql": "fetch dt.entity.host\n| fieldsAdd contains, accessible_by, belongs_to, called_by, calls, clustered_by, instance_of, runs, runs_on",
+        "complexity_score": 1,
+        "dashboard": "\ud83d\udc49 Ready Made - dashboard best practice reference",
+        "original_title": "Mid sized raw response"
+      },
+      {
+        "nl": "entities with problems",
+        "intent": "problems",
+        "expected_contains": [
+          "summarize"
+        ],
+        "dql": "fetch dt.davis.problems\n| expand affected_entity_ids\n| summarize totalEntities = countDistinct(affected_entity_ids)",
+        "complexity_score": 1,
+        "dashboard": "K8s UX tracking dashboard",
+        "original_title": "Entities with problems"
+      },
+      {
+        "nl": "memory size current",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "avg(",
+          "filter",
+          "by"
+        ],
+        "dql": "timeseries {\n  current=avg(deus.queryBackend.l2Cache.current.entryMap.size)\n}, by:{k8s.pod.name}, filter:entityName(dt.entity.kubernetes_cluster) == $ClusterName",
+        "complexity_score": 2,
+        "dashboard": "[Grail][Query Backend] L2Cache Overview",
+        "original_title": "Memory Size Current"
+      },
+      {
+        "nl": "memory size previous",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "avg(",
+          "filter",
+          "by"
+        ],
+        "dql": "timeseries {\n  previous=avg(deus.queryBackend.l2Cache.previous.entryMap.size)\n}, by:{k8s.pod.name}, filter:entityName(dt.entity.kubernetes_cluster) == $ClusterName",
+        "complexity_score": 2,
+        "dashboard": "[Grail][Query Backend] L2Cache Overview",
+        "original_title": "Memory Size Previous"
+      },
+      {
+        "nl": "avg ssl rate per node",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "avg(",
+          "filter",
+          "by"
+        ],
+        "dql": "timeseries { avg(`com.dynatrace.extension.haproxy-prometheus.process_current_ssl_rate`)}, by: { nodeid }, filter:{nodetype == \"PSG\"}",
+        "complexity_score": 2,
+        "dashboard": "[Cloud Control] HAProxy Debug",
+        "original_title": "Avg SSL rate per node"
+      }
+    ],
+    "intermediate": [
+      {
+        "nl": "zero hit cached key",
+        "intent": "log_search",
+        "expected_contains": [
+          "fetch logs",
+          "filter"
+        ],
+        "dql": "fetch logs\n| filter dt.kubernetes.cluster.name == $ClusterName\n| filter k8s.container.name==\"segment-indexer-manager-container\"\n| filter matchesValue(dt.system.bucket, \"custom_sen_low_logs_grail_shared\") or matchesValue(dt.system.bucket, \"custom_sen_low_logs_grail_usage_statistics\")\n| filter matchesValue(k8s.namespace.name, \"seg-index\")\n| filter matchesPhrase(content, \"DefaultZeroHitCacheKeyMonitor\", caseSensitive:true)\n| fields timestamp, content",
+        "complexity_score": 5,
+        "dashboard": "[Grail][Query Backend] L2Cache Overview",
+        "original_title": "Zero Hit Cached Key"
+      },
+      {
+        "nl": "active davis problems",
+        "intent": "kubernetes_query",
+        "expected_contains": [
+          "filter"
+        ],
+        "dql": "fetch dt.davis.events\n| filter contains(event.name, \"ingest-endpoint\") and event.status == \"ACTIVE\" and dt.host_group.id == $Cluster\n| fieldsAdd Severity=if(isNull(dt.alert.openpipeline.severity), \"Unknown\", else:dt.alert.openpipeline.severity)\n\n| fields  Cluster=dt.host_group.id, Problem=event.name,Severity",
+        "complexity_score": 5,
+        "dashboard": "[Grail][Team IVIE] IE Health Check",
+        "original_title": "Active DAVIS Problems"
+      },
+      {
+        "nl": "ponds with high blocking ratio",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "avg(",
+          "filter",
+          "by"
+        ],
+        "dql": "timeseries blockingRatio=max(deus.ingestEndpoint.ingest_session_pool_blocking_ratio),\nfilter: { dt.host_group.id == $Cluster and in(k8s.pod.name, $Pods) },\nby:{ tenant, pondtype, pondname }\n| sort arrayAvg(blockingRatio) desc\n| limit 5",
+        "complexity_score": 5,
+        "dashboard": "[Grail][Team IVIE] IE Health Check",
+        "original_title": "Ponds with High Blocking Ratio (Top 5)"
+      },
+      {
+        "nl": "recent warning logs",
+        "intent": "log_search",
+        "expected_contains": [
+          "fetch logs",
+          "filter"
+        ],
+        "dql": "fetch logs, bucket: { \"custom_sen_low_logs_grail_shared\" }\n| filter k8s.container.name == \"ingest-endpoint-container\"\n| filter dt.host_group.id == $Cluster and in(k8s.pod.name, $Pods)\n| filter in(loglevel, {\"WARN\"})\n| sort timestamp desc\n| fields timestamp, pod=k8s.pod.name, content\n| sort timestamp desc",
+        "complexity_score": 5,
+        "dashboard": "[Grail][Team IVIE] IE Health Check",
+        "original_title": "Recent Warning Logs"
+      },
+      {
+        "nl": "recent error logs",
+        "intent": "log_errors",
+        "expected_contains": [
+          "fetch logs",
+          "filter"
+        ],
+        "dql": "fetch logs, bucket: { \"custom_sen_low_logs_grail_shared\" }\n| filter k8s.container.name == \"ingest-endpoint-container\"\n| filter dt.host_group.id == $Cluster and in(k8s.pod.name, $Pods)\n| filter in(loglevel, {\"ERROR\", \"FATAL\"})\n| sort timestamp desc\n| fields timestamp, content, pod=k8s.pod.name\n| sort timestamp desc",
+        "complexity_score": 5,
+        "dashboard": "[Grail][Team IVIE] IE Health Check",
+        "original_title": "Recent Error Logs"
+      }
+    ],
+    "complex": [
+      {
+        "nl": "failed to dispatch",
+        "intent": "log_count",
+        "expected_contains": [
+          "fetch logs",
+          "timeseries",
+          "count()",
+          "filter"
+        ],
+        "dql": "fetch logs \n| filter in(k8s.cluster.name, $Cluster)\n| filter matchesValue(k8s.namespace.name, \"dac-scheduler-dispatcher\")\n| filter contains(content, \"Failed to send to RabbitMQ topic\")\n| filter matchesPhrase(content, \"dac.GCP.SMARTSCAPE\")\n| parse content, \"LD '| JobId: ' LD:config '|' LD:type '| TenantId: ' LD:tenantId\"\n| fields timestamp, config, type, tenantId\n| filter $ConfigurationId == \"\" or matchesValue(config, $ConfigurationId)\n| filter $TenantId == \"\" or matchesValue(tenantId, $TenantId)\n| makeTimeseries count()",
+        "complexity_score": 11,
+        "dashboard": "[DAC] Troubleshooting -- GCP smartscape poller",
+        "original_title": "Failed to dispatch"
+      },
+      {
+        "nl": "too big tupleset stats",
+        "intent": "log_count",
+        "expected_contains": [
+          "fetch logs",
+          "count()",
+          "avg(",
+          "filter",
+          "summarize"
+        ],
+        "dql": "fetch logs\n| filter dt.kubernetes.cluster.name == $ClusterName\n| filter k8s.container.name == \"segment-indexer-manager-container\"\n| filter matchesValue(dt.system.bucket, \"custom_sen_low_logs_grail_shared\") or matchesValue(dt.system.bucket, \"custom_sen_low_logs_grail_usage_statistics\")\n| filter matchesValue(k8s.namespace.name, \"seg-index\")\n| filter matchesPhrase(content, \"too big tupleSet\") and matchesPhrase(content, \"skipped caching of\", caseSensitive:true)\n| fields timestamp, content\n| parse content, \"LD 'too big tupleSet (' INTEGER:size ')' LD\"\n| fields size\n| summarize \n    count=count(),\n    avg=avg(size),\n    min=min(size),\n    max=max(size),\n    median=median(size),\n    `percentiles(50, 60, 70, 80, 90, 95)` = percentiles(size, {50, 60, 70, 80, 90, 95}),\n    stddev=stddev(size)",
+        "complexity_score": 11,
+        "dashboard": "[Grail][Query Backend] L2Cache Overview",
+        "original_title": "\"too big tupleSet\" stats"
+      },
+      {
+        "nl": "$service-api memory p$percentile",
+        "intent": "memory_metrics",
+        "expected_contains": [
+          "timeseries",
+          "filter",
+          "by"
+        ],
+        "dql": "timeseries \n    {\n      result_max = max(dt.kubernetes.container.memory_working_set, default: 0),\n      result_avg = median(dt.kubernetes.container.memory_working_set, rollup: avg, default: 0),\n      result = percentile(dt.kubernetes.container.memory_working_set, toLong($percentile), rollup: max, default: 0)\n    },\n    nonempty: true, \n    by:{ k8s.deployment.name },\n    filter: { in(k8s.cluster.name, $Cluster) and k8s.namespace.name == $Service and isNotNull(k8s.deployment.name) and k8s.container.name == concat($Service, \"-api\") }\n  | fieldsAdd metricName = \"working set memory\"\n| append [\n  timeseries limit_mem = max(dt.kubernetes.container.limits_memory, rollup: max),\n    nonempty: true, \n    by:{ k8s.deployment.name },\n    filter: { in(k8s.cluster.name, $Cluster) and k8s.namespace.name == $Service and isNotNull(k8s.deployment.name) and k8s.container.name == concat($Service, \"-api\") }\n    | fieldsAdd metricName = \"limit memory\"\n]\n| append [\n  timeseries requested_mem = max(dt.kubernetes.container.requests_memory, rollup: max),\n    nonempty: true, \n    by:{ k8s.deployment.name },\n    filter: { in(k8s.cluster.name, $Cluster) and k8s.namespace.name == $Service and isNotNull(k8s.deployment.name) and k8s.container.name == concat($Service, \"-api\") }\n    | fieldsAdd metricName = \"request memory\"\n]\n| fieldsAdd metricName = concat(replaceString(k8s.deployment.name, concat($Service, \"-\"), \"\"), \"::\", metricName)",
+        "complexity_score": 11,
+        "dashboard": "AutomationServer | Workloads",
+        "original_title": "$Service-api memory p$percentile"
+      },
+      {
+        "nl": "$service-scheduler memory p$percentile",
+        "intent": "memory_metrics",
+        "expected_contains": [
+          "timeseries",
+          "filter",
+          "by"
+        ],
+        "dql": "timeseries \n    {\n      result_max = max(dt.kubernetes.container.memory_working_set, default: 0),\n      result_avg = median(dt.kubernetes.container.memory_working_set, rollup: avg, default: 0),\n      result = percentile(dt.kubernetes.container.memory_working_set, toLong($percentile), rollup: max, default: 0)\n    },\n    nonempty: true, \n    by:{ k8s.deployment.name },\n    filter: { in(k8s.cluster.name, $Cluster) and k8s.namespace.name == $Service and isNotNull(k8s.deployment.name) and k8s.container.name == concat($Service, \"-scheduler\") }\n  | fieldsAdd metricName = \"working set memory\"\n| append [\n  timeseries limit_mem = max(dt.kubernetes.container.limits_memory, rollup: max),\n    nonempty: true, \n    by:{ k8s.deployment.name },\n    filter: { in(k8s.cluster.name, $Cluster) and k8s.namespace.name == $Service and isNotNull(k8s.deployment.name) and k8s.container.name == concat($Service, \"-scheduler\") }\n    | fieldsAdd metricName = \"limit memory\"\n]\n| append [\n  timeseries requested_mem = max(dt.kubernetes.container.requests_memory, rollup: max),\n    nonempty: true, \n    by:{ k8s.deployment.name },\n    filter: { in(k8s.cluster.name, $Cluster) and k8s.namespace.name == $Service and isNotNull(k8s.deployment.name) and k8s.container.name == concat($Service, \"-scheduler\") }\n    | fieldsAdd metricName = \"request memory\"\n]\n| fieldsAdd metricName = concat(replaceString(k8s.deployment.name, concat($Service, \"-\"), \"\"), \"::\", metricName)",
+        "complexity_score": 11,
+        "dashboard": "AutomationServer | Workloads",
+        "original_title": "$Service-scheduler memory p$percentile"
+      },
+      {
+        "nl": "$service-migration memory p$mem_p",
+        "intent": "memory_metrics",
+        "expected_contains": [
+          "timeseries",
+          "filter",
+          "by"
+        ],
+        "dql": "timeseries \n    {\n      result_max = max(dt.kubernetes.container.memory_working_set, default: 0),\n      result_avg = median(dt.kubernetes.container.memory_working_set, rollup: avg, default: 0),\n      result = percentile(dt.kubernetes.container.memory_working_set, toLong($percentile), rollup: max, default: 0)\n    },\n    nonempty: true, \n    by:{ k8s.container.name },\n    filter: { in(k8s.cluster.name, $Cluster) and k8s.namespace.name == $Service and k8s.container.name == concat($Service, \"-migration\") }\n  | fieldsAdd metricName = \"working set memory\"\n| append [\n  timeseries limit_mem = max(dt.kubernetes.container.limits_memory, rollup: max),\n    nonempty: true, \n    by:{ k8s.container.name },\n    filter: { in(k8s.cluster.name, $Cluster) and k8s.namespace.name == $Service and k8s.container.name == concat($Service, \"-migration\") }\n    | fieldsAdd metricName = \"limit memory\"\n]\n| append [\n  timeseries requested_mem = max(dt.kubernetes.container.requests_memory, rollup: max),\n    nonempty: true, \n    by:{ k8s.container.name },\n    filter: { in(k8s.cluster.name, $Cluster) and k8s.namespace.name == $Service and k8s.container.name == concat($Service, \"-migration\") }\n    | fieldsAdd metricName = \"request memory\"\n]\n| fieldsAdd metricName = concat(replaceString(k8s.container.name, concat($Service, \"-\"), \"\"), \"::\", metricName)",
+        "complexity_score": 11,
+        "dashboard": "AutomationServer | Workloads",
+        "original_title": "$Service-migration memory p$mem_p"
+      }
+    ]
+  },
+  "logs": {
+    "simple": [
+      {
+        "nl": "all unfiltered auto-triaging logs",
+        "intent": "log_search",
+        "expected_contains": [
+          "fetch logs",
+          "filter"
+        ],
+        "dql": "fetch logs\n| filter matchesValue(dt.app.id, $AppId)\n| sort timestamp desc",
+        "complexity_score": 1,
+        "dashboard": "[QSP][IDR] Auto-triaging Details [Monaco]",
+        "original_title": "All Unfiltered Auto-Triaging Logs"
+      },
+      {
+        "nl": "what is log?",
+        "intent": "data_record",
+        "expected_contains": [],
+        "dql": "data\n  record(label = \"Baby don't hurt me\", value = 1),\n  record(label = \"Don't hurt me\", value = 1),\n  record(label = \"No more\", value = 1)",
+        "complexity_score": 1,
+        "dashboard": "App Logs Cheatsheet",
+        "original_title": "What is log?"
+      },
+      {
+        "nl": "customer key activation error details",
+        "intent": "log_errors",
+        "expected_contains": [
+          "fetch logs",
+          "filter"
+        ],
+        "dql": "fetch logs\n| filter matchesPhrase(content, \"Error while registering tenant bucket key\")",
+        "complexity_score": 1,
+        "dashboard": "[Texas] Bring Your Own Key",
+        "original_title": "Customer Key Activation Error Details"
+      },
+      {
+        "nl": "last logs from related to worker",
+        "intent": "log_search",
+        "expected_contains": [
+          "fetch logs",
+          "filter"
+        ],
+        "dql": "fetch logs\n| filter matchesValue(content, \"*AgentEventIngestor*\") OR matchesValue(content, \"*AgentHealthSyncPeriodicWorker*\")\n| limit 20",
+        "complexity_score": 1,
+        "dashboard": "[Fleet Management] Agent Health Periodic Worker",
+        "original_title": "Last Logs from related to worker (empty is okay - hopefully means no problems and no debug logs enabled)"
+      },
+      {
+        "nl": "error logs over time",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "filter",
+          "by"
+        ],
+        "dql": "timeseries sum(`log.dtp.app.dynatrace.jira.errorLogs`),\n filter: matchesValue(dt.tenant.uuid, $TenantId),\n   by: { dt.tenant.uuid }",
+        "complexity_score": 2,
+        "dashboard": "[Dtp-App][dynatrace.jira] Jira Connector Dashboard",
+        "original_title": "Error Logs over Time (by Tenant)"
+      }
+    ],
+    "intermediate": [
+      {
+        "nl": "ack delay time",
+        "intent": "disk_metrics",
+        "expected_contains": [
+          "timeseries",
+          "filter"
+        ],
+        "dql": "timeseries { \n  disk_queue_message_sent_interval = min(remote_isfm.active_gate.event_ingest.disk_queue_message_sent_interval), \n  disk_queue_message_ack_delay = max(remote_isfm.active_gate.event_ingest.disk_queue_message_ack_delay)\n}, \nunion:true,\nfilter: {(if($include_env_AGs==\"true\", true, else: dt.active_gate.working_mode==$AGtype))}",
+        "complexity_score": 5,
+        "dashboard": "[LM-Bears] Log Monitoring",
+        "original_title": "ACK delay time"
+      },
+      {
+        "nl": "actual data in grail (old hosts)",
+        "intent": "log_search",
+        "expected_contains": [
+          "fetch logs",
+          "filter"
+        ],
+        "dql": "fetch logs\n| filter dt.system.bucket == \"custom_sen_critical_logs_bdx_iem_prod\"\n| filter log.source.aws.s3.bucket.name == \"ingestion-service-us-east-1-851429953808-prod\"\n| filter bdx.meta.source == \"urn:bdx:src:cdh:iem.host:v1.0.0\"\n| fieldsAdd dt.system.bucket\n| sort timestamp desc\n| limit 20",
+        "complexity_score": 5,
+        "dashboard": "Ingestion Service diagnostics",
+        "original_title": "Actual data in Grail (Old hosts) (deprecated)"
+      },
+      {
+        "nl": "ingest bytes [sum]",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "filter",
+          "by"
+        ],
+        "dql": "timeseries {\n  sum=sum(platform.ppx_service.isfm.logs.ingest.bytes, default:0)\n},\nfilter: { dt.host_group.id == $host_group and in(dt.tenant.uuid, $tenant) and in(table, $table) },\nby:{dt.tenant.uuid, table, subtype}\n| sort arrayMax(sum) desc | limit toLong($limit)",
+        "complexity_score": 5,
+        "dashboard": "[OpenPipeline][ppx-service] Pipeline Processing Dashboard",
+        "original_title": "Ingest Bytes [sum]"
+      },
+      {
+        "nl": "sanitized records [sum]",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "filter",
+          "by"
+        ],
+        "dql": "timeseries {\n  sum=sum(platform.ppx_service.dsfm.server.log_and_events_monitoring.events_sanitized_count)\n},\nfilter: {dt.host_group.id == $host_group AND in(dt.tenant.uuid, $tenant) AND in(table, $table)},\nby: {table, subtype, dt.tenant.uuid}\n| sort arrayMax(sum) desc | limit toLong($limit)",
+        "complexity_score": 5,
+        "dashboard": "[OpenPipeline][ppx-service] Pipeline Processing Dashboard",
+        "original_title": "Sanitized Records [sum]"
+      },
+      {
+        "nl": "logs ingest processed [sum]",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "filter",
+          "by"
+        ],
+        "dql": "timeseries {\n  sum=sum(platform.ppx_service.isfm.server.logs.ingest.processed.count)\n},\nfilter: {dt.host_group.id == $host_group AND in(dt.tenant.uuid, $tenant) AND in(table, $table)},\nby: {table, subtype, dt.tenant.uuid}\n| sort arrayMax(sum) desc | limit toLong($limit)",
+        "complexity_score": 5,
+        "dashboard": "[OpenPipeline][ppx-service] Pipeline Processing Dashboard",
+        "original_title": "Logs Ingest Processed [sum]"
+      }
+    ],
+    "complex": [
+      {
+        "nl": "# of errors",
+        "intent": "log_errors",
+        "expected_contains": [
+          "fetch logs",
+          "count()",
+          "filter",
+          "summarize"
+        ],
+        "dql": "fetch logs\n| filter matchesValue(dt.app.id, $AppId)\n| filter matchesValue(dt.app.function, \"attack-replay.js\")\n| filter loglevel == \"ERROR\"\n| parse content, \"JSON:logobject\"\n| filter \"any\" == $WorkflowId OR logobject[WID] == $WorkflowId\n| filter \"any\" == $ExecutionId OR logobject[EXID] == $ExecutionId\n| filter matchesValue(dt.app.function, \"attack-replay.js\")\n| summarize count = count()\n| fields count",
+        "complexity_score": 11,
+        "dashboard": "[QSP][IDR] Attack Replay Statistics [Monaco]",
+        "original_title": "# of Errors"
+      },
+      {
+        "nl": "# of warnings",
+        "intent": "log_count",
+        "expected_contains": [
+          "fetch logs",
+          "count()",
+          "filter",
+          "summarize"
+        ],
+        "dql": "fetch logs\n| filter matchesValue(dt.app.id, $AppId)\n| filter matchesValue(dt.app.function, \"attack-replay.js\")\n| filter loglevel == \"WARN\"\n| parse content, \"JSON:logobject\"\n| filter \"any\" == $WorkflowId OR logobject[WID] == $WorkflowId\n| filter \"any\" == $ExecutionId OR logobject[EXID] == $ExecutionId\n| filter matchesValue(dt.app.function, \"attack-replay.js\")\n| summarize count = count()\n| fields count",
+        "complexity_score": 11,
+        "dashboard": "[QSP][IDR] Attack Replay Statistics [Monaco]",
+        "original_title": "# of Warnings"
+      },
+      {
+        "nl": "sum of logs queried for attack replay",
+        "intent": "log_count",
+        "expected_contains": [
+          "fetch logs",
+          "sum(",
+          "filter",
+          "summarize"
+        ],
+        "dql": "fetch logs\n| filter matchesValue(dt.app.id, $AppId)\n| filter matchesValue(dt.app.function, \"attack-replay.js\")\n| filter loglevel == \"INFO\"\n| parse content, \"JSON:logobject\"\n| fields logobject = logobject\n| filter \"any\" == $WorkflowId OR logobject[WID] == $WorkflowId\n| filter \"any\" == $ExecutionId OR logobject[EXID] == $ExecutionId\n| summarize count = sum(logobject[finalStatistics][initialAttackReplayLogs])\n| fields count",
+        "complexity_score": 11,
+        "dashboard": "[QSP][IDR] Attack Replay Statistics [Monaco]",
+        "original_title": "Sum of Logs Queried for Attack Replay"
+      },
+      {
+        "nl": "avg logs queried for attack replay",
+        "intent": "log_count",
+        "expected_contains": [
+          "fetch logs",
+          "avg(",
+          "filter",
+          "summarize"
+        ],
+        "dql": "fetch logs\n| filter matchesValue(dt.app.id, $AppId)\n| filter matchesValue(dt.app.function, \"attack-replay.js\")\n| filter loglevel == \"INFO\"\n| parse content, \"JSON:logobject\"\n| fields logobject = logobject\n| filter \"any\" == $WorkflowId OR logobject[WID] == $WorkflowId\n| filter \"any\" == $ExecutionId OR logobject[EXID] == $ExecutionId\n| summarize count = avg(logobject[finalStatistics][initialAttackReplayLogs])\n| fields count",
+        "complexity_score": 11,
+        "dashboard": "[QSP][IDR] Attack Replay Statistics [Monaco]",
+        "original_title": "Avg Logs Queried for Attack Replay"
+      },
+      {
+        "nl": "# of attacks without server",
+        "intent": "log_count",
+        "expected_contains": [
+          "fetch logs",
+          "sum(",
+          "filter",
+          "summarize"
+        ],
+        "dql": "fetch logs\n| filter matchesValue(dt.app.id, $AppId)\n| filter matchesValue(dt.app.function, \"attack-replay.js\")\n| filter loglevel == \"INFO\"\n| parse content, \"JSON:logobject\"\n| fields logobject = logobject\n| filter \"any\" == $WorkflowId OR logobject[WID] == $WorkflowId\n| filter \"any\" == $ExecutionId OR logobject[EXID] == $ExecutionId\n| summarize count = sum(logobject[finalStatistics][attacksWithoutServer])\n| fields count",
+        "complexity_score": 11,
+        "dashboard": "[QSP][IDR] Attack Replay Statistics [Monaco]",
+        "original_title": "# of Attacks without Server"
+      }
+    ]
+  },
+  "metrics": {
+    "simple": [
+      {
+        "nl": "list of lookup tables",
+        "intent": "metrics_query",
+        "expected_contains": [],
+        "dql": "fetch dt.system.files\n| fields name, size, user.email, display_name, description\n| sort size desc",
+        "complexity_score": 1,
+        "dashboard": "Lookup Tables on this tenant",
+        "original_title": "List of Lookup Tables"
+      },
+      {
+        "nl": "user audit in the given timeframe",
+        "intent": "events",
+        "expected_contains": [
+          "fetch bizevents",
+          "filter"
+        ],
+        "dql": "fetch bizevents\n| filter matchesValue(dt.system.bucket, $bucket) AND matchesValue(event.provider, { $event_providers }) AND matchesValue(user_uuid, $user_uuid)\n| sort timestamp desc",
+        "complexity_score": 1,
+        "dashboard": "SSO User Event AudiTT",
+        "original_title": "User audit in the given timeframe"
+      },
+      {
+        "nl": "total alerting entities",
+        "intent": "metrics_query",
+        "expected_contains": [
+          "filter",
+          "summarize",
+          "by"
+        ],
+        "dql": "fetch dt.davis.events\n| filterOut in(event.category, {\"INFO\"})\n| summarize count=countDistinctExact(dt.source_entity), by:{}",
+        "complexity_score": 1,
+        "dashboard": "Alert Spam Detection",
+        "original_title": "Total Alerting Entities"
+      },
+      {
+        "nl": "number of unique users",
+        "intent": "metrics_query",
+        "expected_contains": [
+          "filter",
+          "summarize"
+        ],
+        "dql": "fetch dt.system.events\n| filter event.kind == \"GENAI_EVENT\"\n| summarize countDistinct(user_email)",
+        "complexity_score": 1,
+        "dashboard": "Generative AI feature adoption",
+        "original_title": "Number of unique users"
+      },
+      {
+        "nl": "number of unique users over time",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "filter"
+        ],
+        "dql": "fetch dt.system.events\n| filter event.kind == \"GENAI_EVENT\"\n| makeTimeseries unique_users = countDistinct(user_email), interval:24h",
+        "complexity_score": 1,
+        "dashboard": "Generative AI feature adoption",
+        "original_title": "Number of unique users over time"
+      }
+    ],
+    "intermediate": [
+      {
+        "nl": "mcp tool invocations per tenant",
+        "intent": "events",
+        "expected_contains": [
+          "fetch bizevents",
+          "timeseries",
+          "filter",
+          "by"
+        ],
+        "dql": "fetch bizevents \n| filter event.type == \"MCP Tool Invocation\"\n| filter matchesValue(platform, $Platform)\n| filter matchesValue(tenant, $Tenant)\n| makeTimeseries {success = countIf(status == \"SUCCESSFUL\", default: 0)}, by: {tenant}, nonempty: true",
+        "complexity_score": 5,
+        "dashboard": "[DI][CoPilot] MCP Gateway health monitoring",
+        "original_title": "MCP Tool invocations per tenant (success)"
+      },
+      {
+        "nl": "average click events per session",
+        "intent": "events",
+        "expected_contains": [
+          "fetch events",
+          "count()",
+          "avg(",
+          "filter",
+          "summarize"
+        ],
+        "dql": "fetch events\n| filter dt.system.bucket == \"strato_ui_events\"\n| filter contains(bhv.app.name, \"Clouds\") and bhv.type == \"user_action\"\n| summarize count(), by:{dt.rum.session.id}\n| summarize `Average click events per session`=avg(`count()`)",
+        "complexity_score": 5,
+        "dashboard": "Clouds App Product Metric Dashboard",
+        "original_title": "Average click events per session"
+      },
+      {
+        "nl": "1h burn rate by installation",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "avg(",
+          "filter",
+          "by"
+        ],
+        "dql": "timeseries {\n      burn_rate = sum(sfm.slo.burn_rate, filter:{slo_burn_period == \"1h\"})\n    },\n    filter:{entityName(`dt.entity.standardised:slo`) == $slo},\n    by:{dt_installation_id}\n| sort arrayAvg(burn_rate) desc",
+        "complexity_score": 5,
+        "dashboard": "PRODUCT-11125: SLO Sample Visualizations",
+        "original_title": "1h burn rate by installation"
+      },
+      {
+        "nl": "scans over time",
+        "intent": "events",
+        "expected_contains": [
+          "fetch events",
+          "timeseries",
+          "count()",
+          "sum(",
+          "filter"
+        ],
+        "dql": "fetch events\n| filter event.kind == \"SDLC_EVENT\"\n     AND event.status == \"finished\"\n     AND event.provider == \"SonarQube\"\n| filter in(sonarqube.project.id, $Projects)\n    AND in(sonarqube.tenant,$TenantURL)\n| fieldsAdd end_time=toTimestamp(end_time)\n| summarize by:{end_time}, scans=count()\n| makeTimeseries Scans=sum(scans), time:end_time, interval:1d",
+        "complexity_score": 5,
+        "dashboard": "SonarQube posture overview",
+        "original_title": "Scans over time"
+      },
+      {
+        "nl": "token consumption per ai model",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "avg(",
+          "filter",
+          "summarize"
+        ],
+        "dql": "// Split token consuption by model\ntimeseries tokens=avg(kong_ai_llm_tokens_total), filter: token_type == \"total_tokens\", by:ai_model\n| summarize total=sum(tokens[]), by: {ai_model}\n| fieldsAdd total=arraySum(total)",
+        "complexity_score": 5,
+        "dashboard": "Kong AI - AI Observability",
+        "original_title": "Token Consumption per AI Model"
+      }
+    ],
+    "complex": [
+      {
+        "nl": "most burned down error budgets",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "avg(",
+          "filter",
+          "summarize"
+        ],
+        "dql": "timeseries {\n    bad = sum(sfm.sli.measurement, rollup: sum, filter: {type == \"bad\" or failed == \"true\"}, default: 0),\n    total = sum(sfm.sli.measurement, rollup: sum, scalar: true, default: 0)\n  },\n  filter: { \n          in(`dt.entity.standardised:slo`, {$slo_ids})\n          and in(dt_installation_id, array($installation))\n          and in(dt_source_entity, array($source_entity_ids))\n  },\n  by:{`dt.entity.standardised:slo`, dt_installation_id}\n| lookup [fetch `dt.entity.standardised:slo` | fields id, slo_target], sourceField:`dt.entity.standardised:slo`, lookupField:id, fields:{slo_target}\n// Calculate the error budget burn down.\n| fieldsAdd total_error_budget = 100 - toDouble(slo_target)\n| fieldsAdd bad_cumulative_sum = arrayCumulativeSum(bad)\n| fieldsAdd error_budget_burndown = 100 - (bad_cumulative_sum[] / total * 100)\n// normalize to percentages\n| fields timeframe, interval, `dt.entity.standardised:slo`, dt_installation_id, error_budget_burndown\n| summarize {\n  error_budget_burndown = avg(error_budget_burndown[])\n}, by: {\n  timeframe,\n  interval, \n  dt_installation_id, \n  `dt.entity.standardised:slo`= entityName(`dt.entity.standardised:slo`)\n}\n| sort arrayLast(arrayRemoveNulls(error_budget_burndown))\n| limit 25",
+        "complexity_score": 11,
+        "dashboard": "[SRE] SLO Overview",
+        "original_title": "Most Burned Down Error Budgets (top 25)"
+      },
+      {
+        "nl": "error budget burn down",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "avg(",
+          "filter",
+          "summarize"
+        ],
+        "dql": "timeseries {\n    bad = sum(sfm.sli.measurement, rollup: sum, filter: {type == \"bad\"}, default: 0),\n    total = sum(sfm.sli.measurement, rollup: sum, scalar: true, default: 0)\n  },\n  filter:{entityName(`dt.entity.standardised:slo`) == $slo},\n  by:{`dt.entity.standardised:slo`, dt_installation_id}\n| lookup [fetch `dt.entity.standardised:slo` | fields id, slo_target], sourceField:`dt.entity.standardised:slo`, lookupField:id, fields:{slo_target}\n// Calculate the error budget burn down.\n| fieldsAdd total_error_budget = 100 - toDouble(slo_target)\n| fieldsAdd bad_cumulative_sum = arrayCumulativeSum(bad)\n| fieldsAdd error_budget_burndown = total_error_budget - (bad_cumulative_sum[] / total * 100)\n| fields timeframe, interval, `dt.entity.standardised:slo`, dt_installation_id, error_budget_burndown\n| summarize {\n  error_budget_burndown = avg(error_budget_burndown[])\n}, by: {\n  timeframe,\n  interval, \n  dt_installation_id, \n  `dt.entity.standardised:slo`= entityName(`dt.entity.standardised:slo`)\n}\n| sort arrayLast(arrayRemoveNulls(error_budget_burndown))\n| limit 25",
+        "complexity_score": 11,
+        "dashboard": "PRODUCT-11125: SLO Sample Visualizations",
+        "original_title": "Error Budget Burn Down (shown as error budget)"
+      },
+      {
+        "nl": "task error rate",
+        "intent": "metrics_query",
+        "expected_contains": [
+          "filter",
+          "summarize",
+          "by"
+        ],
+        "dql": "// Error rate\nfetch dt.system.events\n| filter event.kind == \"WORKFLOW_EVENT\" and event.provider == \"AUTOMATION_ENGINE\" and event.type ==\"TASK_EXECUTION\"\n| filter in(dt.automation_engine.workflow.title, array($Workflow))\n| filter not startsWith(dt.automation_engine.task.name, \"filter\")\n| filter dt.automation_engine.task.name != \"is_not_private_ip_address\"\n| filter dt.automation_engine.task.name != \"is_private_ip_address\"\n| filter dt.automation_engine.task.name != \"is_office_ip_address\"\n| filter dt.automation_engine.task.name != \"is_resource_ip\"\n| filter dt.automation_engine.task.name != \"is_not_resource_ip\"\n| filter dt.automation_engine.task.name != \"is_not_office_ip_address\"\n| summarize \n    {errors = countIf(dt.automation_engine.state == \"ERROR\"), \n    successes = countIf(dt.automation_engine.state == \"SUCCESS\")},\n    by: {dt.automation_engine.task.name, dt.automation_engine.workflow.title}\n| fieldsAdd finished_executions = toLong(errors) + toLong(successes)\n| fieldsAdd error_rate = (toDouble(errors) / (toDouble(finished_executions)) * 100)\n| fields dt.automation_engine.task.name,\n         dt.automation_engine.workflow.title,\n         error_rate,\n         errors,\n         finished_executions\n| sort error_rate desc",
+        "complexity_score": 11,
+        "dashboard": "[QSP][IDR] Hyperscaler Alert Monitoring [Monaco]",
+        "original_title": "Task Error Rate"
+      },
+      {
+        "nl": "overall :: availability",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "avg(",
+          "filter",
+          "summarize",
+          "join"
+        ],
+        "dql": "// This query more expensive than it could be due\n// to the cloud_provider, cloud_region, and major_geo\n// dimensions being added later.\n// It can be simplified after some period of time,\n// say, in January 2025.\n\ntimeseries avg(isfm.sla.overall),\n  by:{source},\n  filter:{\n    in(cloud_provider, $cloud_providers) and\n    in(cloud_region, $cloud_regions) and\n    in(major_geo, $major_geos) and\n    in(source, $sources)\n  }\n| join [\n    timeseries values=avg(isfm.sla.overall),\n      by:{source}\n    | fieldsAdd sla_avg = arrayAvg(values)\n  ],\n  on:{source},\n  fields:{sla_avg}\n| summarize sla_avg = avg(sla_avg)",
+        "complexity_score": 11,
+        "dashboard": "[SRE] SLA & SLO Anomalies",
+        "original_title": "Overall :: Availability"
+      },
+      {
+        "nl": "process :: availability",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "avg(",
+          "filter",
+          "summarize",
+          "join"
+        ],
+        "dql": "// This query more expensive than it could be due\n// to the cloud_provider, cloud_region, and major_geo\n// dimensions being added later.\n// It can be simplified after some period of time,\n// say, in January 2025.\n\ntimeseries avg(isfm.sla.process),\n  by:{source},\n  filter:{\n    in(cloud_provider, $cloud_providers) and\n    in(cloud_region, $cloud_regions) and\n    in(major_geo, $major_geos) and\n    in(source, $sources)\n  }\n| join [\n    timeseries values=avg(isfm.sla.process),\n      by:{source}\n    | fieldsAdd sla_avg = arrayAvg(values)\n  ],\n  on:{source},\n  fields:{sla_avg}\n| summarize sla_avg = avg(sla_avg)",
+        "complexity_score": 11,
+        "dashboard": "[SRE] SLA & SLO Anomalies",
+        "original_title": "Process :: Availability"
+      }
+    ]
+  },
+  "other": {
+    "simple": [
+      {
+        "nl": "for next grade",
+        "intent": "data_record",
+        "expected_contains": [],
+        "dql": "data record(\nRulesForNextGrade = \"A1: High Coverage met for your app size (>80%)\")",
+        "complexity_score": 1,
+        "dashboard": "SHS Test",
+        "original_title": "For next grade"
+      },
+      {
+        "nl": "total user sessions",
+        "intent": "other_query",
+        "expected_contains": [
+          "count()",
+          "summarize"
+        ],
+        "dql": "fetch user.sessions\n| summarize count()",
+        "complexity_score": 2,
+        "dashboard": "[PAPA][Smartscapes] App analytics",
+        "original_title": "Total user sessions"
+      },
+      {
+        "nl": "selected day: set this number with variable (days left in trial). dont forget to set the time range.",
+        "intent": "data_record",
+        "expected_contains": [],
+        "dql": "data record()\n  | fields DaysLeft = toString($DaysLeft)",
+        "complexity_score": 1,
+        "dashboard": "Oleg Trial usage per day",
+        "original_title": "Selected day: set this number with variable (Days left in Trial). Don't forget to set the time range."
+      }
+    ],
+    "intermediate": [
+      {
+        "nl": "teams slos list",
+        "intent": "data_record",
+        "expected_contains": [
+          "filter"
+        ],
+        "dql": "data record(record=array($filtered_slos))\n| expand record\n| parse record, \"JSON:record\"\n| fields {\n    slo_name = record[slo_name],\n    tier = record[tier],\n    dt_team_name = record[dt_team_name]\n  }\n\n| fields team = dt_team_name, slo_name, tier\n| sort team, slo_name",
+        "complexity_score": 8,
+        "dashboard": "[SRE] SLO Adoption",
+        "original_title": "Team's SLOs list"
+      },
+      {
+        "nl": "slos per team",
+        "intent": "data_record",
+        "expected_contains": [
+          "count()",
+          "filter",
+          "summarize",
+          "by"
+        ],
+        "dql": "data record(record=array($filtered_slos))\n| expand record\n| parse record, \"JSON:record\"\n| fields dt_team_name = record[dt_team_name]\n\n| summarize count = count(), by: {dt_team_name}\n| sort count desc",
+        "complexity_score": 9,
+        "dashboard": "[SRE] SLO Adoption",
+        "original_title": "SLO's per Team"
+      },
+      {
+        "nl": "slos per tier",
+        "intent": "data_record",
+        "expected_contains": [
+          "count()",
+          "filter",
+          "summarize",
+          "by"
+        ],
+        "dql": "data record(record=array($filtered_slos))\n| expand record\n| parse record, \"JSON:record\"\n| fields tier = record[tier]\n\n| summarize count = count(), by: {tier}\n| sort count desc",
+        "complexity_score": 9,
+        "dashboard": "[SRE] SLO Adoption",
+        "original_title": "SLOs per tier"
+      }
+    ],
+    "complex": [
+      {
+        "nl": "capabilities adopted slos",
+        "intent": "data_record",
+        "expected_contains": [
+          "filter",
+          "summarize",
+          "join",
+          "by"
+        ],
+        "dql": "data record(record=array($filtered_slos))\n| expand record\n| parse record, \"JSON:record\"\n| fields dt_capability_id = record[dt_capability_id], joiner = 1\n| summarize adopted = countDistinct(dt_capability_id), by:{joiner}\n| join [\n  load \"/lookups/sre-slo/v1/teams\"\n  | filter capabilityName != \"undefined\"\n  | summarize total = countDistinct(capabilityName)\n  | fieldsAdd joiner=1\n], on:{joiner}, fields: {total}\n| fields adopted, total",
+        "complexity_score": 22,
+        "dashboard": "[SRE] SLO Adoption",
+        "original_title": "Capabilities adopted SLOs"
+      }
+    ]
+  },
+  "spans": {
+    "simple": [
+      {
+        "nl": "# of services",
+        "intent": "data_record",
+        "expected_contains": [
+          "filter"
+        ],
+        "dql": "// Total services after applying dimension filters\ndata record(selected = array($ServiceIDs:triplequote))\n| fieldsAdd `Total Services` = toLong(arraySize(selected))\n| fields `Total Services`",
+        "complexity_score": 1,
+        "dashboard": "[Feedback version v2] Service Health Overview",
+        "original_title": "# of Services"
+      },
+      {
+        "nl": "users for: add to favorite",
+        "intent": "events",
+        "expected_contains": [
+          "fetch events",
+          "filter",
+          "summarize"
+        ],
+        "dql": "// This query was auto-generated by MagicShell\nfetch events \n| filter bhv.name == \"Add to favorite\" and  bhv.app.id == \"dynatrace.appshell\"  \n| summarize countDistinct(bhv.user.id)",
+        "complexity_score": 1,
+        "dashboard": "[UX][AppShell][Dock] Base figures",
+        "original_title": "Users for: Add to favorite "
+      },
+      {
+        "nl": "users for: app menu opened",
+        "intent": "events",
+        "expected_contains": [
+          "fetch events",
+          "filter",
+          "summarize"
+        ],
+        "dql": "// This query was auto-generated by MagicShell\nfetch events \n | filter bhv.name == \"App menu opened\" and  bhv.app.id == \"dynatrace.appshell\"  \n|  summarize usage=countDistinct(bhv.user.id)",
+        "complexity_score": 1,
+        "dashboard": "[UX][AppShell][Dock] Base figures",
+        "original_title": "Users for: App menu opened "
+      },
+      {
+        "nl": "users for: app launched from link",
+        "intent": "events",
+        "expected_contains": [
+          "fetch events",
+          "filter",
+          "summarize"
+        ],
+        "dql": "// This query was auto-generated by MagicShell\nfetch events \n | filter bhv.name == \"App launched from link\" and  bhv.app.id == \"dynatrace.appshell\"  \n\n|  summarize usage=countDistinct(bhv.user.id)",
+        "complexity_score": 1,
+        "dashboard": "[UX][AppShell][Dock] Base figures",
+        "original_title": "Users for: App launched from link "
+      },
+      {
+        "nl": "daily unique users, last 60 days",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "avg(",
+          "filter",
+          "by"
+        ],
+        "dql": "timeseries avg(dql_usage_stats.unique_users.by_application), by: { application }\n, interval: 24h\n, from: -60d@d\n, to: now()@d\n, filter: { application == \"dynatrace.services\" }",
+        "complexity_score": 2,
+        "dashboard": "[Observability] Services App Adoption",
+        "original_title": "Daily unique users, Last 60 days"
+      }
+    ],
+    "intermediate": [
+      {
+        "nl": "daily span ingest",
+        "intent": "metrics",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "avg(",
+          "filter",
+          "summarize"
+        ],
+        "dql": "timeseries series=sum(deus.segmentIndexerManager.uncompressed_ingested_data_size)\n, filter: { in(pondtype, \"span\") }\n, from: -7d\n, to: now()\n, interval: 1d\n| summarize ingest=sum(arrayAvg(series))",
+        "complexity_score": 5,
+        "dashboard": "[Observability] Traces App Adoption",
+        "original_title": "Daily Span Ingest (average last 7d)"
+      },
+      {
+        "nl": "median daily user",
+        "intent": "events",
+        "expected_contains": [
+          "fetch bizevents",
+          "timeseries",
+          "filter"
+        ],
+        "dql": "fetch bizevents\n| filter event.provider == \"dynatrace-apps\"\n| filter if($User_reach != \"all\", in(userType, $User_reach), else: userType == userType )\n| makeTimeseries sparkline = countDistinct(userId), interval:24h\n| fieldsAdd value=arrayMedian(sparkline)",
+        "complexity_score": 5,
+        "dashboard": "Dynatrace App VSCode Extension",
+        "original_title": "Median daily user"
+      },
+      {
+        "nl": "unique sessions by city",
+        "intent": "events",
+        "expected_contains": [
+          "fetch bizevents",
+          "filter",
+          "summarize",
+          "by"
+        ],
+        "dql": "fetch bizevents\n| filter event.provider == \"dynatrace-apps\"\n| filter if($User_reach != \"all\", in(userType, $User_reach), else: userType == userType )\n| summarize count = countDistinct(sessionId), by:{geo.city.name}",
+        "complexity_score": 5,
+        "dashboard": "Dynatrace App VSCode Extension",
+        "original_title": "Unique sessions by city"
+      },
+      {
+        "nl": "top 10 tenants with sessions",
+        "intent": "events",
+        "expected_contains": [
+          "fetch bizevents",
+          "filter",
+          "summarize",
+          "by"
+        ],
+        "dql": "fetch bizevents\n| filter event.provider == \"dynatrace-apps\"\n| filter if($User_reach != \"all\", in(userType, $User_reach), else: userType == userType )\n| summarize sessionCount = countDistinct(sessionId), by: {tenantId}\n| sort sessionCount desc\n| limit 10",
+        "complexity_score": 5,
+        "dashboard": "Dynatrace App VSCode Extension",
+        "original_title": "Top 10 tenants with sessions"
+      },
+      {
+        "nl": "tenants in use",
+        "intent": "events",
+        "expected_contains": [
+          "fetch bizevents",
+          "filter",
+          "summarize"
+        ],
+        "dql": "fetch bizevents\n| filter event.provider == \"dynatrace-apps\"\n| filter if($User_reach != \"all\", in(userType, $User_reach), else: userType == userType )\n| summarize value=countDistinct(tenantId)",
+        "complexity_score": 5,
+        "dashboard": "Dynatrace App VSCode Extension",
+        "original_title": "Tenants in use"
+      }
+    ],
+    "complex": [
+      {
+        "nl": "top 10 external users",
+        "intent": "events",
+        "expected_contains": [
+          "fetch events",
+          "count()",
+          "filter",
+          "summarize",
+          "by"
+        ],
+        "dql": "fetch events\n| filter dt.system.bucket == \"strato_ui_events\"\n| filter event.type == \"behavioral\"\n| filter `bhv.app.id` == $AppID\n   | parse bhv.user.id, \"LD'@'LD:domainId\"\n  | filterOut  `domainId` == \"ruxitlabs.com\"\n  | filterOut  `domainId` == \"dynatrace.com\"\n| fieldsAdd user = if(isNotNull(bhv.user.id),bhv.user.id,else:dt.rum.instance.id)\n| summarize count = count(), by:{user}\n| sort count desc\n//Filter Out Team\n| limit 10",
+        "complexity_score": 11,
+        "dashboard": "[UX] App Interactions",
+        "original_title": "Top 10 External Users"
+      },
+      {
+        "nl": "\ud83d\uded1 request failures",
+        "intent": "rum",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "filter",
+          "by"
+        ],
+        "dql": "fetch user.events, bucket:{\"default_user_events\"}\n| filter characteristics.has_request\n| filter view.url.domain == url.domain\n| filter http.response.status_code >= 400\n\n| fieldsAdd url.path = replacePattern(url.path, \"UUIDSTRING\", \"{uuid}\")\n| fieldsAdd url.path = replacePattern(url.path, \"SMARTSCAPEID\", \"{entity}\")\n| fieldsAdd url.path = replacePattern(url.path, \"'/'[a-zA-Z]{3} [0-9]{5} '/'\", \"/{tenant}/\")\n| fieldsAdd url.path = replacePattern(url.path, \"('/dynatrace.' | '/my.')[a-zA-Z0-9._-]+\", \"/{appId}\")\n\n\n| makeTimeSeries {\n    httpErrors = count(default:0)\n}, by: {url.path, http.response.status_code}, bins: 30\n\n| filter arraySum(httpErrors) > 10 \n| sort arraySum(httpErrors) desc\n| limit 10",
+        "complexity_score": 11,
+        "dashboard": "App Health + Network (Pre-Release)",
+        "original_title": "\ud83d\uded1 Request failures"
+      },
+      {
+        "nl": "\ud83d\udedc  top requests",
+        "intent": "rum",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "filter",
+          "by"
+        ],
+        "dql": "fetch user.events, bucket:{\"default_user_events\"}, samplingRatio:10\n| filter characteristics.has_request\n| filter view.url.domain == url.domain\n// | filter matchesPhrase(url.path, \"/platform\")\n\n| fieldsAdd url.path = replacePattern(url.path, \"UUIDSTRING\", \"{uuid}\")\n| fieldsAdd url.path = replacePattern(url.path, \"SMARTSCAPEID\", \"{entity}\")\n| fieldsAdd url.path = replacePattern(url.path, \"'/'[a-zA-Z]{3} [0-9]{5} '/'\", \"/{tenant}/\")\n| fieldsAdd url.path = replacePattern(url.path, \"('/dynatrace.' | '/my.')[a-zA-Z0-9._-]+\", \"/{appId}\")\n\n\n| makeTimeSeries {\n    httpErrors = count(default:0)\n}, by: {url.path}, bins: 30\n\n| filter arraySum(httpErrors) > 10 \n| sort arraySum(httpErrors) desc\n| limit 10",
+        "complexity_score": 11,
+        "dashboard": "App Health + Network (Pre-Release)",
+        "original_title": "\ud83d\udedc  TOP requests"
+      },
+      {
+        "nl": "\u2696\ufe0f transfer size",
+        "intent": "rum",
+        "expected_contains": [
+          "timeseries",
+          "sum(",
+          "filter",
+          "by"
+        ],
+        "dql": "fetch user.events, bucket:{\"default_user_events\"}\n| filter characteristics.has_request\n| filter view.url.domain == url.domain\n| filter matchesPhrase(url.path, \"/platform\")\n\n| fieldsAdd url.path = replacePattern(url.path, \"UUIDSTRING\", \"{uuid}\")\n| fieldsAdd url.path = replacePattern(url.path, \"SMARTSCAPEID\", \"{entity}\")\n| fieldsAdd url.path = replacePattern(url.path, \"'/'[a-zA-Z]{3} [0-9]{5} '/'\", \"/{tenant}/\")\n| fieldsAdd url.path = replacePattern(url.path, \"('/dynatrace.' | '/my.')[a-zA-Z0-9._-]+\", \"/{appId}\")\n\n| makeTimeSeries {\n    count = count(default: 0),\n\n    size = sum(performance.decoded_body_size)\n}, by: {url.path}, bins: 30\n\n| filter arraySum(size) > 10 \n| sort arraySum(size) desc\n| limit 10",
+        "complexity_score": 11,
+        "dashboard": "App Health + Network (Pre-Release)",
+        "original_title": "\u2696\ufe0f Transfer size"
+      },
+      {
+        "nl": "\ud83c\udfe2 tenants per version",
+        "intent": "events",
+        "expected_contains": [
+          "fetch events",
+          "timeseries",
+          "filter",
+          "by"
+        ],
+        "dql": "fetch events,  samplingRatio: 8\n| filter dt.system.bucket == \"strato_ui_events\"\n| filter in (bhv.app.id, \"dynatrace.appshell\")\n| fieldsAdd incompatible=\"\u2705\"\n| makeTimeseries tenants = countDistinct(bhv.tenant.uuid, default:0),\n    by:{version=bhv.app.version,incompatible}, bins:60\n \n| append [\n  fetch events\n  | filter dt.system.bucket == \"default_davis_custom_events\"\n  | filter matchesPhrase(event.name, \"[Dtp][Platform-Services][Channels]\")\n  | filter `App-Id` == \"dynatrace.appshell\"\n  | filter Compatibility == \"INCOMPATIBLE\"\n  | fieldsAdd incompatible=\"\ud83d\udeab incompatible\"\n  | fieldsRename Version, version\n  | makeTimeseries { incompatibleEnvironments=countDistinct(Environment)},\n      by: {version, incompatible}, bins:60\n]",
+        "complexity_score": 11,
+        "dashboard": "[PAPA] AppS Health",
+        "original_title": "\ud83c\udfe2 Tenants per version"
+      }
+    ]
+  }
+}

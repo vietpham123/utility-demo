@@ -1,0 +1,17 @@
+{
+  "id": "ff2f300b-60d1-4641-9834-ed11fc9d4f50",
+  "name": "[DAC] AWS Smartscape Runbook",
+  "type": "dashboard",
+  "version": 537,
+  "owner": "58d4b717-b3f8-4832-b89c-42cd6d0e2cbd",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "58d4b717-b3f8-4832-b89c-42cd6d0e2cbd",
+    "createdTime": "2026-01-07T14:07:22.951Z",
+    "lastModifiedBy": "58d4b717-b3f8-4832-b89c-42cd6d0e2cbd",
+    "lastModifiedTime": "2026-02-10T10:57:50.131Z"
+  },
+  "access": [
+    "read"
+  ]
+}

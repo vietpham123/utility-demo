@@ -1,0 +1,17 @@
+{
+  "id": "c834afe0-adc1-44d3-82c1-7e93b605486b",
+  "name": "[Netsky] App health",
+  "type": "dashboard",
+  "version": 20,
+  "owner": "47156c55-0364-4bb4-9c94-82bd9574db46",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "47156c55-0364-4bb4-9c94-82bd9574db46",
+    "createdTime": "2025-04-28T05:32:56.792Z",
+    "lastModifiedBy": "47156c55-0364-4bb4-9c94-82bd9574db46",
+    "lastModifiedTime": "2025-10-17T06:44:40.517Z"
+  },
+  "access": [
+    "read"
+  ]
+}

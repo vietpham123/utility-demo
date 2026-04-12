@@ -1,0 +1,17 @@
+{
+  "id": "5cc4ee87-e537-41b4-b92f-de595ce5dab0",
+  "name": "RETR/Dynamic Aggregation Example",
+  "type": "dashboard",
+  "version": 54,
+  "owner": "e8e3249e-ccf6-4b9f-a4c1-9aebc3e83d54",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "e8e3249e-ccf6-4b9f-a4c1-9aebc3e83d54",
+    "createdTime": "2025-10-28T13:52:35.609Z",
+    "lastModifiedBy": "e8e3249e-ccf6-4b9f-a4c1-9aebc3e83d54",
+    "lastModifiedTime": "2025-10-28T14:11:42.033Z"
+  },
+  "access": [
+    "read"
+  ]
+}

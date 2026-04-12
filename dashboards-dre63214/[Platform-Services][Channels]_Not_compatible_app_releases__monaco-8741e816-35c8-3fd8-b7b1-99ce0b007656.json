@@ -1,0 +1,17 @@
+{
+  "id": "monaco-8741e816-35c8-3fd8-b7b1-99ce0b007656",
+  "name": "[Platform-Services][Channels] Not compatible app releases",
+  "type": "dashboard",
+  "version": 2978,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2024-12-13T05:15:15.888Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:08:51.396Z"
+  },
+  "access": [
+    "read"
+  ]
+}

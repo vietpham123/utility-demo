@@ -1,0 +1,17 @@
+{
+  "id": "monaco-64a1a99f-fd83-3319-8814-3533b3267c14",
+  "name": "[Product Security] Kubernetes Security Policies Blocked Resources",
+  "type": "dashboard",
+  "version": 752,
+  "owner": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+    "createdTime": "2025-08-14T08:12:24.276Z",
+    "lastModifiedBy": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+    "lastModifiedTime": "2026-04-10T15:12:36.36Z"
+  },
+  "access": [
+    "read"
+  ]
+}

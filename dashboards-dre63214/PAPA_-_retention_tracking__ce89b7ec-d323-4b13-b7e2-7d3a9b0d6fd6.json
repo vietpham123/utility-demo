@@ -1,0 +1,17 @@
+{
+  "id": "ce89b7ec-d323-4b13-b7e2-7d3a9b0d6fd6",
+  "name": "PAPA - retention tracking",
+  "type": "dashboard",
+  "version": 518,
+  "owner": "16fb7d7d-8397-4bfa-9c54-73066311cc6e",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "16fb7d7d-8397-4bfa-9c54-73066311cc6e",
+    "createdTime": "2025-07-07T12:23:12.362Z",
+    "lastModifiedBy": "16fb7d7d-8397-4bfa-9c54-73066311cc6e",
+    "lastModifiedTime": "2026-01-31T12:40:57.906Z"
+  },
+  "access": [
+    "read"
+  ]
+}

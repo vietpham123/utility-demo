@@ -1,0 +1,17 @@
+{
+  "id": "monaco-276545b0-6ec4-34fb-a87f-5699e59264be",
+  "name": "[DAC] Performance -- GCP metric poller",
+  "type": "dashboard",
+  "version": 308,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-11-17T11:34:11.654Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-09T13:33:50.388Z"
+  },
+  "access": [
+    "read"
+  ]
+}

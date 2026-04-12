@@ -1,0 +1,17 @@
+{
+  "id": "3bbde698-00c7-4eb4-90f7-bf8b43112c57",
+  "name": "PS-35818 | AS Partition",
+  "type": "dashboard",
+  "version": 38,
+  "owner": "3abf71f5-b7e3-445e-8154-28c67c31708d",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "3abf71f5-b7e3-445e-8154-28c67c31708d",
+    "createdTime": "2025-08-21T04:56:21.338Z",
+    "lastModifiedBy": "3abf71f5-b7e3-445e-8154-28c67c31708d",
+    "lastModifiedTime": "2026-03-03T03:45:11.281Z"
+  },
+  "access": [
+    "read"
+  ]
+}

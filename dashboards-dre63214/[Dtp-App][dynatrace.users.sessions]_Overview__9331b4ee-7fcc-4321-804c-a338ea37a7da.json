@@ -1,0 +1,17 @@
+{
+  "id": "9331b4ee-7fcc-4321-804c-a338ea37a7da",
+  "name": "[Dtp-App][dynatrace.users.sessions] Overview",
+  "type": "dashboard",
+  "version": 49,
+  "owner": "f9938633-46d1-40ef-a18a-29ca1859a88d",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "f9938633-46d1-40ef-a18a-29ca1859a88d",
+    "createdTime": "2025-09-12T14:28:53.478Z",
+    "lastModifiedBy": "f9938633-46d1-40ef-a18a-29ca1859a88d",
+    "lastModifiedTime": "2025-10-02T12:43:04.934Z"
+  },
+  "access": [
+    "read"
+  ]
+}

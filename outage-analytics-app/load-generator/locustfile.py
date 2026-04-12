@@ -35,10 +35,15 @@ DEMO_USERNAMES = [
 
 SEARCH_TERMS = ["chicago", "baltimore", "philadelphia", "washington", "atlantic",
                 "wilmington", "transformer", "feeder", "substation", "outage",
-                "storm", "repair", "emergency"]
+                "storm", "repair", "emergency", "new york", "boston", "atlanta",
+                "miami", "dallas", "houston", "nashville", "charlotte", "orlando",
+                "detroit", "cleveland", "pittsburgh", "st louis", "minneapolis"]
 
-REGIONS = ["Chicago-Metro", "Baltimore-Metro", "Philadelphia-Metro",
-           "DC-Metro", "Atlantic-Coast", "Delaware-Valley"]
+REGIONS = ["Chicago-Metro", "StLouis-Metro", "Minneapolis-Metro", "Detroit-Metro",
+           "Cleveland-Metro", "Pittsburgh-Metro", "Philadelphia-Metro", "Baltimore-Metro",
+           "DC-Metro", "NewYork-Metro", "Boston-Metro", "Atlanta-Metro", "Miami-Metro",
+           "Dallas-Metro", "Houston-Metro", "Nashville-Metro", "Charlotte-Metro",
+           "Orlando-Metro", "Atlantic-Coast", "Delaware-Valley"]
 
 RATE_CLASSES = ["R-1", "R-2", "C-1", "C-2", "I-1"]
 

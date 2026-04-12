@@ -1,0 +1,17 @@
+{
+  "id": "31ccf9f9-ea7c-493e-aa27-b0b49bfbe9a7",
+  "name": "Problem Analysis (Executive Overview)",
+  "type": "dashboard",
+  "version": 4,
+  "owner": "20b7aa0e-e7b2-45a5-915f-d36f702b66f4",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "20b7aa0e-e7b2-45a5-915f-d36f702b66f4",
+    "createdTime": "2026-02-20T12:49:04.864Z",
+    "lastModifiedBy": "b336ce74-3227-4ad4-97e5-578669c2d901",
+    "lastModifiedTime": "2026-04-10T09:00:47.889Z"
+  },
+  "access": [
+    "read"
+  ]
+}

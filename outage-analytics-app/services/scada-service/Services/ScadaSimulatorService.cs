@@ -86,7 +86,14 @@ public class ScadaSimulatorService : BackgroundService
         var substations = new[] {
             (1, "Lakeside Substation", 138.0, 2000.0, "Chicago, IL"),
             (2, "Harbor Point Substation", 138.0, 1800.0, "Baltimore, MD"),
-            (3, "Liberty Grid Substation", 230.0, 2500.0, "Philadelphia, PA")
+            (3, "Liberty Grid Substation", 230.0, 2500.0, "Philadelphia, PA"),
+            (4, "Gateway Arch Substation", 138.0, 1600.0, "St. Louis, MO"),
+            (5, "North Star Substation", 230.0, 2200.0, "Minneapolis, MN"),
+            (6, "Motor City Substation", 138.0, 1900.0, "Detroit, MI"),
+            (7, "Empire State Substation", 230.0, 3000.0, "New York, NY"),
+            (8, "Peachtree Substation", 138.0, 1700.0, "Atlanta, GA"),
+            (9, "Sunshine Substation", 138.0, 2100.0, "Miami, FL"),
+            (10, "Lone Star Substation", 230.0, 2400.0, "Dallas, TX")
         };
         foreach (var (id, name, voltage, current, loc) in substations)
         {

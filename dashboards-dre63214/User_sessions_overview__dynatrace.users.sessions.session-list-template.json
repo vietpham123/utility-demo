@@ -1,0 +1,18 @@
+{
+  "id": "dynatrace.users.sessions.session-list-template",
+  "name": "User sessions overview",
+  "type": "dashboard",
+  "description": "Analyse the sessions in your frontends and segment your audiences.",
+  "version": 11,
+  "owner": "50436aec-8901-4282-ae81-690bd6509b18",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "createdTime": "2025-12-04T11:01:49.339Z",
+    "lastModifiedBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "lastModifiedTime": "2026-03-12T10:36:28.306Z"
+  },
+  "access": [
+    "read"
+  ]
+}

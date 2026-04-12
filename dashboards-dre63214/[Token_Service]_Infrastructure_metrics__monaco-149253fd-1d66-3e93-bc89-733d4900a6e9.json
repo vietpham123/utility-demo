@@ -1,0 +1,17 @@
+{
+  "id": "monaco-149253fd-1d66-3e93-bc89-733d4900a6e9",
+  "name": "[Token Service] Infrastructure metrics",
+  "type": "dashboard",
+  "version": 26,
+  "owner": "5bff2505-24a9-488c-89d8-082e7e8095d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "5bff2505-24a9-488c-89d8-082e7e8095d6",
+    "createdTime": "2025-10-28T14:59:20.72Z",
+    "lastModifiedBy": "5bff2505-24a9-488c-89d8-082e7e8095d6",
+    "lastModifiedTime": "2026-03-30T06:23:12.913Z"
+  },
+  "access": [
+    "read"
+  ]
+}

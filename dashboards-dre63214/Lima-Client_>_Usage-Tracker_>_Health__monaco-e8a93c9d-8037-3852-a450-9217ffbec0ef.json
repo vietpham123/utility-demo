@@ -1,0 +1,17 @@
+{
+  "id": "monaco-e8a93c9d-8037-3852-a450-9217ffbec0ef",
+  "name": "Lima-Client \u003e Usage-Tracker \u003e Health",
+  "type": "dashboard",
+  "version": 57,
+  "owner": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "createdTime": "2025-02-03T12:16:08.944Z",
+    "lastModifiedBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "lastModifiedTime": "2025-03-04T10:10:31.079Z"
+  },
+  "access": [
+    "read"
+  ]
+}

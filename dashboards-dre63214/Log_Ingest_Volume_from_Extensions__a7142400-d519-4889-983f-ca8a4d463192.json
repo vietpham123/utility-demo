@@ -1,0 +1,17 @@
+{
+  "id": "a7142400-d519-4889-983f-ca8a4d463192",
+  "name": "Log Ingest Volume from Extensions",
+  "type": "dashboard",
+  "version": 275,
+  "owner": "d739d4f3-cb85-4f0f-a5ed-261822b8048f",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "d739d4f3-cb85-4f0f-a5ed-261822b8048f",
+    "createdTime": "2025-12-11T09:16:00.313Z",
+    "lastModifiedBy": "d739d4f3-cb85-4f0f-a5ed-261822b8048f",
+    "lastModifiedTime": "2026-02-03T11:04:02.969Z"
+  },
+  "access": [
+    "read"
+  ]
+}

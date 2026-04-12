@@ -1,0 +1,17 @@
+{
+  "id": "monaco-356bcd0b-8c41-35ce-ad82-1b7a79a527d2",
+  "name": "LIMA Bas Adapter - Eventbus Monitoring",
+  "type": "dashboard",
+  "version": 403,
+  "owner": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "createdTime": "2025-07-01T11:14:19.211Z",
+    "lastModifiedBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "lastModifiedTime": "2026-04-10T09:57:15.139Z"
+  },
+  "access": [
+    "read"
+  ]
+}

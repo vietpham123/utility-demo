@@ -1,0 +1,17 @@
+{
+  "id": "monaco-3195a24c-ba9b-3a7d-91f5-b17a6731c682",
+  "name": "[Grail][Shield] Query Analysis (Work in progress)",
+  "type": "dashboard",
+  "version": 931,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-10-20T14:02:42.12Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-02-24T13:38:08.712Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "b4e674fc-08a6-4e45-ac02-a8933502c549",
+  "name": "[Dtp-App][Connectors] External HTTP Requests",
+  "type": "dashboard",
+  "version": 222,
+  "owner": "b32bcf46-75e6-4d0d-a841-61c27cf6d5a6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "b32bcf46-75e6-4d0d-a841-61c27cf6d5a6",
+    "createdTime": "2025-11-21T12:03:01.598Z",
+    "lastModifiedBy": "b32bcf46-75e6-4d0d-a841-61c27cf6d5a6",
+    "lastModifiedTime": "2025-12-15T14:38:04.93Z"
+  },
+  "access": [
+    "read"
+  ]
+}

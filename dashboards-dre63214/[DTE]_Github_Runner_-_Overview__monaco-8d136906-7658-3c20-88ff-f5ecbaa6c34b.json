@@ -1,0 +1,17 @@
+{
+  "id": "monaco-8d136906-7658-3c20-88ff-f5ecbaa6c34b",
+  "name": "[DTE] Github Runner - Overview",
+  "type": "dashboard",
+  "version": 1708,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-08-26T07:44:13.126Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:08:57.291Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-6996cae8-5c83-34dd-bf7b-cc711c10e3b3",
+  "name": "[Grail][Entity Query Service] Service Audit",
+  "type": "dashboard",
+  "version": 2768,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-03-06T06:51:22.917Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:06.599Z"
+  },
+  "access": [
+    "read"
+  ]
+}

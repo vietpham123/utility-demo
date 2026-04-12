@@ -1,0 +1,18 @@
+{
+  "id": "dynatrace.logs.log-ingest-overview",
+  "name": "Log ingest overview",
+  "type": "dashboard",
+  "description": "Overview log ingest volume and top producers. Control health and resolve issues.",
+  "version": 37,
+  "owner": "63164427-dea7-426b-bbbd-a0ccaa77a8eb",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "63164427-dea7-426b-bbbd-a0ccaa77a8eb",
+    "createdTime": "2024-11-19T13:59:58.607Z",
+    "lastModifiedBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "lastModifiedTime": "2026-04-07T08:12:01.578Z"
+  },
+  "access": [
+    "read"
+  ]
+}

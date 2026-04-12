@@ -1,0 +1,17 @@
+{
+  "id": "monaco-7e21b397-bd55-37fa-96b9-d2f9d0694104",
+  "name": "[DAC] Performance -- config, state, scheduler",
+  "type": "dashboard",
+  "version": 426,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-07-18T10:58:51.869Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-09T13:33:50.394Z"
+  },
+  "access": [
+    "read"
+  ]
+}

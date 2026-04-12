@@ -1,0 +1,17 @@
+{
+  "id": "monaco-48f732aa-2e17-3b57-b74a-9b09f6d0dbd8",
+  "name": "[Product Security] Kubernetes Security Policies Violations",
+  "type": "dashboard",
+  "version": 752,
+  "owner": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+    "createdTime": "2025-08-14T08:12:24.205Z",
+    "lastModifiedBy": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+    "lastModifiedTime": "2026-04-10T15:12:36.068Z"
+  },
+  "access": [
+    "read"
+  ]
+}

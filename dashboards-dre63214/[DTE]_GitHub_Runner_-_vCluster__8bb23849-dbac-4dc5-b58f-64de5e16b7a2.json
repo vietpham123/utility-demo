@@ -1,0 +1,17 @@
+{
+  "id": "8bb23849-dbac-4dc5-b58f-64de5e16b7a2",
+  "name": "[DTE] GitHub Runner - vCluster",
+  "type": "dashboard",
+  "version": 2,
+  "owner": "6c5cca5c-1639-4896-8cbf-573633f8f974",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "6c5cca5c-1639-4896-8cbf-573633f8f974",
+    "createdTime": "2025-07-29T10:01:09.481Z",
+    "lastModifiedBy": "6c5cca5c-1639-4896-8cbf-573633f8f974",
+    "lastModifiedTime": "2025-07-29T11:47:45.888Z"
+  },
+  "access": [
+    "read"
+  ]
+}

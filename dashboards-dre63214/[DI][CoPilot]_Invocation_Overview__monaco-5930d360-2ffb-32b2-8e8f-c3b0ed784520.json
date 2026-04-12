@@ -1,0 +1,17 @@
+{
+  "id": "monaco-5930d360-2ffb-32b2-8e8f-c3b0ed784520",
+  "name": "[DI][CoPilot] Invocation Overview",
+  "type": "dashboard",
+  "version": 2917,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-01-13T14:50:24.094Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:22.122Z"
+  },
+  "access": [
+    "read"
+  ]
+}

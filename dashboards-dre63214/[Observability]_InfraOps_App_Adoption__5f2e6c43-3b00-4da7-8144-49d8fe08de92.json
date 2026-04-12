@@ -1,0 +1,17 @@
+{
+  "id": "5f2e6c43-3b00-4da7-8144-49d8fe08de92",
+  "name": "[Observability] InfraOps App Adoption",
+  "type": "dashboard",
+  "version": 5,
+  "owner": "7d90b9bd-38a9-4630-9214-dd8dadc9843e",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "7d90b9bd-38a9-4630-9214-dd8dadc9843e",
+    "createdTime": "2025-04-29T07:32:19.141Z",
+    "lastModifiedBy": "7d90b9bd-38a9-4630-9214-dd8dadc9843e",
+    "lastModifiedTime": "2026-02-26T06:14:57.766Z"
+  },
+  "access": [
+    "read"
+  ]
+}

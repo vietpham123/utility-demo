@@ -1,0 +1,17 @@
+{
+  "id": "monaco-ca7fa5e2-3ce5-3837-bd6e-4907ab13eb9e",
+  "name": "[Platform-Services][Hyperscaler authentication] overview gen3 (new metrics)",
+  "type": "dashboard",
+  "version": 137,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-11-26T08:21:12.878Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2025-12-15T06:04:39.979Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-010ed0b8-125a-3530-bbe2-3406f50b5b76",
+  "name": "[DOK] Clusters Overview",
+  "type": "dashboard",
+  "version": 7,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2026-02-23T08:01:11.352Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-08T06:23:28.457Z"
+  },
+  "access": [
+    "read"
+  ]
+}

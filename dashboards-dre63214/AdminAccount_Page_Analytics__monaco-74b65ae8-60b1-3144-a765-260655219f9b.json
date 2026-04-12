@@ -1,0 +1,17 @@
+{
+  "id": "monaco-74b65ae8-60b1-3144-a765-260655219f9b",
+  "name": "AdminAccount Page Analytics",
+  "type": "dashboard",
+  "version": 53,
+  "owner": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "createdTime": "2026-02-11T10:08:25.438Z",
+    "lastModifiedBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "lastModifiedTime": "2026-04-10T09:57:17.627Z"
+  },
+  "access": [
+    "read"
+  ]
+}

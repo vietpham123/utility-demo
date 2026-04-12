@@ -1,0 +1,17 @@
+{
+  "id": "monaco-d5bac78c-32ae-30a7-996c-4dbd16ce5089",
+  "name": "[IDP][Kafka][Cruise Control] Hotspots",
+  "type": "dashboard",
+  "version": 69,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2026-04-03T12:31:59.362Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:04.084Z"
+  },
+  "access": [
+    "read"
+  ]
+}

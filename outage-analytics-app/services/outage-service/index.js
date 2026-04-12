@@ -93,7 +93,21 @@ const locations = [
   { city: 'Wilmington, DE', lat: 39.7391, lng: -75.5398 },
   { city: 'Cherry Hill, NJ', lat: 39.9348, lng: -75.0307 },
   { city: 'Chester, PA', lat: 39.8496, lng: -75.3557 },
-  { city: 'Ventnor City, NJ', lat: 39.3404, lng: -74.4774 }
+  { city: 'Ventnor City, NJ', lat: 39.3404, lng: -74.4774 },
+  { city: 'New York, NY', lat: 40.7128, lng: -74.0060 },
+  { city: 'Boston, MA', lat: 42.3601, lng: -71.0589 },
+  { city: 'Atlanta, GA', lat: 33.7490, lng: -84.3880 },
+  { city: 'Miami, FL', lat: 25.7617, lng: -80.1918 },
+  { city: 'Dallas, TX', lat: 32.7767, lng: -96.7970 },
+  { city: 'Houston, TX', lat: 29.7604, lng: -95.3698 },
+  { city: 'Nashville, TN', lat: 36.1627, lng: -86.7816 },
+  { city: 'Charlotte, NC', lat: 35.2271, lng: -80.8431 },
+  { city: 'Orlando, FL', lat: 28.5383, lng: -81.3792 },
+  { city: 'Detroit, MI', lat: 42.3314, lng: -83.0458 },
+  { city: 'Cleveland, OH', lat: 41.4993, lng: -81.6944 },
+  { city: 'Pittsburgh, PA', lat: 40.4406, lng: -79.9959 },
+  { city: 'St. Louis, MO', lat: 38.6270, lng: -90.1994 },
+  { city: 'Minneapolis, MN', lat: 44.9778, lng: -93.2650 }
 ];
 
 const causes = [

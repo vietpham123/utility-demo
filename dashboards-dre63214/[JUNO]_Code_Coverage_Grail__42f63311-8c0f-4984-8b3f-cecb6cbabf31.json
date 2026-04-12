@@ -1,0 +1,17 @@
+{
+  "id": "42f63311-8c0f-4984-8b3f-cecb6cbabf31",
+  "name": "[JUNO] Code Coverage Grail",
+  "type": "dashboard",
+  "version": 321,
+  "owner": "7e17ea65-4086-40dd-b6fa-a58ebea5fad6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "7e17ea65-4086-40dd-b6fa-a58ebea5fad6",
+    "createdTime": "2025-10-15T10:27:58.078Z",
+    "lastModifiedBy": "7e17ea65-4086-40dd-b6fa-a58ebea5fad6",
+    "lastModifiedTime": "2026-03-16T09:06:37.517Z"
+  },
+  "access": [
+    "read"
+  ]
+}

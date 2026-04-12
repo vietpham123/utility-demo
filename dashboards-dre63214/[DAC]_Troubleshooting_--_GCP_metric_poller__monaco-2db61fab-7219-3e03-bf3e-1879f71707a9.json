@@ -1,0 +1,17 @@
+{
+  "id": "monaco-2db61fab-7219-3e03-bf3e-1879f71707a9",
+  "name": "[DAC] Troubleshooting -- GCP metric poller",
+  "type": "dashboard",
+  "version": 73,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2026-03-17T11:42:13.407Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-09T13:33:48.73Z"
+  },
+  "access": [
+    "read"
+  ]
+}

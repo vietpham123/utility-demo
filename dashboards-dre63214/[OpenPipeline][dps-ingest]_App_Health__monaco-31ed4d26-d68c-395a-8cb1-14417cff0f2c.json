@@ -1,0 +1,17 @@
+{
+  "id": "monaco-31ed4d26-d68c-395a-8cb1-14417cff0f2c",
+  "name": "[OpenPipeline][dps-ingest] App Health",
+  "type": "dashboard",
+  "version": 2236,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-05-27T06:02:54.253Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:10:29.14Z"
+  },
+  "access": [
+    "read"
+  ]
+}

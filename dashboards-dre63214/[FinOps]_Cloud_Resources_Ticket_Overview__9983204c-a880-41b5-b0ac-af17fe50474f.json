@@ -1,0 +1,17 @@
+{
+  "id": "9983204c-a880-41b5-b0ac-af17fe50474f",
+  "name": "[FinOps] Cloud Resources Ticket Overview",
+  "type": "dashboard",
+  "version": 3,
+  "owner": "8625afc7-4880-4e2a-9771-a054ef439d29",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "8625afc7-4880-4e2a-9771-a054ef439d29",
+    "createdTime": "2025-11-11T12:25:08.994Z",
+    "lastModifiedBy": "8625afc7-4880-4e2a-9771-a054ef439d29",
+    "lastModifiedTime": "2025-11-11T12:25:10.425Z"
+  },
+  "access": [
+    "read"
+  ]
+}

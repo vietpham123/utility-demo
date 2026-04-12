@@ -1,0 +1,17 @@
+{
+  "id": "b023a156-e9e0-4956-941e-5244dc7818e3",
+  "name": "[DTE] Sigstore - Prober",
+  "type": "dashboard",
+  "version": 2,
+  "owner": "6c5cca5c-1639-4896-8cbf-573633f8f974",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "6c5cca5c-1639-4896-8cbf-573633f8f974",
+    "createdTime": "2025-07-29T10:01:45.703Z",
+    "lastModifiedBy": "6c5cca5c-1639-4896-8cbf-573633f8f974",
+    "lastModifiedTime": "2025-07-29T11:47:01.083Z"
+  },
+  "access": [
+    "read"
+  ]
+}

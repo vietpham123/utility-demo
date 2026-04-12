@@ -1,0 +1,17 @@
+{
+  "id": "b6652cd0-bddc-476e-b464-2ea4e1088d83",
+  "name": "Management zone analyzer",
+  "type": "dashboard",
+  "version": 459,
+  "owner": "26922ed5-360a-4b0e-a49a-a919c3fef713",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "26922ed5-360a-4b0e-a49a-a919c3fef713",
+    "createdTime": "2025-05-21T09:21:32.733Z",
+    "lastModifiedBy": "26922ed5-360a-4b0e-a49a-a919c3fef713",
+    "lastModifiedTime": "2025-06-04T07:02:36.151Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "3f367a91-f6e8-493a-8488-7c98f85f9d4e",
+  "name": "[Dtp-App] Outbound Blocked Requests",
+  "type": "dashboard",
+  "version": 96,
+  "owner": "b32bcf46-75e6-4d0d-a841-61c27cf6d5a6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "b32bcf46-75e6-4d0d-a841-61c27cf6d5a6",
+    "createdTime": "2025-12-02T10:03:53.031Z",
+    "lastModifiedBy": "b32bcf46-75e6-4d0d-a841-61c27cf6d5a6",
+    "lastModifiedTime": "2026-01-23T11:48:07.216Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "platform-services-edge-service-edge-requests",
+  "name": "[Platform-Services][Edge-Service] Requests",
+  "type": "dashboard",
+  "version": 675,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2026-01-05T10:47:19.686Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:32.006Z"
+  },
+  "access": [
+    "read"
+  ]
+}

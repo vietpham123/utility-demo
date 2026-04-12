@@ -1,0 +1,17 @@
+{
+  "id": "monaco-1b810e02-f59f-3d08-8284-b237e88ed9be",
+  "name": "[Platform-Services][Argo-Workflows] Overview",
+  "type": "dashboard",
+  "version": 2468,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-04-24T11:08:42.084Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:16.96Z"
+  },
+  "access": [
+    "read"
+  ]
+}

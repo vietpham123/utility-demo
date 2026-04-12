@@ -1,0 +1,17 @@
+{
+  "id": "51060aaf-80e0-41cb-843a-3a14424bb6b7",
+  "name": "Pure 3rd-gen: URLs Mapping Overview",
+  "type": "dashboard",
+  "version": 1082,
+  "owner": "4e25b765-2808-49c8-9445-88c6962d5109",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "4e25b765-2808-49c8-9445-88c6962d5109",
+    "createdTime": "2025-08-27T10:14:20.975Z",
+    "lastModifiedBy": "4e25b765-2808-49c8-9445-88c6962d5109",
+    "lastModifiedTime": "2026-03-11T10:00:51.517Z"
+  },
+  "access": [
+    "read"
+  ]
+}

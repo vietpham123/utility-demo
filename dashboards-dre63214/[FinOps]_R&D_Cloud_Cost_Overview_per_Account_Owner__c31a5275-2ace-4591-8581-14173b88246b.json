@@ -1,0 +1,17 @@
+{
+  "id": "c31a5275-2ace-4591-8581-14173b88246b",
+  "name": "[FinOps] R\u0026D Cloud Cost Overview per Account Owner",
+  "type": "dashboard",
+  "version": 6,
+  "owner": "8625afc7-4880-4e2a-9771-a054ef439d29",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "8625afc7-4880-4e2a-9771-a054ef439d29",
+    "createdTime": "2025-11-05T13:08:47.423Z",
+    "lastModifiedBy": "8625afc7-4880-4e2a-9771-a054ef439d29",
+    "lastModifiedTime": "2025-11-18T10:54:13.415Z"
+  },
+  "access": [
+    "read"
+  ]
+}

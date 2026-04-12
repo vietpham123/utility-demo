@@ -1,0 +1,17 @@
+{
+  "id": "b81c8134-ddb9-4886-a906-e4d190595df8",
+  "name": "[New] Insights - Logs App",
+  "type": "dashboard",
+  "version": 13,
+  "owner": "25870e6c-a26b-46e6-8f9a-a413df717057",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "25870e6c-a26b-46e6-8f9a-a413df717057",
+    "createdTime": "2025-05-23T08:40:09.619Z",
+    "lastModifiedBy": "25870e6c-a26b-46e6-8f9a-a413df717057",
+    "lastModifiedTime": "2026-04-08T09:54:19.698Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-abf1fae8-0746-34ea-bd6a-9d34572a3660",
+  "name": "[Texas] Bring Your Own Key",
+  "type": "dashboard",
+  "version": 35,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-12-31T11:14:40.701Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T13:18:43.836Z"
+  },
+  "access": [
+    "read"
+  ]
+}

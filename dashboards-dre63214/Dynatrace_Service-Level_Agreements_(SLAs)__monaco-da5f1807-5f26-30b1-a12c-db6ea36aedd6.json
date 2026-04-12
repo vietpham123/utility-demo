@@ -1,0 +1,17 @@
+{
+  "id": "monaco-da5f1807-5f26-30b1-a12c-db6ea36aedd6",
+  "name": "Dynatrace Service-Level Agreements (SLA's)",
+  "type": "dashboard",
+  "version": 414,
+  "owner": "43704233-9028-4fdc-85a6-482104633ac4",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "43704233-9028-4fdc-85a6-482104633ac4",
+    "createdTime": "2024-12-11T01:32:32.018Z",
+    "lastModifiedBy": "43704233-9028-4fdc-85a6-482104633ac4",
+    "lastModifiedTime": "2026-03-30T10:27:39.198Z"
+  },
+  "access": [
+    "read"
+  ]
+}

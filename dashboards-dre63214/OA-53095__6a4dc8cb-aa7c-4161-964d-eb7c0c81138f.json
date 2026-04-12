@@ -1,0 +1,17 @@
+{
+  "id": "6a4dc8cb-aa7c-4161-964d-eb7c0c81138f",
+  "name": "OA-53095",
+  "type": "dashboard",
+  "version": 342,
+  "owner": "4a8db15b-fc93-40dd-a048-398b01a2749e",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "4a8db15b-fc93-40dd-a048-398b01a2749e",
+    "createdTime": "2025-09-19T10:25:36.899Z",
+    "lastModifiedBy": "4a8db15b-fc93-40dd-a048-398b01a2749e",
+    "lastModifiedTime": "2025-10-06T08:11:05.319Z"
+  },
+  "access": [
+    "read"
+  ]
+}

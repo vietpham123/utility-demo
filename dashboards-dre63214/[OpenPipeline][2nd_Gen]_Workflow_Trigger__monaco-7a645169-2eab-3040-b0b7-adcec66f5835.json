@@ -1,0 +1,17 @@
+{
+  "id": "monaco-7a645169-2eab-3040-b0b7-adcec66f5835",
+  "name": "[OpenPipeline][2nd Gen] Workflow Trigger",
+  "type": "dashboard",
+  "version": 603,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-01-20T10:17:58.913Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-09T08:52:47.113Z"
+  },
+  "access": [
+    "read"
+  ]
+}

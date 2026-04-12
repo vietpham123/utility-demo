@@ -1,0 +1,17 @@
+{
+  "id": "937950b0-43fc-4f8f-a4c6-691e6dd5b790",
+  "name": "K8s app | Enhanced Object Visibility (Smartscape)",
+  "type": "dashboard",
+  "version": 1023,
+  "owner": "da22d019-9fe1-43ab-bbd8-8e28724b2c30",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "da22d019-9fe1-43ab-bbd8-8e28724b2c30",
+    "createdTime": "2025-09-10T11:00:48.028Z",
+    "lastModifiedBy": "da22d019-9fe1-43ab-bbd8-8e28724b2c30",
+    "lastModifiedTime": "2026-03-18T09:33:22.957Z"
+  },
+  "access": [
+    "read"
+  ]
+}

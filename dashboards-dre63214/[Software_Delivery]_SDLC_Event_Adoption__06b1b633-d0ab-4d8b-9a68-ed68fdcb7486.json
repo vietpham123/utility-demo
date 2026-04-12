@@ -1,0 +1,17 @@
+{
+  "id": "06b1b633-d0ab-4d8b-9a68-ed68fdcb7486",
+  "name": "[Software Delivery] SDLC Event Adoption",
+  "type": "dashboard",
+  "version": 511,
+  "owner": "ff3a3d39-b43e-420f-9563-97320edbd23a",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ff3a3d39-b43e-420f-9563-97320edbd23a",
+    "createdTime": "2026-02-01T08:58:13.418Z",
+    "lastModifiedBy": "ff3a3d39-b43e-420f-9563-97320edbd23a",
+    "lastModifiedTime": "2026-04-07T06:46:41.392Z"
+  },
+  "access": [
+    "read"
+  ]
+}

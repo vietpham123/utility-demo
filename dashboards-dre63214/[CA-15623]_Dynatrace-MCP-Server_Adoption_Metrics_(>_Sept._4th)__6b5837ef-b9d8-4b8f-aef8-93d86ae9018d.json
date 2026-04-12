@@ -1,0 +1,17 @@
+{
+  "id": "6b5837ef-b9d8-4b8f-aef8-93d86ae9018d",
+  "name": "[CA-15623] Dynatrace-MCP-Server Adoption Metrics (\u003e Sept. 4th)",
+  "type": "dashboard",
+  "version": 1379,
+  "owner": "b32bcf46-75e6-4d0d-a841-61c27cf6d5a6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "b32bcf46-75e6-4d0d-a841-61c27cf6d5a6",
+    "createdTime": "2025-07-02T13:13:01.436Z",
+    "lastModifiedBy": "b32bcf46-75e6-4d0d-a841-61c27cf6d5a6",
+    "lastModifiedTime": "2025-10-02T13:27:34.822Z"
+  },
+  "access": [
+    "read"
+  ]
+}

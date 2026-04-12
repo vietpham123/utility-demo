@@ -1,0 +1,17 @@
+{
+  "id": "b40511c0-0f7a-43dd-bf89-80b2f596bb6c",
+  "name": "App Health: Stats",
+  "type": "dashboard",
+  "version": 458,
+  "owner": "4e25b765-2808-49c8-9445-88c6962d5109",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "4e25b765-2808-49c8-9445-88c6962d5109",
+    "createdTime": "2025-05-05T16:11:28.16Z",
+    "lastModifiedBy": "4e25b765-2808-49c8-9445-88c6962d5109",
+    "lastModifiedTime": "2026-03-19T15:19:24.904Z"
+  },
+  "access": [
+    "read"
+  ]
+}

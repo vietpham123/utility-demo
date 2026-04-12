@@ -1,0 +1,17 @@
+{
+  "id": "monaco-aeb2ef33-b278-36e5-b9a0-43f1a79713f8",
+  "name": "[Platform-Services][Management-Service] Recovery API",
+  "type": "dashboard",
+  "version": 2401,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-05-06T08:07:13.03Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:04.149Z"
+  },
+  "access": [
+    "read"
+  ]
+}

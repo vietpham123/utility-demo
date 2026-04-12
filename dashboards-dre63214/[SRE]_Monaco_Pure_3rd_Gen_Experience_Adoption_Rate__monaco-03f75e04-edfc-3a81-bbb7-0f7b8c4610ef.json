@@ -1,0 +1,17 @@
+{
+  "id": "monaco-03f75e04-edfc-3a81-bbb7-0f7b8c4610ef",
+  "name": "[SRE] Monaco Pure 3rd Gen Experience Adoption Rate",
+  "type": "dashboard",
+  "version": 95,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2026-04-02T05:47:52.913Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:08:53.854Z"
+  },
+  "access": [
+    "read"
+  ]
+}

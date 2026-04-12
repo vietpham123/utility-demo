@@ -1,0 +1,17 @@
+{
+  "id": "282c0185-8cf1-4477-bddb-c511da407e30",
+  "name": "App Health + Network (Pre-Release)",
+  "type": "dashboard",
+  "version": 446,
+  "owner": "db1684c6-f178-47ac-84cd-20718cfd1752",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "db1684c6-f178-47ac-84cd-20718cfd1752",
+    "createdTime": "2025-12-03T14:14:51.537Z",
+    "lastModifiedBy": "db1684c6-f178-47ac-84cd-20718cfd1752",
+    "lastModifiedTime": "2025-12-10T16:42:00.925Z"
+  },
+  "access": [
+    "read"
+  ]
+}

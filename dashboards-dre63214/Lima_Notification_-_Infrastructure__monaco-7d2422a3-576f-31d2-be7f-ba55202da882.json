@@ -1,0 +1,17 @@
+{
+  "id": "monaco-7d2422a3-576f-31d2-be7f-ba55202da882",
+  "name": "Lima Notification - Infrastructure",
+  "type": "dashboard",
+  "version": 390,
+  "owner": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "createdTime": "2025-07-08T08:57:21.57Z",
+    "lastModifiedBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "lastModifiedTime": "2026-04-10T09:57:20.643Z"
+  },
+  "access": [
+    "read"
+  ]
+}

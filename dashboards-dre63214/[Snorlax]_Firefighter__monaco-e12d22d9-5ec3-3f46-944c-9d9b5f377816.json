@@ -1,0 +1,17 @@
+{
+  "id": "monaco-e12d22d9-5ec3-3f46-944c-9d9b5f377816",
+  "name": "[Snorlax] Firefighter",
+  "type": "dashboard",
+  "version": 164,
+  "owner": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "createdTime": "2025-11-03T09:48:14.726Z",
+    "lastModifiedBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "lastModifiedTime": "2026-04-10T09:57:19.368Z"
+  },
+  "access": [
+    "read"
+  ]
+}

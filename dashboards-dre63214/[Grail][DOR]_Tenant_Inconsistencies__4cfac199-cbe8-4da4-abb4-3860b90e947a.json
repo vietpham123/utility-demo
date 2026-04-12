@@ -1,0 +1,17 @@
+{
+  "id": "4cfac199-cbe8-4da4-abb4-3860b90e947a",
+  "name": "[Grail][DOR] Tenant Inconsistencies",
+  "type": "dashboard",
+  "version": 64,
+  "owner": "0c04218a-4377-4bad-be60-99db0f32d3c4",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "0c04218a-4377-4bad-be60-99db0f32d3c4",
+    "createdTime": "2025-05-13T09:06:12.466Z",
+    "lastModifiedBy": "0c04218a-4377-4bad-be60-99db0f32d3c4",
+    "lastModifiedTime": "2025-11-17T05:29:45.128Z"
+  },
+  "access": [
+    "read"
+  ]
+}

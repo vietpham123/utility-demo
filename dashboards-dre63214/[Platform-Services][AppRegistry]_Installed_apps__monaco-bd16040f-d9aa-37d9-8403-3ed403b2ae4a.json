@@ -1,0 +1,17 @@
+{
+  "id": "monaco-bd16040f-d9aa-37d9-8403-3ed403b2ae4a",
+  "name": "[Platform-Services][AppRegistry] Installed apps",
+  "type": "dashboard",
+  "version": 2905,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2024-12-13T05:15:19.25Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:03.314Z"
+  },
+  "access": [
+    "read"
+  ]
+}

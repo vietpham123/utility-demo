@@ -1,0 +1,17 @@
+{
+  "id": "monaco-864b9275-72dc-3e00-a7fa-d45ed2f045cc",
+  "name": "encryption-service",
+  "type": "dashboard",
+  "version": 538,
+  "owner": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "createdTime": "2025-03-05T15:13:19.378Z",
+    "lastModifiedBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "lastModifiedTime": "2026-04-10T09:57:17.948Z"
+  },
+  "access": [
+    "read"
+  ]
+}

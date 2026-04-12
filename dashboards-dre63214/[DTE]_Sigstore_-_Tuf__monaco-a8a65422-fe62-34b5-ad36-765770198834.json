@@ -1,0 +1,17 @@
+{
+  "id": "monaco-a8a65422-fe62-34b5-ad36-765770198834",
+  "name": "[DTE] Sigstore - Tuf",
+  "type": "dashboard",
+  "version": 1681,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-08-28T11:47:11.549Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:22.97Z"
+  },
+  "access": [
+    "read"
+  ]
+}

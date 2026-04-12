@@ -1,0 +1,17 @@
+{
+  "id": "monaco-9a2a5c3b-5a04-3ea7-82da-dbbf64d10537",
+  "name": "[Token Service] Business metrics",
+  "type": "dashboard",
+  "version": 26,
+  "owner": "5bff2505-24a9-488c-89d8-082e7e8095d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "5bff2505-24a9-488c-89d8-082e7e8095d6",
+    "createdTime": "2025-10-28T14:59:20.546Z",
+    "lastModifiedBy": "5bff2505-24a9-488c-89d8-082e7e8095d6",
+    "lastModifiedTime": "2026-03-30T06:23:12.186Z"
+  },
+  "access": [
+    "read"
+  ]
+}

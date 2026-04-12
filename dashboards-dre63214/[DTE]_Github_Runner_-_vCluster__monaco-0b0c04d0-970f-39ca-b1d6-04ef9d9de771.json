@@ -1,0 +1,17 @@
+{
+  "id": "monaco-0b0c04d0-970f-39ca-b1d6-04ef9d9de771",
+  "name": "[DTE] Github Runner - vCluster",
+  "type": "dashboard",
+  "version": 1708,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-08-26T07:44:18.271Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:08.215Z"
+  },
+  "access": [
+    "read"
+  ]
+}

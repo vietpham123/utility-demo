@@ -1,0 +1,17 @@
+{
+  "id": "monaco-31e84fbc-8de8-3697-9993-38ee5f629a8d",
+  "name": "[Grail][Segment Indexer Manager] Service Audit",
+  "type": "dashboard",
+  "version": 2785,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-03-03T13:27:59.169Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:00.821Z"
+  },
+  "access": [
+    "read"
+  ]
+}

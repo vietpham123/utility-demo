@@ -1,0 +1,17 @@
+{
+  "id": "f21c516a-04e2-4c70-96e8-7b1827edfda8",
+  "name": "[Monitored Entities] 2nd gen Cluster Execution Path",
+  "type": "dashboard",
+  "version": 1023,
+  "owner": "b53638e9-3b44-4301-97e5-325a12fa9d5a",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "b53638e9-3b44-4301-97e5-325a12fa9d5a",
+    "createdTime": "2025-12-22T15:37:41.518Z",
+    "lastModifiedBy": "b53638e9-3b44-4301-97e5-325a12fa9d5a",
+    "lastModifiedTime": "2026-04-10T13:05:42.785Z"
+  },
+  "access": [
+    "read"
+  ]
+}

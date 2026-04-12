@@ -1,0 +1,17 @@
+{
+  "id": "monaco-1d41e03f-4435-3653-a05a-eceb71e8709b",
+  "name": "[Platform-Services][Document-Service] Health Overview",
+  "type": "dashboard",
+  "version": 2978,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2024-12-13T05:15:20.72Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:04.951Z"
+  },
+  "access": [
+    "read"
+  ]
+}

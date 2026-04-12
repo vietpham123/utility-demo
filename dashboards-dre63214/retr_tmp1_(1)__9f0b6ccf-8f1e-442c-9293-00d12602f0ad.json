@@ -1,0 +1,17 @@
+{
+  "id": "9f0b6ccf-8f1e-442c-9293-00d12602f0ad",
+  "name": "retr_tmp1 (1)",
+  "type": "dashboard",
+  "version": 65,
+  "owner": "e8e3249e-ccf6-4b9f-a4c1-9aebc3e83d54",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "e8e3249e-ccf6-4b9f-a4c1-9aebc3e83d54",
+    "createdTime": "2025-10-15T16:01:57.241Z",
+    "lastModifiedBy": "e8e3249e-ccf6-4b9f-a4c1-9aebc3e83d54",
+    "lastModifiedTime": "2026-03-26T12:38:20.778Z"
+  },
+  "access": [
+    "read"
+  ]
+}

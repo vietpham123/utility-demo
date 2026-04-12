@@ -1,0 +1,17 @@
+{
+  "id": "456038e9-f9bf-44f1-b910-80aac85db2e1",
+  "name": "[Dynatrace MCP Server] Internal Adoption",
+  "type": "dashboard",
+  "version": 38,
+  "owner": "b32bcf46-75e6-4d0d-a841-61c27cf6d5a6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "b32bcf46-75e6-4d0d-a841-61c27cf6d5a6",
+    "createdTime": "2025-09-08T10:10:54.289Z",
+    "lastModifiedBy": "b32bcf46-75e6-4d0d-a841-61c27cf6d5a6",
+    "lastModifiedTime": "2026-01-29T09:40:19.412Z"
+  },
+  "access": [
+    "read"
+  ]
+}

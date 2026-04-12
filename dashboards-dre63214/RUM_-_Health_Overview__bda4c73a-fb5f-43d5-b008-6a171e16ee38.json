@@ -1,0 +1,17 @@
+{
+  "id": "bda4c73a-fb5f-43d5-b008-6a171e16ee38",
+  "name": "RUM - Health Overview",
+  "type": "dashboard",
+  "version": 822,
+  "owner": "17f199c2-ed12-454a-ac6a-dcbba533afe5",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "17f199c2-ed12-454a-ac6a-dcbba533afe5",
+    "createdTime": "2025-11-13T13:48:51.433Z",
+    "lastModifiedBy": "17f199c2-ed12-454a-ac6a-dcbba533afe5",
+    "lastModifiedTime": "2026-04-10T04:39:37.052Z"
+  },
+  "access": [
+    "read"
+  ]
+}

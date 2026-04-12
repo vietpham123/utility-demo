@@ -1,0 +1,17 @@
+{
+  "id": "monaco-34560031-7d2f-3828-9a28-03799ce02ff8",
+  "name": "[GRAIL][Smartscape] Partition Distribution",
+  "type": "dashboard",
+  "version": 618,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2026-01-19T09:55:51.417Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:25.603Z"
+  },
+  "access": [
+    "read"
+  ]
+}

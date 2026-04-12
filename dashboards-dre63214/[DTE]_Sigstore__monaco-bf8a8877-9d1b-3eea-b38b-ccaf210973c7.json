@@ -1,0 +1,17 @@
+{
+  "id": "monaco-bf8a8877-9d1b-3eea-b38b-ccaf210973c7",
+  "name": "[DTE] Sigstore",
+  "type": "dashboard",
+  "version": 1681,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-08-28T11:47:11.997Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:15.641Z"
+  },
+  "access": [
+    "read"
+  ]
+}

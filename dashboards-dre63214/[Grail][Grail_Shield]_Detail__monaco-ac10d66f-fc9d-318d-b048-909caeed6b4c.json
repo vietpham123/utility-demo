@@ -1,0 +1,17 @@
+{
+  "id": "monaco-ac10d66f-fc9d-318d-b048-909caeed6b4c",
+  "name": "[Grail][Grail Shield] Detail",
+  "type": "dashboard",
+  "version": 2768,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-03-06T06:51:21.191Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:14.053Z"
+  },
+  "access": [
+    "read"
+  ]
+}

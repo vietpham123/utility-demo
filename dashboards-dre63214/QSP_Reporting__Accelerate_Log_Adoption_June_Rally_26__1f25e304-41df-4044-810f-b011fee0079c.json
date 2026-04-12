@@ -1,0 +1,17 @@
+{
+  "id": "1f25e304-41df-4044-810f-b011fee0079c",
+  "name": "QSP Reporting: Accelerate Log Adoption June Rally 26",
+  "type": "dashboard",
+  "version": 30,
+  "owner": "2a66a542-9a06-426b-80f7-33196cd0f2ce",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "2a66a542-9a06-426b-80f7-33196cd0f2ce",
+    "createdTime": "2026-03-17T15:39:26.355Z",
+    "lastModifiedBy": "6d51bf19-09c0-4b19-a202-8aa566d34f93",
+    "lastModifiedTime": "2026-04-01T06:13:11.359Z"
+  },
+  "access": [
+    "read"
+  ]
+}

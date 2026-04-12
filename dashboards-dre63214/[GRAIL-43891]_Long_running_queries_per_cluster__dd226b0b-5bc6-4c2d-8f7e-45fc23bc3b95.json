@@ -1,0 +1,17 @@
+{
+  "id": "dd226b0b-5bc6-4c2d-8f7e-45fc23bc3b95",
+  "name": "[GRAIL-43891] Long running queries per cluster",
+  "type": "dashboard",
+  "version": 134,
+  "owner": "ac17c97e-0e70-436f-9516-7c4b8a405b80",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ac17c97e-0e70-436f-9516-7c4b8a405b80",
+    "createdTime": "2025-09-24T10:49:28.446Z",
+    "lastModifiedBy": "ac17c97e-0e70-436f-9516-7c4b8a405b80",
+    "lastModifiedTime": "2025-10-14T11:24:19.307Z"
+  },
+  "access": [
+    "read"
+  ]
+}

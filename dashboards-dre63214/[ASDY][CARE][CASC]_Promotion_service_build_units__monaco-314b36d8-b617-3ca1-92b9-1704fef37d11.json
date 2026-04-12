@@ -1,0 +1,17 @@
+{
+  "id": "monaco-314b36d8-b617-3ca1-92b9-1704fef37d11",
+  "name": "[ASDY][CARE][CASC] Promotion service build units",
+  "type": "dashboard",
+  "version": 1169,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-11-03T15:24:23.824Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:08:54.025Z"
+  },
+  "access": [
+    "read"
+  ]
+}

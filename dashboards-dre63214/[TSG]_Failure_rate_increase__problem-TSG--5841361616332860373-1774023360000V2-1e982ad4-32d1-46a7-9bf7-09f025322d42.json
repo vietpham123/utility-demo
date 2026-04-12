@@ -1,0 +1,17 @@
+{
+  "id": "problem-TSG--5841361616332860373-1774023360000V2-1e982ad4-32d1-46a7-9bf7-09f025322d42",
+  "name": "[TSG] Failure rate increase",
+  "type": "dashboard",
+  "version": 5,
+  "owner": "4fdf79c8-c487-4ff4-84c2-c436b643d70a",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "4fdf79c8-c487-4ff4-84c2-c436b643d70a",
+    "createdTime": "2026-03-20T16:33:04.244Z",
+    "lastModifiedBy": "4fdf79c8-c487-4ff4-84c2-c436b643d70a",
+    "lastModifiedTime": "2026-03-30T12:06:10.713Z"
+  },
+  "access": [
+    "read"
+  ]
+}

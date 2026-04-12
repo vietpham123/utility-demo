@@ -1,0 +1,17 @@
+{
+  "id": "monaco-1c6206c1-efb0-3b11-b9e9-b96ca8dd678c",
+  "name": "[IDP][Kafka][Cruise Control] Partition Metrics",
+  "type": "dashboard",
+  "version": 69,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2026-04-03T12:31:51.613Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:22.413Z"
+  },
+  "access": [
+    "read"
+  ]
+}

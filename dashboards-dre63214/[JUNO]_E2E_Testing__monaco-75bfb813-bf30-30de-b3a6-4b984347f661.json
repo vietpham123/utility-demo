@@ -1,0 +1,17 @@
+{
+  "id": "monaco-75bfb813-bf30-30de-b3a6-4b984347f661",
+  "name": "[JUNO] E2E Testing",
+  "type": "dashboard",
+  "version": 371,
+  "owner": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+    "createdTime": "2025-06-23T06:05:39.46Z",
+    "lastModifiedBy": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+    "lastModifiedTime": "2026-04-10T06:46:53.925Z"
+  },
+  "access": [
+    "read"
+  ]
+}

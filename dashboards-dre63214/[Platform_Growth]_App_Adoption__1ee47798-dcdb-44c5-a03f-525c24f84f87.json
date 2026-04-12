@@ -1,0 +1,17 @@
+{
+  "id": "1ee47798-dcdb-44c5-a03f-525c24f84f87",
+  "name": "[Platform Growth] App Adoption",
+  "type": "dashboard",
+  "version": 569,
+  "owner": "ff3a3d39-b43e-420f-9563-97320edbd23a",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ff3a3d39-b43e-420f-9563-97320edbd23a",
+    "createdTime": "2026-03-18T10:14:50.409Z",
+    "lastModifiedBy": "ff3a3d39-b43e-420f-9563-97320edbd23a",
+    "lastModifiedTime": "2026-03-26T08:46:23.184Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "8958e95e-dada-44c7-b0f6-5decfa5fcc43",
+  "name": "QSP Reporting: Example for test purposes",
+  "type": "dashboard",
+  "version": 56,
+  "owner": "fcb35f80-3608-440b-b6c2-6c1f7d39477d",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "fcb35f80-3608-440b-b6c2-6c1f7d39477d",
+    "createdTime": "2026-02-24T08:15:55.568Z",
+    "lastModifiedBy": "fcb35f80-3608-440b-b6c2-6c1f7d39477d",
+    "lastModifiedTime": "2026-03-25T13:23:33.292Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-4a9c911d-e1c5-375b-8847-52c798fb99ad",
+  "name": "[BDX] DSOA - Snowflake Security",
+  "type": "dashboard",
+  "version": 31,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-12-18T12:41:16.132Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-01T17:44:29.498Z"
+  },
+  "access": [
+    "read"
+  ]
+}

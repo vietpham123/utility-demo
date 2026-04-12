@@ -1,0 +1,17 @@
+{
+  "id": "monaco-27be4c0b-e4d7-3e12-8c27-faba05cc8686",
+  "name": "[Grail][Team IVIE] 2nd Gen Ingest Metrics",
+  "type": "dashboard",
+  "version": 2978,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2024-12-13T05:15:17.203Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:08:54.092Z"
+  },
+  "access": [
+    "read"
+  ]
+}

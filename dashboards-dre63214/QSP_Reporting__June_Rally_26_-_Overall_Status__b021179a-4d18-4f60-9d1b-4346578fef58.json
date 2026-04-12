@@ -1,0 +1,17 @@
+{
+  "id": "b021179a-4d18-4f60-9d1b-4346578fef58",
+  "name": "QSP Reporting: June Rally 26 - Overall Status",
+  "type": "dashboard",
+  "version": 218,
+  "owner": "6d51bf19-09c0-4b19-a202-8aa566d34f93",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "6d51bf19-09c0-4b19-a202-8aa566d34f93",
+    "createdTime": "2026-03-25T13:50:50.175Z",
+    "lastModifiedBy": "6d51bf19-09c0-4b19-a202-8aa566d34f93",
+    "lastModifiedTime": "2026-04-01T06:28:16.691Z"
+  },
+  "access": [
+    "read"
+  ]
+}

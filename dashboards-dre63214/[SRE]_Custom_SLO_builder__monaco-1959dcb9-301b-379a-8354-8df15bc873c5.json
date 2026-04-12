@@ -1,0 +1,17 @@
+{
+  "id": "monaco-1959dcb9-301b-379a-8354-8df15bc873c5",
+  "name": "[SRE] Custom SLO builder",
+  "type": "dashboard",
+  "version": 59,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-11-19T14:29:20.207Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T17:15:14.269Z"
+  },
+  "access": [
+    "read"
+  ]
+}

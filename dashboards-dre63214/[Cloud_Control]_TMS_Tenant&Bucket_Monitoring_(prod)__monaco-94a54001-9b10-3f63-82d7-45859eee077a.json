@@ -1,0 +1,17 @@
+{
+  "id": "monaco-94a54001-9b10-3f63-82d7-45859eee077a",
+  "name": "[Cloud Control] TMS Tenant\u0026Bucket Monitoring (prod)",
+  "type": "dashboard",
+  "version": 51,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-09-24T12:11:01.094Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T13:18:44.421Z"
+  },
+  "access": [
+    "read"
+  ]
+}

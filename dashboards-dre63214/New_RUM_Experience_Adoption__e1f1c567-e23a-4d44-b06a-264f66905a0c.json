@@ -1,0 +1,17 @@
+{
+  "id": "e1f1c567-e23a-4d44-b06a-264f66905a0c",
+  "name": "New RUM Experience Adoption",
+  "type": "dashboard",
+  "version": 1491,
+  "owner": "ad4e5476-5464-4fd5-8c5c-404e8a6278bd",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ad4e5476-5464-4fd5-8c5c-404e8a6278bd",
+    "createdTime": "2025-04-22T15:21:33.41Z",
+    "lastModifiedBy": "ad4e5476-5464-4fd5-8c5c-404e8a6278bd",
+    "lastModifiedTime": "2026-04-09T07:42:59.045Z"
+  },
+  "access": [
+    "read"
+  ]
+}

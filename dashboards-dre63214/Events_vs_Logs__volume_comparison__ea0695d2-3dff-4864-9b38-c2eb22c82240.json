@@ -1,0 +1,17 @@
+{
+  "id": "ea0695d2-3dff-4864-9b38-c2eb22c82240",
+  "name": "Events vs Logs: volume comparison",
+  "type": "dashboard",
+  "version": 266,
+  "owner": "c0ce19cd-6727-4ab5-8c4f-aa57385f3aec",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c0ce19cd-6727-4ab5-8c4f-aa57385f3aec",
+    "createdTime": "2025-05-13T07:25:56.212Z",
+    "lastModifiedBy": "c0ce19cd-6727-4ab5-8c4f-aa57385f3aec",
+    "lastModifiedTime": "2025-07-29T11:06:03.783Z"
+  },
+  "access": [
+    "read"
+  ]
+}

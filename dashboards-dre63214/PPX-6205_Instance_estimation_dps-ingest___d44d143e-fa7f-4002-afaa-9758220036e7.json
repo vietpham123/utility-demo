@@ -1,0 +1,17 @@
+{
+  "id": "d44d143e-fa7f-4002-afaa-9758220036e7",
+  "name": "PPX-6205 Instance estimation dps-ingest ",
+  "type": "dashboard",
+  "version": 210,
+  "owner": "0152d562-5005-41f0-984d-2922709220da",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "0152d562-5005-41f0-984d-2922709220da",
+    "createdTime": "2025-07-10T12:56:02.921Z",
+    "lastModifiedBy": "0152d562-5005-41f0-984d-2922709220da",
+    "lastModifiedTime": "2026-02-23T09:58:33.979Z"
+  },
+  "access": [
+    "read"
+  ]
+}

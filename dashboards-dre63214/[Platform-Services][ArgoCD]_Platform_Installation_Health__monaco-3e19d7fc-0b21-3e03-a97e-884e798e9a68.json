@@ -1,0 +1,17 @@
+{
+  "id": "monaco-3e19d7fc-0b21-3e03-a97e-884e798e9a68",
+  "name": "[Platform-Services][ArgoCD] Platform Installation Health",
+  "type": "dashboard",
+  "version": 1589,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-09-09T15:04:50.977Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:36.371Z"
+  },
+  "access": [
+    "read"
+  ]
+}

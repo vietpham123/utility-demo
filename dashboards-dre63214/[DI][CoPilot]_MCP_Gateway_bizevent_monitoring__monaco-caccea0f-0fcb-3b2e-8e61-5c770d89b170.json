@@ -1,0 +1,17 @@
+{
+  "id": "monaco-caccea0f-0fcb-3b2e-8e61-5c770d89b170",
+  "name": "[DI][CoPilot] MCP Gateway bizevent monitoring",
+  "type": "dashboard",
+  "version": 1342,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-10-15T14:02:23.053Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:02.531Z"
+  },
+  "access": [
+    "read"
+  ]
+}

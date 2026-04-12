@@ -1,0 +1,17 @@
+{
+  "id": "2e7a0efa-60d1-4a99-ba7c-2780b0890264",
+  "name": "QSP Reporting: Cloud-native tracing and service map June Rally 26",
+  "type": "dashboard",
+  "version": 21,
+  "owner": "7ea375ec-0e88-4e79-af74-558ccd5de5ec",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "7ea375ec-0e88-4e79-af74-558ccd5de5ec",
+    "createdTime": "2026-03-25T08:51:04.176Z",
+    "lastModifiedBy": "7ea375ec-0e88-4e79-af74-558ccd5de5ec",
+    "lastModifiedTime": "2026-04-09T08:48:48.398Z"
+  },
+  "access": [
+    "read"
+  ]
+}

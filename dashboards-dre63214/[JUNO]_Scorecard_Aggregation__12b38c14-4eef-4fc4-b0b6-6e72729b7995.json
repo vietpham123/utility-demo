@@ -1,0 +1,17 @@
+{
+  "id": "12b38c14-4eef-4fc4-b0b6-6e72729b7995",
+  "name": "[JUNO] Scorecard Aggregation",
+  "type": "dashboard",
+  "version": 671,
+  "owner": "7e17ea65-4086-40dd-b6fa-a58ebea5fad6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "7e17ea65-4086-40dd-b6fa-a58ebea5fad6",
+    "createdTime": "2025-09-02T12:37:52.026Z",
+    "lastModifiedBy": "7e17ea65-4086-40dd-b6fa-a58ebea5fad6",
+    "lastModifiedTime": "2026-03-16T09:06:56.652Z"
+  },
+  "access": [
+    "read"
+  ]
+}

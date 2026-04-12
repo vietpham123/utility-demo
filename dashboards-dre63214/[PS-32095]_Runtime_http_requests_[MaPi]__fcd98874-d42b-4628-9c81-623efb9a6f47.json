@@ -1,0 +1,17 @@
+{
+  "id": "fcd98874-d42b-4628-9c81-623efb9a6f47",
+  "name": "[PS-32095] Runtime http requests [MaPi]",
+  "type": "dashboard",
+  "version": 211,
+  "owner": "cd6d80c7-f9cd-4c36-959d-10c1761d8e03",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "cd6d80c7-f9cd-4c36-959d-10c1761d8e03",
+    "createdTime": "2025-10-02T06:52:13.885Z",
+    "lastModifiedBy": "cd6d80c7-f9cd-4c36-959d-10c1761d8e03",
+    "lastModifiedTime": "2025-11-19T07:00:03.692Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-bb570780-361c-388d-8ba4-41fc1ae27378",
+  "name": "Security Shared SCA Lib Usage \u0026 Tracking",
+  "type": "dashboard",
+  "version": 333,
+  "owner": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+    "createdTime": "2026-01-14T13:43:12.073Z",
+    "lastModifiedBy": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+    "lastModifiedTime": "2026-04-10T15:12:38.132Z"
+  },
+  "access": [
+    "read"
+  ]
+}

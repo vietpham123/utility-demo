@@ -1,0 +1,17 @@
+{
+  "id": "755a73c6-7b7c-43eb-9349-38e2fc16ca08",
+  "name": "[Grail] Hardware Growth Rate",
+  "type": "dashboard",
+  "version": 283,
+  "owner": "9503577f-75ff-4fa2-bd77-0815bbc1d808",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "9503577f-75ff-4fa2-bd77-0815bbc1d808",
+    "createdTime": "2025-07-03T16:24:22.301Z",
+    "lastModifiedBy": "9503577f-75ff-4fa2-bd77-0815bbc1d808",
+    "lastModifiedTime": "2026-03-19T12:46:03.463Z"
+  },
+  "access": [
+    "read"
+  ]
+}

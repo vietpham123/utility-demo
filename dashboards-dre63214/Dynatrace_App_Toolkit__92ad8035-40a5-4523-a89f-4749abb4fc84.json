@@ -1,0 +1,17 @@
+{
+  "id": "92ad8035-40a5-4523-a89f-4749abb4fc84",
+  "name": "Dynatrace App Toolkit",
+  "type": "dashboard",
+  "version": 439,
+  "owner": "3f62c454-1b0f-4c83-b427-636d5c03f263",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "3f62c454-1b0f-4c83-b427-636d5c03f263",
+    "createdTime": "2025-03-24T14:03:17.539Z",
+    "lastModifiedBy": "3f62c454-1b0f-4c83-b427-636d5c03f263",
+    "lastModifiedTime": "2026-03-16T07:53:56.887Z"
+  },
+  "access": [
+    "read"
+  ]
+}

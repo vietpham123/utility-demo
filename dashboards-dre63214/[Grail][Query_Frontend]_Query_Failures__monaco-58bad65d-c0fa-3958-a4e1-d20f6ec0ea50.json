@@ -1,0 +1,17 @@
+{
+  "id": "monaco-58bad65d-c0fa-3958-a4e1-d20f6ec0ea50",
+  "name": "[Grail][Query Frontend] Query Failures",
+  "type": "dashboard",
+  "version": 2916,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-01-13T14:50:32.915Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:10:33.801Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-b12b052d-a8e2-3cab-a21c-07aee7da348d",
+  "name": "[QSP][IDR] Hyperscaler Alert Monitoring [Monaco]",
+  "type": "dashboard",
+  "version": 575,
+  "owner": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+    "createdTime": "2025-09-29T12:22:54.491Z",
+    "lastModifiedBy": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+    "lastModifiedTime": "2026-04-10T15:12:33.782Z"
+  },
+  "access": [
+    "read"
+  ]
+}

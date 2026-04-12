@@ -1,0 +1,17 @@
+{
+  "id": "monaco-4a44fb6f-f67f-3f46-bb6e-0b74aab54275",
+  "name": "[Grail][Team IVIE] Ingest Lag Monitoring (logs)",
+  "type": "dashboard",
+  "version": 320,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2024-12-13T05:15:17.364Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2025-03-24T15:48:30.604Z"
+  },
+  "access": [
+    "read"
+  ]
+}

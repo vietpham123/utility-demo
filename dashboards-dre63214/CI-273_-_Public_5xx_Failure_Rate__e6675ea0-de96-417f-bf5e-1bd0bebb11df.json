@@ -1,0 +1,17 @@
+{
+  "id": "e6675ea0-de96-417f-bf5e-1bd0bebb11df",
+  "name": "CI-273 - Public 5xx Failure Rate",
+  "type": "dashboard",
+  "version": 106,
+  "owner": "cd6d80c7-f9cd-4c36-959d-10c1761d8e03",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "cd6d80c7-f9cd-4c36-959d-10c1761d8e03",
+    "createdTime": "2025-10-23T06:55:41.457Z",
+    "lastModifiedBy": "cd6d80c7-f9cd-4c36-959d-10c1761d8e03",
+    "lastModifiedTime": "2025-11-10T13:20:18.472Z"
+  },
+  "access": [
+    "read"
+  ]
+}

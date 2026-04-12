@@ -1,0 +1,17 @@
+{
+  "id": "monaco-f1856b1b-f2d8-3035-9a0f-49204e594eb2",
+  "name": "[Grail] Utilization - All Clusters",
+  "type": "dashboard",
+  "version": 1437,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-10-01T15:42:19.291Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:34.708Z"
+  },
+  "access": [
+    "read"
+  ]
+}

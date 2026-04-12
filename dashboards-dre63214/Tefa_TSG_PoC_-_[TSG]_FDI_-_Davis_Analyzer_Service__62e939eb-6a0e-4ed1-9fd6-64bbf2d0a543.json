@@ -1,0 +1,17 @@
+{
+  "id": "62e939eb-6a0e-4ed1-9fd6-64bbf2d0a543",
+  "name": "Tefa TSG PoC - [TSG] FDI - Davis Analyzer Service",
+  "type": "dashboard",
+  "version": 236,
+  "owner": "39bada11-6fad-410c-bd8e-b68691d4046d",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "39bada11-6fad-410c-bd8e-b68691d4046d",
+    "createdTime": "2025-05-26T05:00:14.42Z",
+    "lastModifiedBy": "39bada11-6fad-410c-bd8e-b68691d4046d",
+    "lastModifiedTime": "2025-06-03T09:10:12.78Z"
+  },
+  "access": [
+    "read"
+  ]
+}

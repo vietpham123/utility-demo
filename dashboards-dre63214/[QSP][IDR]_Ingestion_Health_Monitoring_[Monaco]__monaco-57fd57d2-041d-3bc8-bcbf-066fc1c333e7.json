@@ -1,0 +1,17 @@
+{
+  "id": "monaco-57fd57d2-041d-3bc8-bcbf-066fc1c333e7",
+  "name": "[QSP][IDR] Ingestion Health Monitoring [Monaco]",
+  "type": "dashboard",
+  "version": 220,
+  "owner": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+    "createdTime": "2026-02-23T16:22:23.604Z",
+    "lastModifiedBy": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+    "lastModifiedTime": "2026-04-10T15:12:34.534Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-e68b5ea9-4aa7-3144-bcc4-39e8208d24b5",
+  "name": "[Grail][Smartscape Change Detector] Service Audit",
+  "type": "dashboard",
+  "version": 2525,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-04-16T06:27:15.752Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:01.838Z"
+  },
+  "access": [
+    "read"
+  ]
+}

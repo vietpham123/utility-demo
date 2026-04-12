@@ -1,0 +1,17 @@
+{
+  "id": "5b773694-28fe-4d42-bcb7-8d5edb472905",
+  "name": "LogsApp - `fetch-fields-summary` queries [for engineering insights]",
+  "type": "dashboard",
+  "version": 8,
+  "owner": "d860af69-3b20-4875-bd4c-ff32d38cfd4c",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "d860af69-3b20-4875-bd4c-ff32d38cfd4c",
+    "createdTime": "2025-06-03T06:54:52.778Z",
+    "lastModifiedBy": "d860af69-3b20-4875-bd4c-ff32d38cfd4c",
+    "lastModifiedTime": "2026-01-27T13:02:19.237Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-cce726c3-3db8-3d15-a63f-43dfac842c35",
+  "name": "[ASDY][CARE][CASC] Promotion service overview",
+  "type": "dashboard",
+  "version": 1676,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-08-28T13:58:33.739Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:05.737Z"
+  },
+  "access": [
+    "read"
+  ]
+}

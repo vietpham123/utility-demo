@@ -1,0 +1,17 @@
+{
+  "id": "monaco-46b5a56b-b360-3580-beae-07db4a497273",
+  "name": "[Grail][Team Voltron] Lookup Tables Status",
+  "type": "dashboard",
+  "version": 2036,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-07-07T15:53:16.889Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:38.927Z"
+  },
+  "access": [
+    "read"
+  ]
+}

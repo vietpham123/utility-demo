@@ -1,0 +1,17 @@
+{
+  "id": "monaco-28b63ca4-5962-3e86-9979-6a092e7121a6",
+  "name": "[JUNO] Quality Gates",
+  "type": "dashboard",
+  "version": 370,
+  "owner": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+    "createdTime": "2025-07-15T10:35:41.883Z",
+    "lastModifiedBy": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+    "lastModifiedTime": "2026-04-10T06:46:54.091Z"
+  },
+  "access": [
+    "read"
+  ]
+}

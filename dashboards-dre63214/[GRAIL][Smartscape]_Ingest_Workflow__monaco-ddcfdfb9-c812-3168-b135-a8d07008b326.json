@@ -1,0 +1,17 @@
+{
+  "id": "monaco-ddcfdfb9-c812-3168-b135-a8d07008b326",
+  "name": "[GRAIL][Smartscape] Ingest Workflow",
+  "type": "dashboard",
+  "version": 2436,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-04-29T06:59:23.685Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:10.495Z"
+  },
+  "access": [
+    "read"
+  ]
+}

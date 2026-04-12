@@ -1,0 +1,17 @@
+{
+  "id": "monaco-9e609abe-a883-3cdc-aadd-f1e87c7eb464",
+  "name": "LIMA Tenant Config - Eventbus Monitoring",
+  "type": "dashboard",
+  "version": 181,
+  "owner": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "createdTime": "2025-10-28T10:29:28.195Z",
+    "lastModifiedBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "lastModifiedTime": "2026-04-10T09:57:23.39Z"
+  },
+  "access": [
+    "read"
+  ]
+}

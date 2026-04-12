@@ -1,0 +1,17 @@
+{
+  "id": "monaco-72db6e24-194d-3bc5-af92-2e6e067f7554",
+  "name": "[DAC] [team-piranhas] AWS Monitoring Panorama",
+  "type": "dashboard",
+  "version": 139,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2026-01-19T12:47:14.137Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-09T13:33:49.576Z"
+  },
+  "access": [
+    "read"
+  ]
+}

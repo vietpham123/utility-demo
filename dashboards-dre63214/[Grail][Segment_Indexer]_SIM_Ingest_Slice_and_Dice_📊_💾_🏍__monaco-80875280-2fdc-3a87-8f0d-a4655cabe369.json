@@ -1,0 +1,17 @@
+{
+  "id": "monaco-80875280-2fdc-3a87-8f0d-a4655cabe369",
+  "name": "[Grail][Segment Indexer] SIM Ingest Slice and Dice 📊 💾 🏍",
+  "type": "dashboard",
+  "version": 1133,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-11-06T11:44:39.389Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:06.281Z"
+  },
+  "access": [
+    "read"
+  ]
+}

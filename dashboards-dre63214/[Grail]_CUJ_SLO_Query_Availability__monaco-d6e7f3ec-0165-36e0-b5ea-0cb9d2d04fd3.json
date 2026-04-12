@@ -1,0 +1,17 @@
+{
+  "id": "monaco-d6e7f3ec-0165-36e0-b5ea-0cb9d2d04fd3",
+  "name": "[Grail] CUJ SLO Query Availability",
+  "type": "dashboard",
+  "version": 1049,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-11-14T15:54:02.073Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:10.739Z"
+  },
+  "access": [
+    "read"
+  ]
+}

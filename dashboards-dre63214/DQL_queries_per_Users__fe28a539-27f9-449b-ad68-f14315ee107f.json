@@ -1,0 +1,17 @@
+{
+  "id": "fe28a539-27f9-449b-ad68-f14315ee107f",
+  "name": "DQL queries per Users",
+  "type": "dashboard",
+  "version": 2,
+  "owner": "7d90b9bd-38a9-4630-9214-dd8dadc9843e",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "7d90b9bd-38a9-4630-9214-dd8dadc9843e",
+    "createdTime": "2025-04-22T06:55:36.283Z",
+    "lastModifiedBy": "7d90b9bd-38a9-4630-9214-dd8dadc9843e",
+    "lastModifiedTime": "2025-04-22T06:55:40.779Z"
+  },
+  "access": [
+    "read"
+  ]
+}

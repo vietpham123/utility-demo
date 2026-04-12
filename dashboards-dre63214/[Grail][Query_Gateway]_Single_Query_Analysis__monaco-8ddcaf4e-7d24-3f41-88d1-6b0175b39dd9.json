@@ -1,0 +1,17 @@
+{
+  "id": "monaco-8ddcaf4e-7d24-3f41-88d1-6b0175b39dd9",
+  "name": "[Grail][Query Gateway] Single Query Analysis",
+  "type": "dashboard",
+  "version": 1308,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-10-20T10:02:52.64Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:20.698Z"
+  },
+  "access": [
+    "read"
+  ]
+}

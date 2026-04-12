@@ -1,0 +1,17 @@
+{
+  "id": "b4d2307e-6e71-4f00-b587-94839a9a4761",
+  "name": "[GRAIL] 🪣 Buckets per Customer_Tenant",
+  "type": "dashboard",
+  "version": 54,
+  "owner": "904dd0b4-9dab-4506-b1ab-5e96a7977fbf",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "904dd0b4-9dab-4506-b1ab-5e96a7977fbf",
+    "createdTime": "2025-05-30T08:31:32.11Z",
+    "lastModifiedBy": "904dd0b4-9dab-4506-b1ab-5e96a7977fbf",
+    "lastModifiedTime": "2026-03-05T12:42:45.371Z"
+  },
+  "access": [
+    "read"
+  ]
+}

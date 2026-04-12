@@ -1,0 +1,17 @@
+{
+  "id": "monaco-00f1e996-6cf6-3d95-ba97-4e484883c8ee",
+  "name": "[Grail] Utilization - Single Cluster",
+  "type": "dashboard",
+  "version": 2324,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-05-14T13:17:43.418Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:30.274Z"
+  },
+  "access": [
+    "read"
+  ]
+}

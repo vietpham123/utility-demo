@@ -1,0 +1,17 @@
+{
+  "id": "22294502-0ac8-400b-9667-5a7a4d1ebc3e",
+  "name": "[DTE] Sigstore - Rekor",
+  "type": "dashboard",
+  "version": 2,
+  "owner": "6c5cca5c-1639-4896-8cbf-573633f8f974",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "6c5cca5c-1639-4896-8cbf-573633f8f974",
+    "createdTime": "2025-07-29T10:01:52.762Z",
+    "lastModifiedBy": "6c5cca5c-1639-4896-8cbf-573633f8f974",
+    "lastModifiedTime": "2025-07-29T11:46:50.682Z"
+  },
+  "access": [
+    "read"
+  ]
+}

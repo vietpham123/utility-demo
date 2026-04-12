@@ -1,0 +1,17 @@
+{
+  "id": "monaco-3dd8566e-c004-3c51-b17f-1382d87234a2",
+  "name": "Lookup Tables on this tenant",
+  "type": "dashboard",
+  "version": 1335,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-10-16T10:46:31.552Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:13.986Z"
+  },
+  "access": [
+    "read"
+  ]
+}

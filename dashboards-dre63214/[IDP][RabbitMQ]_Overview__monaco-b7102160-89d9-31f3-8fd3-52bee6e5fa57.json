@@ -1,0 +1,17 @@
+{
+  "id": "monaco-b7102160-89d9-31f3-8fd3-52bee6e5fa57",
+  "name": "[IDP][RabbitMQ] Overview",
+  "type": "dashboard",
+  "version": 2907,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-01-22T07:50:27.132Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:19.451Z"
+  },
+  "access": [
+    "read"
+  ]
+}

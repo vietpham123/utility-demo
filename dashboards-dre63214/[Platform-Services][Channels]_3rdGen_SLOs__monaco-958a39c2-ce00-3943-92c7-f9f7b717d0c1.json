@@ -1,0 +1,17 @@
+{
+  "id": "monaco-958a39c2-ce00-3943-92c7-f9f7b717d0c1",
+  "name": "[Platform-Services][Channels] 3rdGen SLOs",
+  "type": "dashboard",
+  "version": 1844,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-08-05T09:09:27.637Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:44.786Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "aa195bc7-82cd-44e4-b785-dfd8d5f04a3b",
+  "name": "[Platform] Problems App Adoption",
+  "type": "dashboard",
+  "version": 9,
+  "owner": "7d90b9bd-38a9-4630-9214-dd8dadc9843e",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "7d90b9bd-38a9-4630-9214-dd8dadc9843e",
+    "createdTime": "2025-04-29T07:33:14.309Z",
+    "lastModifiedBy": "7d90b9bd-38a9-4630-9214-dd8dadc9843e",
+    "lastModifiedTime": "2026-02-26T06:14:55.315Z"
+  },
+  "access": [
+    "read"
+  ]
+}

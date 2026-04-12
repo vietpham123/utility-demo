@@ -1,0 +1,17 @@
+{
+  "id": "28eaa2cd-6c3f-412e-8b31-60678297f769",
+  "name": "UA DQL queries",
+  "type": "dashboard",
+  "version": 11,
+  "owner": "a8379620-64ee-4f24-8bb8-529cf7778cce",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "a8379620-64ee-4f24-8bb8-529cf7778cce",
+    "createdTime": "2025-06-16T14:31:15.804Z",
+    "lastModifiedBy": "a8379620-64ee-4f24-8bb8-529cf7778cce",
+    "lastModifiedTime": "2025-11-21T10:01:19.041Z"
+  },
+  "access": [
+    "read"
+  ]
+}

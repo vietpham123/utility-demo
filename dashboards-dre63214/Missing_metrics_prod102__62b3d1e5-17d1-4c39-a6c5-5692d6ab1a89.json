@@ -1,0 +1,17 @@
+{
+  "id": "62b3d1e5-17d1-4c39-a6c5-5692d6ab1a89",
+  "name": "Missing metrics prod102",
+  "type": "dashboard",
+  "version": 50,
+  "owner": "ac17c97e-0e70-436f-9516-7c4b8a405b80",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ac17c97e-0e70-436f-9516-7c4b8a405b80",
+    "createdTime": "2025-09-15T18:27:54.52Z",
+    "lastModifiedBy": "ac17c97e-0e70-436f-9516-7c4b8a405b80",
+    "lastModifiedTime": "2025-09-16T08:16:53.668Z"
+  },
+  "access": [
+    "read"
+  ]
+}

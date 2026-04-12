@@ -1,0 +1,17 @@
+{
+  "id": "d53807f7-2f3e-4637-8934-71ef0933cfe7",
+  "name": "Live Debugger connections",
+  "type": "dashboard",
+  "version": 148,
+  "owner": "58fbcc0b-838f-47c2-bde5-780d148bf008",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "58fbcc0b-838f-47c2-bde5-780d148bf008",
+    "createdTime": "2025-07-10T11:04:44.583Z",
+    "lastModifiedBy": "e5b930c2-8584-4295-adc4-2300107cf5be",
+    "lastModifiedTime": "2026-01-08T14:08:44.651Z"
+  },
+  "access": [
+    "read"
+  ]
+}

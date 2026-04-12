@@ -1,0 +1,17 @@
+{
+  "id": "b1117f94-da9c-46ac-9764-cb5ebbdb9a7b",
+  "name": "AI Model Versioning and A/B Testing",
+  "type": "dashboard",
+  "version": 23,
+  "owner": "fc350a08-c723-407c-8139-ba6d21892593",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "fc350a08-c723-407c-8139-ba6d21892593",
+    "createdTime": "2025-08-07T10:18:04.811Z",
+    "lastModifiedBy": "fc350a08-c723-407c-8139-ba6d21892593",
+    "lastModifiedTime": "2025-10-20T10:29:59.334Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "f31d0eee-2cf8-4136-80d0-8e1fc165544b",
+  "name": "[Sparta] entity-query-service - queryid",
+  "type": "dashboard",
+  "version": 2363,
+  "owner": "b53638e9-3b44-4301-97e5-325a12fa9d5a",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "b53638e9-3b44-4301-97e5-325a12fa9d5a",
+    "createdTime": "2025-05-14T19:59:00.502Z",
+    "lastModifiedBy": "b53638e9-3b44-4301-97e5-325a12fa9d5a",
+    "lastModifiedTime": "2026-04-10T13:22:06.335Z"
+  },
+  "access": [
+    "read"
+  ]
+}

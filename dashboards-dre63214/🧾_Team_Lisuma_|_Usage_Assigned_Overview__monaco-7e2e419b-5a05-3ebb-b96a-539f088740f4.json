@@ -1,0 +1,17 @@
+{
+  "id": "monaco-7e2e419b-5a05-3ebb-b96a-539f088740f4",
+  "name": "🧾 Team Lisuma | Usage Assigned Overview",
+  "type": "dashboard",
+  "version": 553,
+  "owner": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "createdTime": "2025-03-04T08:56:29.14Z",
+    "lastModifiedBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "lastModifiedTime": "2026-04-10T09:57:18.64Z"
+  },
+  "access": [
+    "read"
+  ]
+}

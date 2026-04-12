@@ -1,0 +1,17 @@
+{
+  "id": "monaco-a82518ef-75e2-39c1-8286-3b6c324cd766",
+  "name": "[Platform Services][Automation Server] Newly Failed Stable Workflows",
+  "type": "dashboard",
+  "version": 1809,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-08-07T15:29:34.609Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:37.418Z"
+  },
+  "access": [
+    "read"
+  ]
+}

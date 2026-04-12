@@ -1,0 +1,17 @@
+{
+  "id": "monaco-40691f5c-a5f2-3ae7-ac93-2e5d51f7fdf1",
+  "name": "Team Lisuma | Central Audit Service Overview",
+  "type": "dashboard",
+  "version": 364,
+  "owner": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "createdTime": "2025-07-29T14:08:41.089Z",
+    "lastModifiedBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "lastModifiedTime": "2026-04-10T09:57:22.364Z"
+  },
+  "access": [
+    "read"
+  ]
+}

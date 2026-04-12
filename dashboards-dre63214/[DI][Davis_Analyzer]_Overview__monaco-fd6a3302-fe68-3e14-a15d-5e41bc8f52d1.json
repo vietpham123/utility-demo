@@ -1,0 +1,17 @@
+{
+  "id": "monaco-fd6a3302-fe68-3e14-a15d-5e41bc8f52d1",
+  "name": "[DI][Davis Analyzer] Overview",
+  "type": "dashboard",
+  "version": 230,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2024-12-13T05:15:17.751Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2025-03-10T07:46:18.988Z"
+  },
+  "access": [
+    "read"
+  ]
+}

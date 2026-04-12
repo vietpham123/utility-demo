@@ -1,0 +1,17 @@
+{
+  "id": "monaco-0f438b51-c848-3587-8e1f-be958ac614f0",
+  "name": "[JUNO] Sanity Testing",
+  "type": "dashboard",
+  "version": 2,
+  "owner": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+    "createdTime": "2025-11-11T12:10:16.567Z",
+    "lastModifiedBy": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+    "lastModifiedTime": "2025-11-11T12:10:17.115Z"
+  },
+  "access": [
+    "read"
+  ]
+}

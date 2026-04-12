@@ -1,0 +1,17 @@
+{
+  "id": "monaco-3a9ffe8d-e338-32a4-981b-32d1c4a09d10",
+  "name": "[DAC] Performance -- AWS metric poller",
+  "type": "dashboard",
+  "version": 426,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-07-18T10:58:52.052Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-09T13:33:51.356Z"
+  },
+  "access": [
+    "read"
+  ]
+}

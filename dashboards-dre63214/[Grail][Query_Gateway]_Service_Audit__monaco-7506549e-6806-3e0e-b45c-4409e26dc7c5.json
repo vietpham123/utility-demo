@@ -1,0 +1,17 @@
+{
+  "id": "monaco-7506549e-6806-3e0e-b45c-4409e26dc7c5",
+  "name": "[Grail][Query Gateway] Service Audit",
+  "type": "dashboard",
+  "version": 2978,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2024-12-13T05:15:20.56Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:11.082Z"
+  },
+  "access": [
+    "read"
+  ]
+}

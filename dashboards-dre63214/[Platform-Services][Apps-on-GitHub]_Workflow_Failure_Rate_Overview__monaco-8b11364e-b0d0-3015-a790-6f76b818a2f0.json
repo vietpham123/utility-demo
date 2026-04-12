@@ -1,0 +1,17 @@
+{
+  "id": "monaco-8b11364e-b0d0-3015-a790-6f76b818a2f0",
+  "name": "[Platform-Services][Apps-on-GitHub] Workflow Failure Rate Overview",
+  "type": "dashboard",
+  "version": 1668,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-08-29T13:53:08.75Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:40.355Z"
+  },
+  "access": [
+    "read"
+  ]
+}

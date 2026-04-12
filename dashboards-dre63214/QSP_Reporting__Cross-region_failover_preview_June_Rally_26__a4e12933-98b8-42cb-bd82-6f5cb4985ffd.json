@@ -1,0 +1,17 @@
+{
+  "id": "a4e12933-98b8-42cb-bd82-6f5cb4985ffd",
+  "name": "QSP Reporting: Cross-region failover preview June Rally 26",
+  "type": "dashboard",
+  "version": 23,
+  "owner": "a9ba7317-23bf-4f49-b7ea-dd34caab976a",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "a9ba7317-23bf-4f49-b7ea-dd34caab976a",
+    "createdTime": "2026-03-17T12:15:36.875Z",
+    "lastModifiedBy": "a9ba7317-23bf-4f49-b7ea-dd34caab976a",
+    "lastModifiedTime": "2026-03-25T12:07:05.975Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "dynatrace.database.overview.database-overview",
+  "name": "Databases overview",
+  "type": "dashboard",
+  "description": "High-level overview of monitored databases",
+  "version": 30,
+  "owner": "63164427-dea7-426b-bbbd-a0ccaa77a8eb",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "63164427-dea7-426b-bbbd-a0ccaa77a8eb",
+    "createdTime": "2025-01-09T13:35:55.856Z",
+    "lastModifiedBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "lastModifiedTime": "2026-04-08T13:27:13.079Z"
+  },
+  "access": [
+    "read"
+  ]
+}

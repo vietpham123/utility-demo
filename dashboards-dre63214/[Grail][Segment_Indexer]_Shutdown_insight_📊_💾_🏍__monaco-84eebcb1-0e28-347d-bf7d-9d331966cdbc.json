@@ -1,0 +1,17 @@
+{
+  "id": "monaco-84eebcb1-0e28-347d-bf7d-9d331966cdbc",
+  "name": "[Grail][Segment Indexer] Shutdown insight 📊 💾 🏍",
+  "type": "dashboard",
+  "version": 1141,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-11-05T16:56:58.591Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:21.258Z"
+  },
+  "access": [
+    "read"
+  ]
+}

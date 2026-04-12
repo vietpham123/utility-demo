@@ -1,0 +1,17 @@
+{
+  "id": "monaco-e826ef52-726c-38b9-b0f9-272c48e4b140",
+  "name": "SSO Adoption Statistics prod",
+  "type": "dashboard",
+  "version": 69,
+  "owner": "8bf945a4-1f5c-4d0f-9641-ecedd031426d",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "8bf945a4-1f5c-4d0f-9641-ecedd031426d",
+    "createdTime": "2025-06-06T07:19:43.761Z",
+    "lastModifiedBy": "8bf945a4-1f5c-4d0f-9641-ecedd031426d",
+    "lastModifiedTime": "2026-04-07T05:17:27.443Z"
+  },
+  "access": [
+    "read"
+  ]
+}

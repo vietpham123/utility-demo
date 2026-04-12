@@ -1,0 +1,18 @@
+{
+  "id": "dynatrace.security.posturemanagement.security-posture-overview",
+  "name": "Security Posture overview",
+  "type": "dashboard",
+  "description": "Overview of the compliance findings across your entire environment",
+  "version": 7,
+  "owner": "50436aec-8901-4282-ae81-690bd6509b18",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "createdTime": "2025-04-29T12:13:00.482Z",
+    "lastModifiedBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "lastModifiedTime": "2026-02-26T05:50:48.637Z"
+  },
+  "access": [
+    "read"
+  ]
+}

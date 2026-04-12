@@ -1,0 +1,18 @@
+{
+  "id": "dynatrace.aws.securityhub.security-product-coverage",
+  "name": "Security product coverage",
+  "type": "dashboard",
+  "description": "Overview of the security product coverage across various objects and entities. ",
+  "version": 7,
+  "owner": "50436aec-8901-4282-ae81-690bd6509b18",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "createdTime": "2025-09-01T06:46:45.97Z",
+    "lastModifiedBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "lastModifiedTime": "2026-03-17T15:36:36.166Z"
+  },
+  "access": [
+    "read"
+  ]
+}

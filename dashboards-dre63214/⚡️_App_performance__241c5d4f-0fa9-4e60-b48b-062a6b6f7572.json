@@ -1,0 +1,17 @@
+{
+  "id": "241c5d4f-0fa9-4e60-b48b-062a6b6f7572",
+  "name": "⚡️ App performance",
+  "type": "dashboard",
+  "version": 404,
+  "owner": "b6b61d03-0e7f-49ef-ab97-672edee5cfa5",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "b6b61d03-0e7f-49ef-ab97-672edee5cfa5",
+    "createdTime": "2025-05-20T10:03:28.049Z",
+    "lastModifiedBy": "b6b61d03-0e7f-49ef-ab97-672edee5cfa5",
+    "lastModifiedTime": "2026-03-25T12:46:42.161Z"
+  },
+  "access": [
+    "read"
+  ]
+}

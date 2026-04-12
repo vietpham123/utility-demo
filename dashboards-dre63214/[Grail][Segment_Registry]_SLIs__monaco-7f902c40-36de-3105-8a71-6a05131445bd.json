@@ -1,0 +1,17 @@
+{
+  "id": "monaco-7f902c40-36de-3105-8a71-6a05131445bd",
+  "name": "[Grail][Segment Registry] SLIs",
+  "type": "dashboard",
+  "version": 782,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-12-11T14:22:50.085Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:08:58.189Z"
+  },
+  "access": [
+    "read"
+  ]
+}

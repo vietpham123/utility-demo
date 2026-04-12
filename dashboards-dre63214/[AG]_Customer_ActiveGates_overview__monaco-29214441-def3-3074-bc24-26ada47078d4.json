@@ -1,0 +1,17 @@
+{
+  "id": "monaco-29214441-def3-3074-bc24-26ada47078d4",
+  "name": "[AG] Customer ActiveGates overview",
+  "type": "dashboard",
+  "version": 639,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2024-12-10T02:41:56Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T14:54:49.556Z"
+  },
+  "access": [
+    "read"
+  ]
+}

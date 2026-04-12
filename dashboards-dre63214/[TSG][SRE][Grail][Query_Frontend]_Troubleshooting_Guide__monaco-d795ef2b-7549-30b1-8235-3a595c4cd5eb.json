@@ -1,0 +1,17 @@
+{
+  "id": "monaco-d795ef2b-7549-30b1-8235-3a595c4cd5eb",
+  "name": "[TSG][SRE][Grail][Query Frontend] Troubleshooting Guide",
+  "type": "dashboard",
+  "version": 1986,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-07-15T05:30:29.439Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:11.52Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-27571541-790e-32be-89e4-c8a28353012d",
+  "name": "[Grail][Segment Indexer][Metric] LUMEM finished segment reader memory 📊 💾 🏍",
+  "type": "dashboard",
+  "version": 2624,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-04-01T07:21:02.702Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:22.461Z"
+  },
+  "access": [
+    "read"
+  ]
+}

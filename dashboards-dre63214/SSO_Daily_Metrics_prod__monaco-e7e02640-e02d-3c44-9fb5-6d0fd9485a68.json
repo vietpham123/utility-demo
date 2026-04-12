@@ -1,0 +1,17 @@
+{
+  "id": "monaco-e7e02640-e02d-3c44-9fb5-6d0fd9485a68",
+  "name": "SSO Daily Metrics prod",
+  "type": "dashboard",
+  "version": 69,
+  "owner": "8bf945a4-1f5c-4d0f-9641-ecedd031426d",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "8bf945a4-1f5c-4d0f-9641-ecedd031426d",
+    "createdTime": "2025-06-06T07:19:43.788Z",
+    "lastModifiedBy": "8bf945a4-1f5c-4d0f-9641-ecedd031426d",
+    "lastModifiedTime": "2026-04-07T05:17:27.177Z"
+  },
+  "access": [
+    "read"
+  ]
+}

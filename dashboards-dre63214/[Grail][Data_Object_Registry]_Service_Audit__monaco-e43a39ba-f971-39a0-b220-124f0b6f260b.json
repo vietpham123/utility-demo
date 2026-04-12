@@ -1,0 +1,17 @@
+{
+  "id": "monaco-e43a39ba-f971-39a0-b220-124f0b6f260b",
+  "name": "[Grail][Data Object Registry] Service Audit",
+  "type": "dashboard",
+  "version": 2696,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-03-19T14:10:03.016Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:26.501Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "b7a12e74-659d-4445-b103-63a219c3521e",
+  "name": "SRE Public ActiveGates",
+  "type": "dashboard",
+  "version": 25,
+  "owner": "cc6951ee-972f-4bc5-b59f-be6508b0734b",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "cc6951ee-972f-4bc5-b59f-be6508b0734b",
+    "createdTime": "2025-07-07T10:34:07.255Z",
+    "lastModifiedBy": "cc6951ee-972f-4bc5-b59f-be6508b0734b",
+    "lastModifiedTime": "2026-04-08T08:45:02.187Z"
+  },
+  "access": [
+    "read"
+  ]
+}

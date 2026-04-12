@@ -1,0 +1,17 @@
+{
+  "id": "aae911f9-9b78-421c-b304-0fee34062ae5",
+  "name": "SIM Scaling Overview",
+  "type": "dashboard",
+  "version": 22,
+  "owner": "7d90b9bd-38a9-4630-9214-dd8dadc9843e",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "7d90b9bd-38a9-4630-9214-dd8dadc9843e",
+    "createdTime": "2025-04-22T06:54:35.046Z",
+    "lastModifiedBy": "7d90b9bd-38a9-4630-9214-dd8dadc9843e",
+    "lastModifiedTime": "2026-03-03T13:54:11.756Z"
+  },
+  "access": [
+    "read"
+  ]
+}

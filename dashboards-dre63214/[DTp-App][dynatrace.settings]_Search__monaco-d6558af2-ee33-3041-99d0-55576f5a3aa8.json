@@ -1,0 +1,17 @@
+{
+  "id": "monaco-d6558af2-ee33-3041-99d0-55576f5a3aa8",
+  "name": "[DTp-App][dynatrace.settings] Search",
+  "type": "dashboard",
+  "version": 249,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-02-07T08:13:17.863Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T14:38:18.73Z"
+  },
+  "access": [
+    "read"
+  ]
+}

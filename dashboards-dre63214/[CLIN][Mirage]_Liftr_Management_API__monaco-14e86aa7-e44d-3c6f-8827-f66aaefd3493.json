@@ -1,0 +1,17 @@
+{
+  "id": "monaco-14e86aa7-e44d-3c6f-8827-f66aaefd3493",
+  "name": "[CLIN][Mirage] Liftr Management API",
+  "type": "dashboard",
+  "version": 52,
+  "owner": "d88f9bb7-05cb-4268-9339-6526c7df822a",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "d88f9bb7-05cb-4268-9339-6526c7df822a",
+    "createdTime": "2025-09-17T08:20:15.514Z",
+    "lastModifiedBy": "d88f9bb7-05cb-4268-9339-6526c7df822a",
+    "lastModifiedTime": "2026-04-02T06:46:30.428Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-40f968a0-4252-344d-82aa-c63eb1d63eaf",
+  "name": "[IDP][Kafka] Strimzi operators",
+  "type": "dashboard",
+  "version": 1019,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-11-18T11:17:29.211Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:17.4Z"
+  },
+  "access": [
+    "read"
+  ]
+}

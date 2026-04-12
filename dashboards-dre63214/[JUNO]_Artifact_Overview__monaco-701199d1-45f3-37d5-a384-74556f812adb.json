@@ -1,0 +1,17 @@
+{
+  "id": "monaco-701199d1-45f3-37d5-a384-74556f812adb",
+  "name": "[JUNO] Artifact Overview",
+  "type": "dashboard",
+  "version": 2,
+  "owner": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+    "createdTime": "2025-06-18T09:25:14.812Z",
+    "lastModifiedBy": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+    "lastModifiedTime": "2025-06-18T09:25:15.123Z"
+  },
+  "access": [
+    "read"
+  ]
+}

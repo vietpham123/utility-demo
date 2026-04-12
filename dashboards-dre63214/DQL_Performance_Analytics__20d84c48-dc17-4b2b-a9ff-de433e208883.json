@@ -1,0 +1,17 @@
+{
+  "id": "20d84c48-dc17-4b2b-a9ff-de433e208883",
+  "name": "DQL Performance Analytics",
+  "type": "dashboard",
+  "version": 17,
+  "owner": "7d90b9bd-38a9-4630-9214-dd8dadc9843e",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "7d90b9bd-38a9-4630-9214-dd8dadc9843e",
+    "createdTime": "2025-04-22T06:57:55.489Z",
+    "lastModifiedBy": "7d90b9bd-38a9-4630-9214-dd8dadc9843e",
+    "lastModifiedTime": "2025-04-24T13:23:50.585Z"
+  },
+  "access": [
+    "read"
+  ]
+}

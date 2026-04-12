@@ -1,0 +1,17 @@
+{
+  "id": "monaco-25bd26b7-d4e0-3fa1-adb2-42ae382e6209",
+  "name": "[Grail][Query] Task could not be scheduled: queue is saturated",
+  "type": "dashboard",
+  "version": 1581,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-09-11T10:39:40.417Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:08:51.392Z"
+  },
+  "access": [
+    "read"
+  ]
+}

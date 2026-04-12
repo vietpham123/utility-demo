@@ -1,0 +1,17 @@
+{
+  "id": "5abe10b4-c963-47d6-96cd-5b43797a1471",
+  "name": "[Platform Growth] Workflow Adoption",
+  "type": "dashboard",
+  "version": 3918,
+  "owner": "ff3a3d39-b43e-420f-9563-97320edbd23a",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ff3a3d39-b43e-420f-9563-97320edbd23a",
+    "createdTime": "2025-11-27T13:58:33.631Z",
+    "lastModifiedBy": "ff3a3d39-b43e-420f-9563-97320edbd23a",
+    "lastModifiedTime": "2026-03-31T07:35:42.448Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "8cb0b5ad-a7d2-49ea-9e2e-92e884d12344",
+  "name": "ATF Test Monitoring",
+  "type": "dashboard",
+  "version": 440,
+  "owner": "625fc7dc-5895-4870-ad60-db2967fd48e7",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "625fc7dc-5895-4870-ad60-db2967fd48e7",
+    "createdTime": "2025-11-03T07:38:02.891Z",
+    "lastModifiedBy": "dbb812dc-5698-4e9b-9d21-9bfbeba5b8f1",
+    "lastModifiedTime": "2026-04-07T11:27:11.131Z"
+  },
+  "access": [
+    "read"
+  ]
+}

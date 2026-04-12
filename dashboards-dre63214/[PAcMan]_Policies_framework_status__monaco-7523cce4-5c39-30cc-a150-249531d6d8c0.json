@@ -1,0 +1,17 @@
+{
+  "id": "monaco-7523cce4-5c39-30cc-a150-249531d6d8c0",
+  "name": "[PAcMan] Policies framework status",
+  "type": "dashboard",
+  "version": 94,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-06-17T12:35:36.141Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-07T03:05:28.424Z"
+  },
+  "access": [
+    "read"
+  ]
+}

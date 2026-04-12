@@ -1,0 +1,17 @@
+{
+  "id": "monaco-b1a2e42e-7464-304b-af7b-eaa607042489",
+  "name": "Lima Boomi Connector - Event Statistics",
+  "type": "dashboard",
+  "version": 183,
+  "owner": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "createdTime": "2025-10-28T09:06:51.485Z",
+    "lastModifiedBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "lastModifiedTime": "2026-04-10T09:57:15.141Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "dynatrace.distributedtracing.full-stack-atm-and-trace-capture",
+  "name": "Full-Stack Adaptive Traffic Management and trace capture",
+  "type": "dashboard",
+  "description": "Get insights into Full-Stack monitoring traces volumes, Adaptive Traffic Management and estimate extended ingest.",
+  "version": 17,
+  "owner": "50436aec-8901-4282-ae81-690bd6509b18",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "createdTime": "2025-09-24T16:33:47.913Z",
+    "lastModifiedBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "lastModifiedTime": "2026-03-16T15:08:58.294Z"
+  },
+  "access": [
+    "read"
+  ]
+}

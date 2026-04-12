@@ -1,0 +1,17 @@
+{
+  "id": "43ee3e2d-f62b-4e7e-a18e-b65db6cf9d56",
+  "name": "GRAIL-43432 cost updates delay",
+  "type": "dashboard",
+  "version": 24,
+  "owner": "ac17c97e-0e70-436f-9516-7c4b8a405b80",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ac17c97e-0e70-436f-9516-7c4b8a405b80",
+    "createdTime": "2025-09-22T09:22:08.664Z",
+    "lastModifiedBy": "ac17c97e-0e70-436f-9516-7c4b8a405b80",
+    "lastModifiedTime": "2025-09-22T12:36:53.857Z"
+  },
+  "access": [
+    "read"
+  ]
+}

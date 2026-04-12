@@ -1,0 +1,17 @@
+{
+  "id": "monaco-22346f01-551f-3260-9bd7-8ecc0e1eda1f",
+  "name": "Tenable Overview",
+  "type": "dashboard",
+  "version": 884,
+  "owner": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+    "createdTime": "2025-06-24T08:54:00.62Z",
+    "lastModifiedBy": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+    "lastModifiedTime": "2026-04-10T15:12:38.907Z"
+  },
+  "access": [
+    "read"
+  ]
+}

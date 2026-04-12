@@ -1,0 +1,17 @@
+{
+  "id": "monaco-98fccc33-e73b-3b97-a606-04f2a7c43cac",
+  "name": "[TSG][DAC] [team-vortex] Azure Metrics troubleshooting guide",
+  "type": "dashboard",
+  "version": 212,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-12-16T17:44:59.539Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-09T13:33:53.79Z"
+  },
+  "access": [
+    "read"
+  ]
+}

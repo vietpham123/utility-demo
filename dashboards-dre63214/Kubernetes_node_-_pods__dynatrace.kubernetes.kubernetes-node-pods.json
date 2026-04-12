@@ -1,0 +1,18 @@
+{
+  "id": "dynatrace.kubernetes.kubernetes-node-pods",
+  "name": "Kubernetes node - pods",
+  "type": "dashboard",
+  "description": "Understand pod resource consumption on your nodes.",
+  "version": 31,
+  "owner": "63164427-dea7-426b-bbbd-a0ccaa77a8eb",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "63164427-dea7-426b-bbbd-a0ccaa77a8eb",
+    "createdTime": "2024-11-19T13:59:58.594Z",
+    "lastModifiedBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "lastModifiedTime": "2026-04-08T13:27:02.338Z"
+  },
+  "access": [
+    "read"
+  ]
+}

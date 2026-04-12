@@ -1,0 +1,17 @@
+{
+  "id": "53177aba-55a3-43d8-bc6a-713a512eacb4",
+  "name": "LIMA traffic redistribution",
+  "type": "dashboard",
+  "version": 77,
+  "owner": "ac17c97e-0e70-436f-9516-7c4b8a405b80",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ac17c97e-0e70-436f-9516-7c4b8a405b80",
+    "createdTime": "2025-10-27T13:28:03.245Z",
+    "lastModifiedBy": "ac17c97e-0e70-436f-9516-7c4b8a405b80",
+    "lastModifiedTime": "2025-10-27T19:47:06.672Z"
+  },
+  "access": [
+    "read"
+  ]
+}

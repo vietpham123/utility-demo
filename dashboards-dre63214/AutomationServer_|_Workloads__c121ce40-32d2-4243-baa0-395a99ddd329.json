@@ -1,0 +1,17 @@
+{
+  "id": "c121ce40-32d2-4243-baa0-395a99ddd329",
+  "name": "AutomationServer | Workloads",
+  "type": "dashboard",
+  "version": 2093,
+  "owner": "3abf71f5-b7e3-445e-8154-28c67c31708d",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "3abf71f5-b7e3-445e-8154-28c67c31708d",
+    "createdTime": "2025-11-04T06:32:09.203Z",
+    "lastModifiedBy": "3abf71f5-b7e3-445e-8154-28c67c31708d",
+    "lastModifiedTime": "2026-03-26T09:47:22.893Z"
+  },
+  "access": [
+    "read"
+  ]
+}

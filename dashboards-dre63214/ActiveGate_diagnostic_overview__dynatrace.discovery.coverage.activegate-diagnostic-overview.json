@@ -1,0 +1,18 @@
+{
+  "id": "dynatrace.discovery.coverage.activegate-diagnostic-overview",
+  "name": "ActiveGate diagnostic overview",
+  "type": "dashboard",
+  "description": "Provides overview of ActiveGate diagnostic metrics",
+  "version": 15,
+  "owner": "63164427-dea7-426b-bbbd-a0ccaa77a8eb",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "63164427-dea7-426b-bbbd-a0ccaa77a8eb",
+    "createdTime": "2024-11-19T14:02:08.535Z",
+    "lastModifiedBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "lastModifiedTime": "2026-04-02T15:09:38.333Z"
+  },
+  "access": [
+    "read"
+  ]
+}

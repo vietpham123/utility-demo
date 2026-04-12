@@ -1,0 +1,17 @@
+{
+  "id": "monaco-6d9989bf-2292-3485-b6eb-ce712e57116e",
+  "name": "DTP GCP PostgreSQL",
+  "type": "dashboard",
+  "version": 2030,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-07-08T09:03:10.948Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:45.612Z"
+  },
+  "access": [
+    "read"
+  ]
+}

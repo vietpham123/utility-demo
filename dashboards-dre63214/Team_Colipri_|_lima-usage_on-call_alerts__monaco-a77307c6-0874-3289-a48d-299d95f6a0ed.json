@@ -1,0 +1,17 @@
+{
+  "id": "monaco-a77307c6-0874-3289-a48d-299d95f6a0ed",
+  "name": "Team Colipri | lima-usage on-call alerts",
+  "type": "dashboard",
+  "version": 224,
+  "owner": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "createdTime": "2025-10-14T07:50:14.289Z",
+    "lastModifiedBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "lastModifiedTime": "2026-04-10T09:57:21.453Z"
+  },
+  "access": [
+    "read"
+  ]
+}

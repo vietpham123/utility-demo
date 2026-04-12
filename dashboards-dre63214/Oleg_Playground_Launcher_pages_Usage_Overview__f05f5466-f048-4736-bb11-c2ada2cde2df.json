@@ -1,0 +1,17 @@
+{
+  "id": "f05f5466-f048-4736-bb11-c2ada2cde2df",
+  "name": "Oleg Playground Launcher pages Usage Overview",
+  "type": "dashboard",
+  "version": 42,
+  "owner": "2b194dc3-574e-4419-b05f-52d1814a3542",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "2b194dc3-574e-4419-b05f-52d1814a3542",
+    "createdTime": "2025-08-17T21:07:40.62Z",
+    "lastModifiedBy": "2b194dc3-574e-4419-b05f-52d1814a3542",
+    "lastModifiedTime": "2026-03-14T13:31:13.061Z"
+  },
+  "access": [
+    "read"
+  ]
+}

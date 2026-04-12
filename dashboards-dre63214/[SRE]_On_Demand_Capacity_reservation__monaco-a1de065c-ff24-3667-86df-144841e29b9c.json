@@ -1,0 +1,17 @@
+{
+  "id": "monaco-a1de065c-ff24-3667-86df-144841e29b9c",
+  "name": "[SRE] On Demand Capacity reservation",
+  "type": "dashboard",
+  "version": 624,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2024-12-16T15:34:17.703Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T14:54:49.654Z"
+  },
+  "access": [
+    "read"
+  ]
+}

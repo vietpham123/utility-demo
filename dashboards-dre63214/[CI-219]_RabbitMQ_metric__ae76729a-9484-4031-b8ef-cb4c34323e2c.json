@@ -1,0 +1,17 @@
+{
+  "id": "ae76729a-9484-4031-b8ef-cb4c34323e2c",
+  "name": "[CI-219] RabbitMQ metric",
+  "type": "dashboard",
+  "version": 716,
+  "owner": "3abf71f5-b7e3-445e-8154-28c67c31708d",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "3abf71f5-b7e3-445e-8154-28c67c31708d",
+    "createdTime": "2025-07-18T05:46:58.556Z",
+    "lastModifiedBy": "3abf71f5-b7e3-445e-8154-28c67c31708d",
+    "lastModifiedTime": "2025-11-05T04:53:23.88Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "be335613-8ef7-4a69-8aec-06852cc8440b",
+  "name": "Demo Live Usage Overview",
+  "type": "dashboard",
+  "version": 45,
+  "owner": "afb7b267-26b5-4035-90cc-058073c75c3f",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "afb7b267-26b5-4035-90cc-058073c75c3f",
+    "createdTime": "2025-05-13T13:02:34.372Z",
+    "lastModifiedBy": "afb7b267-26b5-4035-90cc-058073c75c3f",
+    "lastModifiedTime": "2026-03-17T12:02:55.203Z"
+  },
+  "access": [
+    "read"
+  ]
+}

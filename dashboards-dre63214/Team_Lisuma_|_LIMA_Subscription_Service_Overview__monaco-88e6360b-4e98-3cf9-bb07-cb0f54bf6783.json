@@ -1,0 +1,17 @@
+{
+  "id": "monaco-88e6360b-4e98-3cf9-bb07-cb0f54bf6783",
+  "name": "Team Lisuma | LIMA Subscription Service Overview",
+  "type": "dashboard",
+  "version": 424,
+  "owner": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "createdTime": "2025-05-15T11:03:52.191Z",
+    "lastModifiedBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "lastModifiedTime": "2026-04-10T09:57:23.284Z"
+  },
+  "access": [
+    "read"
+  ]
+}

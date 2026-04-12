@@ -1,0 +1,17 @@
+{
+  "id": "84eda5ca-2bf7-4a35-8b90-ade42743cd8b",
+  "name": "DRS Service Insights",
+  "type": "dashboard",
+  "version": 47,
+  "owner": "40f30ee7-d43e-476a-b529-9f3d81bf7e7f",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "40f30ee7-d43e-476a-b529-9f3d81bf7e7f",
+    "createdTime": "2025-09-24T14:09:03.916Z",
+    "lastModifiedBy": "5329613a-dd42-41a7-88c2-5d6b06260810",
+    "lastModifiedTime": "2026-04-09T08:44:32.872Z"
+  },
+  "access": [
+    "read"
+  ]
+}

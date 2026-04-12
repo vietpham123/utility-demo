@@ -1,0 +1,17 @@
+{
+  "id": "f3918dfd-f451-4dad-a645-35545a4c07ff",
+  "name": "SBOMs",
+  "type": "dashboard",
+  "version": 123,
+  "owner": "b5ffa786-43e8-419f-b735-ccf2f5f8e1cc",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "b5ffa786-43e8-419f-b735-ccf2f5f8e1cc",
+    "createdTime": "2026-02-04T15:08:58.891Z",
+    "lastModifiedBy": "2c7fc334-78ac-4be0-9a57-c2fe15589c98",
+    "lastModifiedTime": "2026-03-03T09:58:47.395Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-7360ba26-bead-32b0-8d21-842c81b7cc17",
+  "name": "[Platform Services][Feature Flag Management Service] Observability Adoption Overview",
+  "type": "dashboard",
+  "version": 1878,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-07-31T06:35:54.503Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:26.672Z"
+  },
+  "access": [
+    "read"
+  ]
+}

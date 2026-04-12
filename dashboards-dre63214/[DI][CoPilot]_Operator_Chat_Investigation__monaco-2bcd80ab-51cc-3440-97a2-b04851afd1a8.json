@@ -1,0 +1,17 @@
+{
+  "id": "monaco-2bcd80ab-51cc-3440-97a2-b04851afd1a8",
+  "name": "[DI][CoPilot] Operator Chat Investigation",
+  "type": "dashboard",
+  "version": 450,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2026-02-10T15:43:57.387Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:12.071Z"
+  },
+  "access": [
+    "read"
+  ]
+}

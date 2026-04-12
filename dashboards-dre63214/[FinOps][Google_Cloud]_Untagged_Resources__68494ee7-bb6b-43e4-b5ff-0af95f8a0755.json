@@ -1,0 +1,17 @@
+{
+  "id": "68494ee7-bb6b-43e4-b5ff-0af95f8a0755",
+  "name": "[FinOps][Google Cloud] Untagged Resources",
+  "type": "dashboard",
+  "version": 10,
+  "owner": "8625afc7-4880-4e2a-9771-a054ef439d29",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "8625afc7-4880-4e2a-9771-a054ef439d29",
+    "createdTime": "2025-10-30T10:37:11.451Z",
+    "lastModifiedBy": "8625afc7-4880-4e2a-9771-a054ef439d29",
+    "lastModifiedTime": "2026-03-09T19:58:19.826Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-1c42b758-1bd7-362b-9d79-7cf1a90eba80",
+  "name": "[AppSec][EternalBlue] Java Software Component Extractor",
+  "type": "dashboard",
+  "version": 50,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-08-20T13:07:47.312Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-03-31T14:21:48.029Z"
+  },
+  "access": [
+    "read"
+  ]
+}

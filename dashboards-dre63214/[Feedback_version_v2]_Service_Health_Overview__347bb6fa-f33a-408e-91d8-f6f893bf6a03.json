@@ -1,0 +1,17 @@
+{
+  "id": "347bb6fa-f33a-408e-91d8-f6f893bf6a03",
+  "name": "[Feedback version v2] Service Health Overview",
+  "type": "dashboard",
+  "version": 23,
+  "owner": "49d8b98b-25db-45f7-94d1-9a91c32e76b8",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "49d8b98b-25db-45f7-94d1-9a91c32e76b8",
+    "createdTime": "2026-04-06T08:30:36.179Z",
+    "lastModifiedBy": "49d8b98b-25db-45f7-94d1-9a91c32e76b8",
+    "lastModifiedTime": "2026-04-06T18:10:53.882Z"
+  },
+  "access": [
+    "read"
+  ]
+}

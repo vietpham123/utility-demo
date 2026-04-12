@@ -1,0 +1,17 @@
+{
+  "id": "b8b5abff-24a8-4527-b4ba-0bd70ac6bdb6",
+  "name": "Http Usage - Structured Logs",
+  "type": "dashboard",
+  "version": 234,
+  "owner": "6ab59e52-db16-488c-bb6e-f067167d786e",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "6ab59e52-db16-488c-bb6e-f067167d786e",
+    "createdTime": "2025-12-15T10:59:06.305Z",
+    "lastModifiedBy": "6ab59e52-db16-488c-bb6e-f067167d786e",
+    "lastModifiedTime": "2026-02-10T14:33:28.925Z"
+  },
+  "access": [
+    "read"
+  ]
+}

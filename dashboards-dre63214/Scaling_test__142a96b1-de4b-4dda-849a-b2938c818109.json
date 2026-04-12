@@ -1,0 +1,17 @@
+{
+  "id": "142a96b1-de4b-4dda-849a-b2938c818109",
+  "name": "Scaling test",
+  "type": "dashboard",
+  "version": 306,
+  "owner": "c5395dec-41a2-46e9-9d84-5f3524267014",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c5395dec-41a2-46e9-9d84-5f3524267014",
+    "createdTime": "2025-07-29T17:30:51.453Z",
+    "lastModifiedBy": "c5395dec-41a2-46e9-9d84-5f3524267014",
+    "lastModifiedTime": "2025-11-21T11:53:49.94Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "ac93d14c-2945-4958-b386-4b98cc99ce94",
+  "name": "Copy of [Platform Services][Automation Server] Newly Failed Stable Workflows",
+  "type": "dashboard",
+  "version": 358,
+  "owner": "3abf71f5-b7e3-445e-8154-28c67c31708d",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "3abf71f5-b7e3-445e-8154-28c67c31708d",
+    "createdTime": "2025-11-27T08:56:01.156Z",
+    "lastModifiedBy": "3abf71f5-b7e3-445e-8154-28c67c31708d",
+    "lastModifiedTime": "2025-12-03T10:14:54.77Z"
+  },
+  "access": [
+    "read"
+  ]
+}

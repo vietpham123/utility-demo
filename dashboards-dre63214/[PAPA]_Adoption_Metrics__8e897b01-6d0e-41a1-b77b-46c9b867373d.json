@@ -1,0 +1,17 @@
+{
+  "id": "8e897b01-6d0e-41a1-b77b-46c9b867373d",
+  "name": "[PAPA] Adoption Metrics",
+  "type": "dashboard",
+  "version": 1569,
+  "owner": "d49634d3-d69c-4b60-bb92-24e25432aa00",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "d49634d3-d69c-4b60-bb92-24e25432aa00",
+    "createdTime": "2025-05-06T19:11:14.916Z",
+    "lastModifiedBy": "d49634d3-d69c-4b60-bb92-24e25432aa00",
+    "lastModifiedTime": "2026-04-03T10:33:29.849Z"
+  },
+  "access": [
+    "read"
+  ]
+}

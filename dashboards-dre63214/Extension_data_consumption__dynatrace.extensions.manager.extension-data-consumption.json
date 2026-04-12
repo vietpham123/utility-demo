@@ -1,0 +1,18 @@
+{
+  "id": "dynatrace.extensions.manager.extension-data-consumption",
+  "name": "Extension data consumption",
+  "type": "dashboard",
+  "description": "Overview of data consumption per extension and its configurations",
+  "version": 15,
+  "owner": "63164427-dea7-426b-bbbd-a0ccaa77a8eb",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "63164427-dea7-426b-bbbd-a0ccaa77a8eb",
+    "createdTime": "2024-11-19T13:59:58.553Z",
+    "lastModifiedBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "lastModifiedTime": "2026-04-01T10:38:56.642Z"
+  },
+  "access": [
+    "read"
+  ]
+}

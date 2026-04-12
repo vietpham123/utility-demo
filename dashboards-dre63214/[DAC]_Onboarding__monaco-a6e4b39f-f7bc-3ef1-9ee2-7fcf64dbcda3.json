@@ -1,0 +1,17 @@
+{
+  "id": "monaco-a6e4b39f-f7bc-3ef1-9ee2-7fcf64dbcda3",
+  "name": "[DAC] Onboarding",
+  "type": "dashboard",
+  "version": 398,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-08-11T12:56:33.902Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-09T13:33:47.837Z"
+  },
+  "access": [
+    "read"
+  ]
+}

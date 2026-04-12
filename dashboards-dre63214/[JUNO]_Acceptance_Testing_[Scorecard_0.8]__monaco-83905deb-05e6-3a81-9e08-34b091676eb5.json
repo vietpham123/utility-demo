@@ -1,0 +1,17 @@
+{
+  "id": "monaco-83905deb-05e6-3a81-9e08-34b091676eb5",
+  "name": "[JUNO] Acceptance Testing [Scorecard 0.8]",
+  "type": "dashboard",
+  "version": 202,
+  "owner": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+    "createdTime": "2026-01-08T12:45:11.205Z",
+    "lastModifiedBy": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+    "lastModifiedTime": "2026-04-10T06:46:59.324Z"
+  },
+  "access": [
+    "read"
+  ]
+}

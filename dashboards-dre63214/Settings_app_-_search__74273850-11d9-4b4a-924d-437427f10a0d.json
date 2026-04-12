@@ -1,0 +1,17 @@
+{
+  "id": "74273850-11d9-4b4a-924d-437427f10a0d",
+  "name": "Settings app - search",
+  "type": "dashboard",
+  "version": 2,
+  "owner": "7ff7cdf7-912f-4f06-987a-488a6de7bf1d",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "7ff7cdf7-912f-4f06-987a-488a6de7bf1d",
+    "createdTime": "2026-01-28T15:23:44.239Z",
+    "lastModifiedBy": "7ff7cdf7-912f-4f06-987a-488a6de7bf1d",
+    "lastModifiedTime": "2026-01-28T15:38:06.036Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-198b83c5-1e3b-3c93-8820-906f47bbb92e",
+  "name": "Notification Service (Legacy) - Services",
+  "type": "dashboard",
+  "version": 4,
+  "owner": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "createdTime": "2026-04-09T08:31:31.981Z",
+    "lastModifiedBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "lastModifiedTime": "2026-04-10T09:57:19.672Z"
+  },
+  "access": [
+    "read"
+  ]
+}

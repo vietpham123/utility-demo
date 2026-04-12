@@ -1,0 +1,17 @@
+{
+  "id": "monaco-0463a664-0cd6-331e-8d67-230307b0a5ca",
+  "name": "Search Analytics",
+  "type": "dashboard",
+  "version": 204,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-04-18T08:01:59.581Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T14:38:19.847Z"
+  },
+  "access": [
+    "read"
+  ]
+}

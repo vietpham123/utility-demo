@@ -1,0 +1,17 @@
+{
+  "id": "monaco-8d74a952-8496-3a00-a2fc-4d1b7932b349",
+  "name": "[SRE] Alerts statistics \u0026 Help-SRE overview",
+  "type": "dashboard",
+  "version": 2978,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2024-12-13T05:15:19.367Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:30.158Z"
+  },
+  "access": [
+    "read"
+  ]
+}

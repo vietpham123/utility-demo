@@ -1,0 +1,18 @@
+{
+  "id": "dynatrace.infraops.Network-analytics",
+  "name": "Network analytics",
+  "type": "dashboard",
+  "description": "Utilize AWS flow logs for monitoring \u0026 analysis.",
+  "version": 32,
+  "owner": "63164427-dea7-426b-bbbd-a0ccaa77a8eb",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "63164427-dea7-426b-bbbd-a0ccaa77a8eb",
+    "createdTime": "2024-11-19T14:02:08.548Z",
+    "lastModifiedBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "lastModifiedTime": "2026-04-09T15:57:47.336Z"
+  },
+  "access": [
+    "read"
+  ]
+}

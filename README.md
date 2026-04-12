@@ -1,6 +1,6 @@
 # GenericUtility — Utility Management Platform
 
-A multi-tier, polyglot utility management platform designed for Kubernetes deployment with observability. The platform consists of two applications simulating real-world utility operations: customer billing and outage analytics.
+A multi-tier, polyglot utility management platform designed for Kubernetes deployment with observability. The platform simulates real-world utility operations: outage analytics, SCADA telemetry, demand forecasting, crew dispatch, and more.
 
 ## Architecture Overview
 
@@ -8,26 +8,25 @@ A multi-tier, polyglot utility management platform designed for Kubernetes deplo
 ┌────────────────────────────────────────────────────────────────────────────┐
 │                            Kubernetes Cluster                              │
 │                                                                            │
-│  ┌─── Customer Billing ──────────┐  ┌─── Outage Analytics ────────────────┐│
-│  │                               │  │                                     ││
-│  │  ┌──────────┐                 │  │  ┌──────────┐  ┌────────────┐       ││
-│  │  │Billing UI│ ← Ingress/LB    │  │  │Analytics │ ←| Ingress/LB │       ││
-│  │  │ (nginx)  │                 │  │  │UI (nginx)│  |            |       ││
-│  │  └────┬─────┘                 │  │  └────┬─────┘  └────────────┘       ││
-│  │       │                       │  │       │                             ││
-│  │  ┌────▼──────────┐            │  │  ┌────▼──────────────────────┐      ││
-│  │  │Billing Gateway│            │  │  │  Analytics Gateway        │      ││
-│  │  │  (.NET 6)     │            │  │  │  (Node.js/Express)        │      ││
-│  │  └──┬───┬───┬────┘            │  │  └──┬──┬──┬──┬──┬──┬──┬──┬──┘       ││
-│  │     │   │   │                 │  │     │  │  │  │  │  │  │  │  │       ││
-│  │  ┌──▼┐┌─▼─┐┌▼──┐              │  │  16 microservices (see below)       ││
-│  │  │Cus││Inv││Pay│              │  │                                     ││
-│  │  │tom││oic││men│              │  │  ┌──────────────────────────┐       ││
-│  │  │er ││e  ││t  │              │  │  │ TimescaleDB │ Redis      │       ││
-│  │  │.NE││.NE││.NE│              │  │  │ Kafka       │ RabbitMQ   │       ││
-│  │  │T 6││T 6││T 6│              │  │  └──────────────────────────┘       ││
-│  │  └───┘└───┘└───┘              │  │                                     ││
-│  └───────────────────────────────┘  └─────────────────────────────────────┘│
+│  ┌─── Outage Analytics ───────────────────────────────────────────────────┐│
+│  │                                                                       ││
+│  │  ┌──────────┐  ┌────────────┐                                         ││
+│  │  │Analytics │ ←| Ingress/LB │                                         ││
+│  │  │UI (nginx)│  |            |                                         ││
+│  │  └────┬─────┘  └────────────┘                                         ││
+│  │       │                                                               ││
+│  │  ┌────▼──────────────────────┐                                        ││
+│  │  │  Analytics Gateway        │                                        ││
+│  │  │  (Node.js/Express)        │                                        ││
+│  │  └──┬──┬──┬──┬──┬──┬──┬──┬──┘                                         ││
+│  │     │  │  │  │  │  │  │  │  │                                         ││
+│  │  16 microservices (see below)                                         ││
+│  │                                                                       ││
+│  │  ┌──────────────────────────┐                                         ││
+│  │  │ TimescaleDB │ Redis      │                                         ││
+│  │  │ Kafka       │ RabbitMQ   │                                         ││
+│  │  └──────────────────────────┘                                         ││
+│  └───────────────────────────────────────────────────────────────────────┘│
 │                                                                            │
 │  Dynatrace OneAgent (auto-injected on all pods)                            │
 └────────────────────────────────────────────────────────────────────────────┘
@@ -37,7 +36,6 @@ A multi-tier, polyglot utility management platform designed for Kubernetes deplo
 
 | Application | Pods | Languages |
 |---|---|---|
-| [Customer Billing](customer-billing-app/) | 5 (3 microservices + gateway + UI) | .NET 6 |
 | [Outage Analytics](outage-analytics-app/) | 24 (16 microservices + gateway + UI + 4 infra + reverse-proxy + load-generator) | Node.js, .NET 6, Java 17, Python, Go, Ruby, Kotlin, PHP, Elixir, Rust |
 | [Browser Traffic Generator](browser-traffic-generator/) | 1 per app | Node.js (Playwright/Chromium) |
 | [Traffic Controller](traffic-controller/) | 1 | Node.js (Express) |
@@ -88,9 +86,6 @@ for svc in outage-service usage-service scada-service meter-data-service \
            analytics-ui reverse-proxy load-generator; do
   docker build -t $REGISTRY/$svc:latest services/$svc/ 2>/dev/null || \
   docker build -t $REGISTRY/$svc:latest $svc/
-  docker push $REGISTRY/$svc:latest
-done
-
 # Deploy to Kubernetes
 kubectl apply -f k8s/all-in-one.yaml
 ```
@@ -108,15 +103,6 @@ kubectl get svc -A | grep LoadBalancer
 ## Repository Structure
 
 ```
-├── customer-billing-app/
-│   ├── gateway/           # .NET 6 API gateway
-│   ├── services/
-│   │   ├── customer-service/   # .NET 6 — customer CRUD
-│   │   ├── invoice-service/    # .NET 6 — invoice management
-│   │   └── payment-service/    # .NET 6 — payment processing
-│   ├── ui-web/            # Nginx SPA
-│   └── k8s/               # Kubernetes manifests
-│
 ├── outage-analytics-app/
 │   ├── gateway/           # Node.js API gateway + simulation orchestrator
 │   ├── reverse-proxy/     # NGINX reverse proxy

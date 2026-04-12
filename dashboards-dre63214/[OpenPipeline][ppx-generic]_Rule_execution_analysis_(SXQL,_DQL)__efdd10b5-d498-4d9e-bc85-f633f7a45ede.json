@@ -1,0 +1,17 @@
+{
+  "id": "efdd10b5-d498-4d9e-bc85-f633f7a45ede",
+  "name": "[OpenPipeline][ppx-generic] Rule execution analysis (SXQL, DQL)",
+  "type": "dashboard",
+  "version": 495,
+  "owner": "552007be-4b66-45a6-b958-d92fe24afd33",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "552007be-4b66-45a6-b958-d92fe24afd33",
+    "createdTime": "2025-09-15T12:27:06.71Z",
+    "lastModifiedBy": "552007be-4b66-45a6-b958-d92fe24afd33",
+    "lastModifiedTime": "2026-02-05T14:43:04.724Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-3286993b-4c2b-3d04-beb0-f84b2a082e16",
+  "name": "[Platform Services][Automation Server][DB] Amazon Aurora PostgreSQL",
+  "type": "dashboard",
+  "version": 594,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-12-27T23:43:37.239Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-03-31T12:46:17.461Z"
+  },
+  "access": [
+    "read"
+  ]
+}

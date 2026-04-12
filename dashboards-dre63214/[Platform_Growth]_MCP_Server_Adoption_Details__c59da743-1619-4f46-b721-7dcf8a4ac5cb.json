@@ -1,0 +1,17 @@
+{
+  "id": "c59da743-1619-4f46-b721-7dcf8a4ac5cb",
+  "name": "[Platform Growth] MCP Server Adoption Details",
+  "type": "dashboard",
+  "version": 361,
+  "owner": "ff3a3d39-b43e-420f-9563-97320edbd23a",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ff3a3d39-b43e-420f-9563-97320edbd23a",
+    "createdTime": "2026-03-17T12:20:33.993Z",
+    "lastModifiedBy": "ff3a3d39-b43e-420f-9563-97320edbd23a",
+    "lastModifiedTime": "2026-03-24T12:43:07.514Z"
+  },
+  "access": [
+    "read"
+  ]
+}

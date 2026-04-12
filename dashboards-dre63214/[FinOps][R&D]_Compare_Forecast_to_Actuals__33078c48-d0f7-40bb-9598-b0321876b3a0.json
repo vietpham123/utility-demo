@@ -1,0 +1,17 @@
+{
+  "id": "33078c48-d0f7-40bb-9598-b0321876b3a0",
+  "name": "[FinOps][R\u0026D] Compare Forecast to Actuals",
+  "type": "dashboard",
+  "version": 5,
+  "owner": "8625afc7-4880-4e2a-9771-a054ef439d29",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "8625afc7-4880-4e2a-9771-a054ef439d29",
+    "createdTime": "2026-01-28T13:16:33.193Z",
+    "lastModifiedBy": "8625afc7-4880-4e2a-9771-a054ef439d29",
+    "lastModifiedTime": "2026-02-03T07:58:03.441Z"
+  },
+  "access": [
+    "read"
+  ]
+}

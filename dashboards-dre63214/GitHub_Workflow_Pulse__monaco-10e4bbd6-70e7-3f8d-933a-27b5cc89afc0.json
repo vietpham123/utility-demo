@@ -1,0 +1,17 @@
+{
+  "id": "monaco-10e4bbd6-70e7-3f8d-933a-27b5cc89afc0",
+  "name": "GitHub Workflow Pulse",
+  "type": "dashboard",
+  "version": 206,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-12-09T14:12:49.167Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T13:57:54.804Z"
+  },
+  "access": [
+    "read"
+  ]
+}

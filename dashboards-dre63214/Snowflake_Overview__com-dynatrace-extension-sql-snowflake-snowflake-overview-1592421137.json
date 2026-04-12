@@ -1,0 +1,17 @@
+{
+  "id": "com-dynatrace-extension-sql-snowflake-snowflake-overview-1592421137",
+  "name": "Snowflake Overview",
+  "type": "dashboard",
+  "version": 1,
+  "owner": "60a34747-becc-47c2-ac3a-bfaf2c537471",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "60a34747-becc-47c2-ac3a-bfaf2c537471",
+    "createdTime": "2026-01-22T14:00:56.216Z",
+    "lastModifiedBy": "60a34747-becc-47c2-ac3a-bfaf2c537471",
+    "lastModifiedTime": "2026-01-22T14:00:56.216Z"
+  },
+  "access": [
+    "read"
+  ]
+}

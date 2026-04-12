@@ -1,0 +1,17 @@
+{
+  "id": "2bd0f38e-f8c5-4fc1-8a6a-8182defbfee4",
+  "name": "Settings App popularity among Infra Obs apps",
+  "type": "dashboard",
+  "version": 38,
+  "owner": "8ccfb876-b946-4322-aae0-74b07fc06f95",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "8ccfb876-b946-4322-aae0-74b07fc06f95",
+    "createdTime": "2025-10-30T10:54:05.34Z",
+    "lastModifiedBy": "8ccfb876-b946-4322-aae0-74b07fc06f95",
+    "lastModifiedTime": "2025-11-19T08:28:32.606Z"
+  },
+  "access": [
+    "read"
+  ]
+}

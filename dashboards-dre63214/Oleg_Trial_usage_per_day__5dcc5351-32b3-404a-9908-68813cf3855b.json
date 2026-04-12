@@ -1,0 +1,17 @@
+{
+  "id": "5dcc5351-32b3-404a-9908-68813cf3855b",
+  "name": "Oleg Trial usage per day",
+  "type": "dashboard",
+  "version": 946,
+  "owner": "2b194dc3-574e-4419-b05f-52d1814a3542",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "2b194dc3-574e-4419-b05f-52d1814a3542",
+    "createdTime": "2025-10-02T08:39:45.529Z",
+    "lastModifiedBy": "2b194dc3-574e-4419-b05f-52d1814a3542",
+    "lastModifiedTime": "2026-03-30T10:43:41.481Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "6bed3755-45a9-46c1-8b53-561b90b30c29",
+  "name": "Dynatrace User Session Analysis (Adoption)",
+  "type": "dashboard",
+  "version": 4634,
+  "owner": "685702f1-5f16-4108-adb1-2afbb6fcb0cc",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "685702f1-5f16-4108-adb1-2afbb6fcb0cc",
+    "createdTime": "2025-04-29T19:13:47.605Z",
+    "lastModifiedBy": "2b6e96cf-84c8-40ed-b5aa-8505efd766f2",
+    "lastModifiedTime": "2026-04-02T18:03:44.278Z"
+  },
+  "access": [
+    "read"
+  ]
+}

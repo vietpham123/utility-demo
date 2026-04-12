@@ -1,0 +1,17 @@
+{
+  "id": "monaco-de410e40-4d53-3dc7-9806-3b5a8a1674ce",
+  "name": "[DAC] Performance -- GCP smartscape poller",
+  "type": "dashboard",
+  "version": 308,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-11-17T11:34:11.783Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-09T13:33:52.256Z"
+  },
+  "access": [
+    "read"
+  ]
+}

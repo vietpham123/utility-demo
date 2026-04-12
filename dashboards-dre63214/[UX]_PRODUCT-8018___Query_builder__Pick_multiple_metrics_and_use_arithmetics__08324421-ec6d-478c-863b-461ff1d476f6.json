@@ -1,0 +1,17 @@
+{
+  "id": "08324421-ec6d-478c-863b-461ff1d476f6",
+  "name": "[UX] PRODUCT-8018 / Query builder: Pick multiple metrics and use arithmetics",
+  "type": "dashboard",
+  "version": 3,
+  "owner": "08d1dd0b-5fa1-47cf-b7d3-2f9ccc2d5a79",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "08d1dd0b-5fa1-47cf-b7d3-2f9ccc2d5a79",
+    "createdTime": "2025-04-28T09:04:28.467Z",
+    "lastModifiedBy": "08d1dd0b-5fa1-47cf-b7d3-2f9ccc2d5a79",
+    "lastModifiedTime": "2025-04-28T09:12:19.819Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-b6f29a1f-6d8e-3fad-a665-c80a5a04e059",
+  "name": "[Platform-Services][Security-Analyzer-Service] Overview",
+  "type": "dashboard",
+  "version": 2884,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-01-27T15:24:59.072Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:38.577Z"
+  },
+  "access": [
+    "read"
+  ]
+}

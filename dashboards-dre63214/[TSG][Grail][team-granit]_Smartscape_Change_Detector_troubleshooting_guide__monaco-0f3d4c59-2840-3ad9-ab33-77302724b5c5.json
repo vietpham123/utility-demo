@@ -1,0 +1,17 @@
+{
+  "id": "monaco-0f3d4c59-2840-3ad9-ab33-77302724b5c5",
+  "name": "[TSG][Grail][team-granit] Smartscape Change Detector troubleshooting guide",
+  "type": "dashboard",
+  "version": 289,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2026-03-04T14:00:08.861Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:35.481Z"
+  },
+  "access": [
+    "read"
+  ]
+}

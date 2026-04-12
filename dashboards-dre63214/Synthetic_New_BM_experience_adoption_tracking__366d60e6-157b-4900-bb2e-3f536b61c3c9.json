@@ -1,0 +1,17 @@
+{
+  "id": "366d60e6-157b-4900-bb2e-3f536b61c3c9",
+  "name": "Synthetic New BM experience adoption tracking",
+  "type": "dashboard",
+  "version": 780,
+  "owner": "deaa4058-8355-4be1-b615-5b460c0dfd1c",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "deaa4058-8355-4be1-b615-5b460c0dfd1c",
+    "createdTime": "2026-03-06T12:29:01.28Z",
+    "lastModifiedBy": "deaa4058-8355-4be1-b615-5b460c0dfd1c",
+    "lastModifiedTime": "2026-03-24T11:59:29.307Z"
+  },
+  "access": [
+    "read"
+  ]
+}

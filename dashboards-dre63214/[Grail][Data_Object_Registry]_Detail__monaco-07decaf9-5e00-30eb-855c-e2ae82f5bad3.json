@@ -1,0 +1,17 @@
+{
+  "id": "monaco-07decaf9-5e00-30eb-855c-e2ae82f5bad3",
+  "name": "[Grail][Data Object Registry] Detail",
+  "type": "dashboard",
+  "version": 2696,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-03-19T14:10:03.211Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:04.308Z"
+  },
+  "access": [
+    "read"
+  ]
+}

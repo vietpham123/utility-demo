@@ -1,0 +1,17 @@
+{
+  "id": "monaco-46ca1d5f-2d55-3930-843b-5379be274c8d",
+  "name": "DTP AWS Aurora PostgreSQL Logs Insights",
+  "type": "dashboard",
+  "version": 1837,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-08-05T12:55:55.761Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:09.552Z"
+  },
+  "access": [
+    "read"
+  ]
+}

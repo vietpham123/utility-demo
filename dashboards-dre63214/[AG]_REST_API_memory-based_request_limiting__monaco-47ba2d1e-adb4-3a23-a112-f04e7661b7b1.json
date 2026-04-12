@@ -1,0 +1,17 @@
+{
+  "id": "monaco-47ba2d1e-adb4-3a23-a112-f04e7661b7b1",
+  "name": "[AG] REST API memory-based request limiting",
+  "type": "dashboard",
+  "version": 315,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-09-09T10:00:57.641Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T14:54:48.774Z"
+  },
+  "access": [
+    "read"
+  ]
+}

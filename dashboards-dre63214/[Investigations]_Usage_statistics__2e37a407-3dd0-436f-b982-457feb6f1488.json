@@ -1,0 +1,17 @@
+{
+  "id": "2e37a407-3dd0-436f-b982-457feb6f1488",
+  "name": "[Investigations] Usage statistics",
+  "type": "dashboard",
+  "version": 1876,
+  "owner": "e1f4765f-6c30-480f-aae7-b58ae4f70e60",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "e1f4765f-6c30-480f-aae7-b58ae4f70e60",
+    "createdTime": "2025-11-24T13:53:25.209Z",
+    "lastModifiedBy": "1af08960-31d3-4f0a-8c90-fd103e96bc4f",
+    "lastModifiedTime": "2026-03-03T12:34:15.49Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "45c38381-c0d8-48f0-8282-83775b234dfc",
+  "name": "GitHub Actions overview",
+  "type": "dashboard",
+  "version": 329,
+  "owner": "cf470deb-846e-4160-905e-3243c4527558",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "cf470deb-846e-4160-905e-3243c4527558",
+    "createdTime": "2025-07-16T10:12:33.753Z",
+    "lastModifiedBy": "cf470deb-846e-4160-905e-3243c4527558",
+    "lastModifiedTime": "2025-08-27T11:11:42.099Z"
+  },
+  "access": [
+    "read"
+  ]
+}

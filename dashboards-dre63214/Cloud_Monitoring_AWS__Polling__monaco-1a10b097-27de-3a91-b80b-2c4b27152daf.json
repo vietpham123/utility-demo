@@ -1,0 +1,17 @@
+{
+  "id": "monaco-1a10b097-27de-3a91-b80b-2c4b27152daf",
+  "name": "Cloud Monitoring AWS: Polling",
+  "type": "dashboard",
+  "version": 383,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-08-21T08:57:53.388Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-09T13:33:49.524Z"
+  },
+  "access": [
+    "read"
+  ]
+}

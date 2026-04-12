@@ -1,0 +1,17 @@
+{
+  "id": "monaco-aaaef5fa-ccda-31ab-89b2-9c54d6e29569",
+  "name": "[Juno] 0.8 Product Security - Platform App Security Violations",
+  "type": "dashboard",
+  "version": 151,
+  "owner": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+    "createdTime": "2026-01-27T12:31:10.328Z",
+    "lastModifiedBy": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+    "lastModifiedTime": "2026-04-10T06:46:59.298Z"
+  },
+  "access": [
+    "read"
+  ]
+}

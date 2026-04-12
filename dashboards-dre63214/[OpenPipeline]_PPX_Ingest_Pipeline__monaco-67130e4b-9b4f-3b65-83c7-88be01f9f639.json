@@ -1,0 +1,17 @@
+{
+  "id": "monaco-67130e4b-9b4f-3b65-83c7-88be01f9f639",
+  "name": "[OpenPipeline] PPX Ingest Pipeline",
+  "type": "dashboard",
+  "version": 495,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-06-17T06:05:33.842Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T13:57:54.736Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-c74e29ca-1aed-3af7-b252-8acc246e5f4d",
+  "name": "[Platform Services] [Business Analytics Service] Overview",
+  "type": "dashboard",
+  "version": 1718,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-08-21T12:52:49.551Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:08:53.287Z"
+  },
+  "access": [
+    "read"
+  ]
+}

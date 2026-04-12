@@ -1,0 +1,18 @@
+{
+  "id": "dynatrace.clouds.azure-appgateway",
+  "name": "Azure Application Gateway",
+  "type": "dashboard",
+  "description": "Concise view of gateway traffic, reliability, and capacity that helps you see trends and quickly spot issues in request flows, connection load, and backend health.",
+  "version": 5,
+  "owner": "50436aec-8901-4282-ae81-690bd6509b18",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "createdTime": "2026-01-15T12:30:06.276Z",
+    "lastModifiedBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "lastModifiedTime": "2026-03-18T12:47:26.151Z"
+  },
+  "access": [
+    "read"
+  ]
+}

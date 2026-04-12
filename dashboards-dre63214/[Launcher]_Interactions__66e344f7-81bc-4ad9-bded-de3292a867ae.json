@@ -1,0 +1,17 @@
+{
+  "id": "66e344f7-81bc-4ad9-bded-de3292a867ae",
+  "name": "[Launcher] Interactions",
+  "type": "dashboard",
+  "version": 2,
+  "owner": "4be39390-e9c4-471d-b54f-cc69a25a2caf",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "4be39390-e9c4-471d-b54f-cc69a25a2caf",
+    "createdTime": "2025-05-14T13:24:01.185Z",
+    "lastModifiedBy": "4be39390-e9c4-471d-b54f-cc69a25a2caf",
+    "lastModifiedTime": "2025-05-14T13:24:26.048Z"
+  },
+  "access": [
+    "read"
+  ]
+}

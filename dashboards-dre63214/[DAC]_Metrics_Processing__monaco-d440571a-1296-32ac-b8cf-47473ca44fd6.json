@@ -1,0 +1,17 @@
+{
+  "id": "monaco-d440571a-1296-32ac-b8cf-47473ca44fd6",
+  "name": "[DAC] Metrics Processing",
+  "type": "dashboard",
+  "version": 398,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-08-11T12:56:34.184Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-09T13:33:53.056Z"
+  },
+  "access": [
+    "read"
+  ]
+}

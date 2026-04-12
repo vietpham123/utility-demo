@@ -1,0 +1,17 @@
+{
+  "id": "d80700c7-fa9c-442f-8972-99764dd6f4a4",
+  "name": "Copy of OA-53095 -- investigation, instance-view",
+  "type": "dashboard",
+  "version": 142,
+  "owner": "4a8db15b-fc93-40dd-a048-398b01a2749e",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "4a8db15b-fc93-40dd-a048-398b01a2749e",
+    "createdTime": "2025-09-26T11:13:43.521Z",
+    "lastModifiedBy": "4a8db15b-fc93-40dd-a048-398b01a2749e",
+    "lastModifiedTime": "2025-09-26T13:58:34.046Z"
+  },
+  "access": [
+    "read"
+  ]
+}

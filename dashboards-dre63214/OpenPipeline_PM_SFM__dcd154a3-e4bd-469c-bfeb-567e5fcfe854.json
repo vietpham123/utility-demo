@@ -1,0 +1,17 @@
+{
+  "id": "dcd154a3-e4bd-469c-bfeb-567e5fcfe854",
+  "name": "OpenPipeline PM SFM",
+  "type": "dashboard",
+  "version": 95,
+  "owner": "ea946222-5853-45d4-a32c-feab18d8defc",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ea946222-5853-45d4-a32c-feab18d8defc",
+    "createdTime": "2025-05-05T08:35:35.541Z",
+    "lastModifiedBy": "ea946222-5853-45d4-a32c-feab18d8defc",
+    "lastModifiedTime": "2026-03-06T15:44:08.307Z"
+  },
+  "access": [
+    "read"
+  ]
+}

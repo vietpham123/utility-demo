@@ -1,0 +1,17 @@
+{
+  "id": "5a39f4a3-7146-4611-bba2-2087246d4219",
+  "name": "[Platform Growth] Account and Tenant Finder",
+  "type": "dashboard",
+  "version": 524,
+  "owner": "ff3a3d39-b43e-420f-9563-97320edbd23a",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ff3a3d39-b43e-420f-9563-97320edbd23a",
+    "createdTime": "2025-11-27T07:55:43.982Z",
+    "lastModifiedBy": "ff3a3d39-b43e-420f-9563-97320edbd23a",
+    "lastModifiedTime": "2026-03-31T08:17:28.917Z"
+  },
+  "access": [
+    "read"
+  ]
+}

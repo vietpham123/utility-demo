@@ -1,0 +1,17 @@
+{
+  "id": "monaco-f7c27335-c59f-3e0d-847f-42043054c3e2",
+  "name": "[DAC] AWS Event Ingest -- Issue investigation",
+  "type": "dashboard",
+  "version": 130,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2026-01-26T16:30:23.609Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-09T13:33:50.446Z"
+  },
+  "access": [
+    "read"
+  ]
+}

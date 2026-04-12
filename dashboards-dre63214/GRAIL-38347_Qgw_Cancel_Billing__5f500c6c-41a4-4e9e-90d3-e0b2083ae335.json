@@ -1,0 +1,17 @@
+{
+  "id": "5f500c6c-41a4-4e9e-90d3-e0b2083ae335",
+  "name": "GRAIL-38347 Qgw Cancel Billing",
+  "type": "dashboard",
+  "version": 10,
+  "owner": "ac17c97e-0e70-436f-9516-7c4b8a405b80",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ac17c97e-0e70-436f-9516-7c4b8a405b80",
+    "createdTime": "2025-08-28T08:29:35.079Z",
+    "lastModifiedBy": "ac17c97e-0e70-436f-9516-7c4b8a405b80",
+    "lastModifiedTime": "2025-10-08T07:48:44.205Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "71bbbe9c-1f78-41bc-a016-335c95a245b2",
+  "name": "Dynatrace Adoption",
+  "type": "dashboard",
+  "version": 2295,
+  "owner": "1e3ca1c8-b05e-4d68-a109-e1dad5584eb7",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "1e3ca1c8-b05e-4d68-a109-e1dad5584eb7",
+    "createdTime": "2025-10-21T14:16:46.146Z",
+    "lastModifiedBy": "1e3ca1c8-b05e-4d68-a109-e1dad5584eb7",
+    "lastModifiedTime": "2026-03-06T11:15:29.462Z"
+  },
+  "access": [
+    "read"
+  ]
+}

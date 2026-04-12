@@ -1,0 +1,17 @@
+{
+  "id": "monaco-95303f81-2ff1-3200-8084-222765a1e76a",
+  "name": "SLOs Public Hub",
+  "type": "dashboard",
+  "version": 624,
+  "owner": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "createdTime": "2025-01-16T21:39:24.084Z",
+    "lastModifiedBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "lastModifiedTime": "2026-04-10T09:57:24.019Z"
+  },
+  "access": [
+    "read"
+  ]
+}

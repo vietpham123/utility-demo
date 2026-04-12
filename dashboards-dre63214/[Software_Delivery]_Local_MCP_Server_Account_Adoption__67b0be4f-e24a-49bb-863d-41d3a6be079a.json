@@ -1,0 +1,17 @@
+{
+  "id": "67b0be4f-e24a-49bb-863d-41d3a6be079a",
+  "name": "[Software Delivery] Local MCP Server Account Adoption",
+  "type": "dashboard",
+  "version": 1490,
+  "owner": "ff3a3d39-b43e-420f-9563-97320edbd23a",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ff3a3d39-b43e-420f-9563-97320edbd23a",
+    "createdTime": "2026-02-10T07:43:10.005Z",
+    "lastModifiedBy": "ff3a3d39-b43e-420f-9563-97320edbd23a",
+    "lastModifiedTime": "2026-03-17T12:14:28.679Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-1f830b05-d5b4-3e59-85c6-6ac15e75eb33",
+  "name": "[Platform-Services][Github] Repository Resources",
+  "type": "dashboard",
+  "version": 666,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2026-01-07T08:57:01.915Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:28.369Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-503071f8-e290-30f4-b606-108a779fce0e",
+  "name": "[CLIN][Mirage] Email Service Delivery Issues Helper",
+  "type": "dashboard",
+  "version": 28,
+  "owner": "d88f9bb7-05cb-4268-9339-6526c7df822a",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "d88f9bb7-05cb-4268-9339-6526c7df822a",
+    "createdTime": "2025-12-18T11:05:44.784Z",
+    "lastModifiedBy": "d88f9bb7-05cb-4268-9339-6526c7df822a",
+    "lastModifiedTime": "2026-04-02T06:46:30.382Z"
+  },
+  "access": [
+    "read"
+  ]
+}

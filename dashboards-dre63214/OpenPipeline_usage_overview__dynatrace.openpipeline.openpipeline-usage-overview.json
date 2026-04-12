@@ -1,0 +1,18 @@
+{
+  "id": "dynatrace.openpipeline.openpipeline-usage-overview",
+  "name": "OpenPipeline usage overview",
+  "type": "dashboard",
+  "description": "See the most important information about data ingest in one glance.",
+  "version": 32,
+  "owner": "50436aec-8901-4282-ae81-690bd6509b18",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "createdTime": "2025-03-06T10:10:55.788Z",
+    "lastModifiedBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "lastModifiedTime": "2026-04-09T09:07:28.591Z"
+  },
+  "access": [
+    "read"
+  ]
+}

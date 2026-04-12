@@ -1,0 +1,17 @@
+{
+  "id": "monaco-66c52309-7118-339a-936d-25d4770ea1b3",
+  "name": "[Token Service] Heimdall Lambda metrics",
+  "type": "dashboard",
+  "version": 24,
+  "owner": "5bff2505-24a9-488c-89d8-082e7e8095d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "5bff2505-24a9-488c-89d8-082e7e8095d6",
+    "createdTime": "2025-10-30T09:33:51.616Z",
+    "lastModifiedBy": "5bff2505-24a9-488c-89d8-082e7e8095d6",
+    "lastModifiedTime": "2026-03-30T06:23:11.995Z"
+  },
+  "access": [
+    "read"
+  ]
+}

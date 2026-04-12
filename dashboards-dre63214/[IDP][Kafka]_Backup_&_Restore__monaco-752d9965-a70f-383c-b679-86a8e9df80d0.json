@@ -1,0 +1,17 @@
+{
+  "id": "monaco-752d9965-a70f-383c-b679-86a8e9df80d0",
+  "name": "[IDP][Kafka] Backup \u0026 Restore",
+  "type": "dashboard",
+  "version": 1019,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-11-18T11:17:22Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:15.368Z"
+  },
+  "access": [
+    "read"
+  ]
+}

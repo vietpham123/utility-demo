@@ -1,0 +1,17 @@
+{
+  "id": "bb84a88e-1fa0-4d38-853e-177d1c63a04e",
+  "name": "SAggS Overview",
+  "type": "dashboard",
+  "version": 509,
+  "owner": "09a40efc-e20c-4aad-9627-68bb45c351d2",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "09a40efc-e20c-4aad-9627-68bb45c351d2",
+    "createdTime": "2025-11-14T06:41:13.226Z",
+    "lastModifiedBy": "1f007ecc-7ff0-4c56-82b9-2dd4645498c4",
+    "lastModifiedTime": "2026-03-19T13:03:14.127Z"
+  },
+  "access": [
+    "read"
+  ]
+}

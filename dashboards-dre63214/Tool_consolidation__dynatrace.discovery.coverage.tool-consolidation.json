@@ -1,0 +1,18 @@
+{
+  "id": "dynatrace.discovery.coverage.tool-consolidation",
+  "name": "Tool consolidation",
+  "type": "dashboard",
+  "description": "Replace siloed tools and improve business outcomes with Dynatrace unified observability",
+  "version": 2,
+  "owner": "50436aec-8901-4282-ae81-690bd6509b18",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "createdTime": "2026-04-01T12:58:49.383Z",
+    "lastModifiedBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "lastModifiedTime": "2026-04-02T15:09:38.333Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-67f2c8af-8e2e-3322-a79b-d010d95f92e2",
+  "name": "[Platform-Services][Management-Service] Tenant Operations",
+  "type": "dashboard",
+  "version": 2243,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-05-26T14:11:18.108Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:22.997Z"
+  },
+  "access": [
+    "read"
+  ]
+}

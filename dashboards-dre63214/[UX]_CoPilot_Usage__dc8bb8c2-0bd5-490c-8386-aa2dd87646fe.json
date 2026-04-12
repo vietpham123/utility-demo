@@ -1,0 +1,17 @@
+{
+  "id": "dc8bb8c2-0bd5-490c-8386-aa2dd87646fe",
+  "name": "[UX] CoPilot Usage",
+  "type": "dashboard",
+  "version": 306,
+  "owner": "91b0607b-6ba3-4b6b-a46d-4d287b96c79b",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "91b0607b-6ba3-4b6b-a46d-4d287b96c79b",
+    "createdTime": "2025-05-12T07:57:27.133Z",
+    "lastModifiedBy": "91b0607b-6ba3-4b6b-a46d-4d287b96c79b",
+    "lastModifiedTime": "2026-03-04T14:12:57.165Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-b594945f-057b-3b32-91db-137da7281149",
+  "name": "[GRAIL][Smartscape] Query Workflow",
+  "type": "dashboard",
+  "version": 2423,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-04-30T07:56:12.909Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:31.357Z"
+  },
+  "access": [
+    "read"
+  ]
+}

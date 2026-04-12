@@ -1,0 +1,17 @@
+{
+  "id": "monaco-6f0ebab7-bcad-3e94-8400-e68ee5975786",
+  "name": "[Platform-Services][Document-Service] Usages and Limits",
+  "type": "dashboard",
+  "version": 2808,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-02-20T13:47:25.131Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:43.53Z"
+  },
+  "access": [
+    "read"
+  ]
+}

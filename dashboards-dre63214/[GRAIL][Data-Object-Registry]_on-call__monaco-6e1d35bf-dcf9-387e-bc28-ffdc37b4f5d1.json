@@ -1,0 +1,17 @@
+{
+  "id": "monaco-6e1d35bf-dcf9-387e-bc28-ffdc37b4f5d1",
+  "name": "[GRAIL][Data-Object-Registry] on-call",
+  "type": "dashboard",
+  "version": 2977,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2024-12-13T05:15:16.23Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:08:56.802Z"
+  },
+  "access": [
+    "read"
+  ]
+}

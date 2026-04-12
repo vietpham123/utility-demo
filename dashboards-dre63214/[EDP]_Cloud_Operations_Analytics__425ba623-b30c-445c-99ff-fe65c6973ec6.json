@@ -1,0 +1,17 @@
+{
+  "id": "425ba623-b30c-445c-99ff-fe65c6973ec6",
+  "name": "[EDP] Cloud Operations Analytics",
+  "type": "dashboard",
+  "version": 1306,
+  "owner": "dff8e00e-52bf-45e6-92b4-4fb2f813482f",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "dff8e00e-52bf-45e6-92b4-4fb2f813482f",
+    "createdTime": "2025-08-11T11:08:46.464Z",
+    "lastModifiedBy": "31d732ab-60c1-48db-b5ae-4fa7af1b46ca",
+    "lastModifiedTime": "2026-04-08T08:34:07.397Z"
+  },
+  "access": [
+    "read"
+  ]
+}

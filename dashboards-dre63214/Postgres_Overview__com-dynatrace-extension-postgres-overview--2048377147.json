@@ -1,0 +1,17 @@
+{
+  "id": "com-dynatrace-extension-postgres-overview--2048377147",
+  "name": "Postgres Overview",
+  "type": "dashboard",
+  "version": 1,
+  "owner": "60a34747-becc-47c2-ac3a-bfaf2c537471",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "60a34747-becc-47c2-ac3a-bfaf2c537471",
+    "createdTime": "2026-03-06T09:27:19.809Z",
+    "lastModifiedBy": "60a34747-becc-47c2-ac3a-bfaf2c537471",
+    "lastModifiedTime": "2026-03-06T09:27:19.809Z"
+  },
+  "access": [
+    "read"
+  ]
+}

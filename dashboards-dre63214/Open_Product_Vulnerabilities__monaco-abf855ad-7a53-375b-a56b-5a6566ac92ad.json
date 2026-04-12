@@ -1,0 +1,17 @@
+{
+  "id": "monaco-abf855ad-7a53-375b-a56b-5a6566ac92ad",
+  "name": "Open Product Vulnerabilities",
+  "type": "dashboard",
+  "version": 1153,
+  "owner": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+    "createdTime": "2025-01-23T15:32:13.333Z",
+    "lastModifiedBy": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+    "lastModifiedTime": "2026-04-10T15:12:33.613Z"
+  },
+  "access": [
+    "read"
+  ]
+}

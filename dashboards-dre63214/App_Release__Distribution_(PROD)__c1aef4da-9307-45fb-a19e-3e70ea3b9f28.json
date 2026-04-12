@@ -1,0 +1,17 @@
+{
+  "id": "c1aef4da-9307-45fb-a19e-3e70ea3b9f28",
+  "name": "App Release_ Distribution (PROD)",
+  "type": "dashboard",
+  "version": 126,
+  "owner": "08ab2c6b-72fc-4f45-b114-4d4080656cf8",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "08ab2c6b-72fc-4f45-b114-4d4080656cf8",
+    "createdTime": "2025-10-27T09:05:15.857Z",
+    "lastModifiedBy": "08ab2c6b-72fc-4f45-b114-4d4080656cf8",
+    "lastModifiedTime": "2026-03-09T12:17:42.969Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-17549ddf-63b2-3af1-8af8-00180acbae28",
+  "name": "[QSP][IDR] Auto-triaging Health [Monaco]",
+  "type": "dashboard",
+  "version": 380,
+  "owner": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+    "createdTime": "2025-12-04T15:30:57.193Z",
+    "lastModifiedBy": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+    "lastModifiedTime": "2026-04-10T15:12:33.566Z"
+  },
+  "access": [
+    "read"
+  ]
+}

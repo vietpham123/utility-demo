@@ -1,0 +1,17 @@
+{
+  "id": "monaco-0ed317f5-a600-316a-b191-030be42f28e9",
+  "name": "[GRAIL][Smartscape] Replay-Migration",
+  "type": "dashboard",
+  "version": 2724,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-03-17T07:09:20.584Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:16.2Z"
+  },
+  "access": [
+    "read"
+  ]
+}

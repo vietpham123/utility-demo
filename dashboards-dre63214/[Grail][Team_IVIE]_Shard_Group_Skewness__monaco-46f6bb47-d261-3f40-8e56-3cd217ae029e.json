@@ -1,0 +1,17 @@
+{
+  "id": "monaco-46f6bb47-d261-3f40-8e56-3cd217ae029e",
+  "name": "[Grail][Team IVIE] Shard Group Skewness",
+  "type": "dashboard",
+  "version": 2978,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2024-12-13T05:15:20.498Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:25.607Z"
+  },
+  "access": [
+    "read"
+  ]
+}

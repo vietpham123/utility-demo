@@ -1,0 +1,17 @@
+{
+  "id": "954e87d5-63e1-42cb-a2a9-c05d761e902a",
+  "name": "[JUNO] Code Coverage Platform Services",
+  "type": "dashboard",
+  "version": 170,
+  "owner": "7e17ea65-4086-40dd-b6fa-a58ebea5fad6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "7e17ea65-4086-40dd-b6fa-a58ebea5fad6",
+    "createdTime": "2025-10-17T07:23:26.723Z",
+    "lastModifiedBy": "7e17ea65-4086-40dd-b6fa-a58ebea5fad6",
+    "lastModifiedTime": "2026-03-16T09:07:32.297Z"
+  },
+  "access": [
+    "read"
+  ]
+}

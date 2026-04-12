@@ -1,0 +1,17 @@
+{
+  "id": "0f7fc6b1-99ab-4918-af4e-ea55c825c91a",
+  "name": "Playground Usage Overview",
+  "type": "dashboard",
+  "version": 600,
+  "owner": "afb7b267-26b5-4035-90cc-058073c75c3f",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "afb7b267-26b5-4035-90cc-058073c75c3f",
+    "createdTime": "2025-04-28T07:47:54.454Z",
+    "lastModifiedBy": "afb7b267-26b5-4035-90cc-058073c75c3f",
+    "lastModifiedTime": "2026-03-31T15:42:12.479Z"
+  },
+  "access": [
+    "read"
+  ]
+}

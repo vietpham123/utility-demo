@@ -1,0 +1,17 @@
+{
+  "id": "monaco-31cd9e3a-fbf6-38ae-a082-ac6bab22197e",
+  "name": "Eventbus Overview",
+  "type": "dashboard",
+  "version": 492,
+  "owner": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "createdTime": "2025-04-08T14:30:02.03Z",
+    "lastModifiedBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "lastModifiedTime": "2026-04-10T09:57:18.454Z"
+  },
+  "access": [
+    "read"
+  ]
+}

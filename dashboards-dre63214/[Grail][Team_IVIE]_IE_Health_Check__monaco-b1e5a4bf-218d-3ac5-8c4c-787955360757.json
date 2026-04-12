@@ -1,0 +1,17 @@
+{
+  "id": "monaco-b1e5a4bf-218d-3ac5-8c4c-787955360757",
+  "name": "[Grail][Team IVIE] IE Health Check",
+  "type": "dashboard",
+  "version": 2921,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-01-09T06:59:15.254Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:16.537Z"
+  },
+  "access": [
+    "read"
+  ]
+}

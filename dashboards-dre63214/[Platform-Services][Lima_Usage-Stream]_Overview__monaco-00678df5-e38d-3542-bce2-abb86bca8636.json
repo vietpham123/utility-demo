@@ -1,0 +1,17 @@
+{
+  "id": "monaco-00678df5-e38d-3542-bce2-abb86bca8636",
+  "name": "[Platform-Services][Lima Usage-Stream] Overview",
+  "type": "dashboard",
+  "version": 2978,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2024-12-13T05:15:18.155Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:34.871Z"
+  },
+  "access": [
+    "read"
+  ]
+}

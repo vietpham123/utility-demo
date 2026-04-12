@@ -52,12 +52,19 @@ app.use((req, res, next) => {
   next();
 });
 
-// Areas: 3 substations + system-wide
+// Areas: substations + system-wide
 const areas = [
   { id: 'SUB-001', name: 'Lakeside Substation', type: 'substation', baseLoadMw: 280, peakCapacityMw: 450 },
   { id: 'SUB-002', name: 'Harbor Point Substation', type: 'substation', baseLoadMw: 220, peakCapacityMw: 380 },
   { id: 'SUB-003', name: 'Liberty Grid Substation', type: 'substation', baseLoadMw: 350, peakCapacityMw: 520 },
-  { id: 'SYSTEM', name: 'System Total', type: 'system', baseLoadMw: 850, peakCapacityMw: 1350 }
+  { id: 'SUB-004', name: 'Gateway Arch Substation', type: 'substation', baseLoadMw: 200, peakCapacityMw: 340 },
+  { id: 'SUB-005', name: 'North Star Substation', type: 'substation', baseLoadMw: 300, peakCapacityMw: 480 },
+  { id: 'SUB-006', name: 'Motor City Substation', type: 'substation', baseLoadMw: 260, peakCapacityMw: 420 },
+  { id: 'SUB-007', name: 'Empire State Substation', type: 'substation', baseLoadMw: 400, peakCapacityMw: 600 },
+  { id: 'SUB-008', name: 'Peachtree Substation', type: 'substation', baseLoadMw: 240, peakCapacityMw: 380 },
+  { id: 'SUB-009', name: 'Sunshine Substation', type: 'substation', baseLoadMw: 310, peakCapacityMw: 500 },
+  { id: 'SUB-010', name: 'Lone Star Substation', type: 'substation', baseLoadMw: 340, peakCapacityMw: 540 },
+  { id: 'SYSTEM', name: 'System Total', type: 'system', baseLoadMw: 2900, peakCapacityMw: 4610 }
 ];
 
 let currentForecasts = [];

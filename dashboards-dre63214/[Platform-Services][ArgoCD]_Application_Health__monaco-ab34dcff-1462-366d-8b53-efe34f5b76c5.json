@@ -1,0 +1,17 @@
+{
+  "id": "monaco-ab34dcff-1462-366d-8b53-efe34f5b76c5",
+  "name": "[Platform-Services][ArgoCD] Application Health",
+  "type": "dashboard",
+  "version": 1589,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-09-09T15:04:45.701Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:06.944Z"
+  },
+  "access": [
+    "read"
+  ]
+}

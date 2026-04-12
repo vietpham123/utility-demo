@@ -1,0 +1,17 @@
+{
+  "id": "monaco-db37a74f-d244-3c5e-b9c9-e73e34cccc30",
+  "name": "LIMA Entitlement - Eventbus Monitoring",
+  "type": "dashboard",
+  "version": 610,
+  "owner": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "createdTime": "2025-01-22T11:47:55.441Z",
+    "lastModifiedBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "lastModifiedTime": "2026-04-10T09:57:15.07Z"
+  },
+  "access": [
+    "read"
+  ]
+}

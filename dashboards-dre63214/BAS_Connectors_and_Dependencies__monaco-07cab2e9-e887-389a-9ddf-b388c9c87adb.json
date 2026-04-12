@@ -1,0 +1,17 @@
+{
+  "id": "monaco-07cab2e9-e887-389a-9ddf-b388c9c87adb",
+  "name": "BAS Connectors and Dependencies",
+  "type": "dashboard",
+  "version": 76,
+  "owner": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "createdTime": "2026-01-20T14:37:30.71Z",
+    "lastModifiedBy": "9698ed7a-ec5e-47f1-a538-98ba19972509",
+    "lastModifiedTime": "2026-04-10T09:57:22.987Z"
+  },
+  "access": [
+    "read"
+  ]
+}

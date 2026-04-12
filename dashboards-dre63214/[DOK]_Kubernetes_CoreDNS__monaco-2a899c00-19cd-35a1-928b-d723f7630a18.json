@@ -1,0 +1,17 @@
+{
+  "id": "monaco-2a899c00-19cd-35a1-928b-d723f7630a18",
+  "name": "[DOK] Kubernetes CoreDNS",
+  "type": "dashboard",
+  "version": 33,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2024-12-23T11:17:45.905Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-08T06:23:28.632Z"
+  },
+  "access": [
+    "read"
+  ]
+}

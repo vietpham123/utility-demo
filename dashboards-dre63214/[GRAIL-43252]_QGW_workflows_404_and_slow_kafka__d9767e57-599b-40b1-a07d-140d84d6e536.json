@@ -1,0 +1,17 @@
+{
+  "id": "d9767e57-599b-40b1-a07d-140d84d6e536",
+  "name": "[GRAIL-43252] QGW workflows 404 and slow kafka",
+  "type": "dashboard",
+  "version": 177,
+  "owner": "ac17c97e-0e70-436f-9516-7c4b8a405b80",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ac17c97e-0e70-436f-9516-7c4b8a405b80",
+    "createdTime": "2025-08-26T14:17:09.25Z",
+    "lastModifiedBy": "ac17c97e-0e70-436f-9516-7c4b8a405b80",
+    "lastModifiedTime": "2025-10-06T12:58:23.538Z"
+  },
+  "access": [
+    "read"
+  ]
+}

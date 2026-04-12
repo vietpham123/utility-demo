@@ -1,0 +1,17 @@
+{
+  "id": "monaco-d72023ab-dc13-3992-be40-f2e91408ac8b",
+  "name": "[SRE] Classic API Usage in Monaco",
+  "type": "dashboard",
+  "version": 686,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-12-30T10:56:33.041Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:08:59.362Z"
+  },
+  "access": [
+    "read"
+  ]
+}

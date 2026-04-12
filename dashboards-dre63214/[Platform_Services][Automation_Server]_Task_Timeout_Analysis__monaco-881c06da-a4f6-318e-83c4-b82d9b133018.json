@@ -1,0 +1,17 @@
+{
+  "id": "monaco-881c06da-a4f6-318e-83c4-b82d9b133018",
+  "name": "[Platform Services][Automation Server] Task Timeout Analysis",
+  "type": "dashboard",
+  "version": 755,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-12-16T15:37:06.721Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:13.216Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-b655c919-70af-38ff-8716-793262bb1b8c",
+  "name": "[DTE] Github Runner - eksCluster",
+  "type": "dashboard",
+  "version": 1708,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-08-26T07:44:11.793Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:08:58.192Z"
+  },
+  "access": [
+    "read"
+  ]
+}

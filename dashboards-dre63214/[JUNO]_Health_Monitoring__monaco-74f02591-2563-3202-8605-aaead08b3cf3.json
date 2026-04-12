@@ -1,0 +1,17 @@
+{
+  "id": "monaco-74f02591-2563-3202-8605-aaead08b3cf3",
+  "name": "[JUNO] Health Monitoring",
+  "type": "dashboard",
+  "version": 371,
+  "owner": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+    "createdTime": "2025-06-23T06:05:39.47Z",
+    "lastModifiedBy": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+    "lastModifiedTime": "2026-04-10T06:46:53.929Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "42791817-0524-4c7f-88db-e44e8d6b0549",
+  "name": "[Sini] Dok Disk usage",
+  "type": "dashboard",
+  "version": 38,
+  "owner": "ce5d151d-38da-4b88-b3e0-bd0c6b8541f8",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ce5d151d-38da-4b88-b3e0-bd0c6b8541f8",
+    "createdTime": "2025-11-26T16:37:16.551Z",
+    "lastModifiedBy": "ce5d151d-38da-4b88-b3e0-bd0c6b8541f8",
+    "lastModifiedTime": "2025-11-27T07:01:03.199Z"
+  },
+  "access": [
+    "read"
+  ]
+}

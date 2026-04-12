@@ -1,0 +1,17 @@
+{
+  "id": "monaco-cdcdda4c-66b6-313a-ac5d-7142f36abb13",
+  "name": "[Token Service] DTP Infrastructure metrics",
+  "type": "dashboard",
+  "version": 6,
+  "owner": "5bff2505-24a9-488c-89d8-082e7e8095d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "5bff2505-24a9-488c-89d8-082e7e8095d6",
+    "createdTime": "2026-03-23T11:43:11.417Z",
+    "lastModifiedBy": "5bff2505-24a9-488c-89d8-082e7e8095d6",
+    "lastModifiedTime": "2026-03-30T06:23:12.798Z"
+  },
+  "access": [
+    "read"
+  ]
+}

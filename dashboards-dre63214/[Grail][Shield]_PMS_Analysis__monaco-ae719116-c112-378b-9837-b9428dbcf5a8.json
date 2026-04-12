@@ -1,0 +1,17 @@
+{
+  "id": "monaco-ae719116-c112-378b-9837-b9428dbcf5a8",
+  "name": "[Grail][Shield] PMS Analysis",
+  "type": "dashboard",
+  "version": 270,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2026-03-06T09:57:05.7Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:28.445Z"
+  },
+  "access": [
+    "read"
+  ]
+}

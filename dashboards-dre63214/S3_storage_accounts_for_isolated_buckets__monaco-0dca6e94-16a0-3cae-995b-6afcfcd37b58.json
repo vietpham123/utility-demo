@@ -1,0 +1,17 @@
+{
+  "id": "monaco-0dca6e94-16a0-3cae-995b-6afcfcd37b58",
+  "name": "S3 storage accounts for isolated buckets",
+  "type": "dashboard",
+  "version": 639,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2024-12-10T02:41:56.362Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T14:54:48.946Z"
+  },
+  "access": [
+    "read"
+  ]
+}

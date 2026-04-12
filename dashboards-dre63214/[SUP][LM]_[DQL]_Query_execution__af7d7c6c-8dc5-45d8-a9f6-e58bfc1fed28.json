@@ -1,0 +1,17 @@
+{
+  "id": "af7d7c6c-8dc5-45d8-a9f6-e58bfc1fed28",
+  "name": "[SUP][LM] [DQL] Query execution",
+  "type": "dashboard",
+  "version": 85,
+  "owner": "720db132-97b4-4620-a84e-c4d492690b04",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "720db132-97b4-4620-a84e-c4d492690b04",
+    "createdTime": "2025-05-08T13:50:07.025Z",
+    "lastModifiedBy": "720db132-97b4-4620-a84e-c4d492690b04",
+    "lastModifiedTime": "2025-11-03T16:47:25.801Z"
+  },
+  "access": [
+    "read"
+  ]
+}

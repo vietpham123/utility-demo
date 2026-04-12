@@ -1,0 +1,17 @@
+{
+  "id": "d7bd4934-a2e0-4f34-984b-a542bbeea6ef",
+  "name": "Synthetic Private scheduler monitoring",
+  "type": "dashboard",
+  "version": 56,
+  "owner": "deaa4058-8355-4be1-b615-5b460c0dfd1c",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "deaa4058-8355-4be1-b615-5b460c0dfd1c",
+    "createdTime": "2026-03-04T18:04:51.316Z",
+    "lastModifiedBy": "deaa4058-8355-4be1-b615-5b460c0dfd1c",
+    "lastModifiedTime": "2026-03-09T08:18:54.709Z"
+  },
+  "access": [
+    "read"
+  ]
+}

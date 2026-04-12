@@ -1,0 +1,17 @@
+{
+  "id": "monaco-ba48938d-fec7-31af-b242-d576fe57219b",
+  "name": "[Grail][Metric Metadata Service] overview",
+  "type": "dashboard",
+  "version": 387,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2024-12-13T05:15:17.877Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2025-04-04T11:01:47.25Z"
+  },
+  "access": [
+    "read"
+  ]
+}

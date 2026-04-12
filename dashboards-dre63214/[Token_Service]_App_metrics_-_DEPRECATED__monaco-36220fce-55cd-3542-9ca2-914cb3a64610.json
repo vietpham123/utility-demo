@@ -1,0 +1,17 @@
+{
+  "id": "monaco-36220fce-55cd-3542-9ca2-914cb3a64610",
+  "name": "[Token Service] App metrics - DEPRECATED",
+  "type": "dashboard",
+  "version": 16,
+  "owner": "5bff2505-24a9-488c-89d8-082e7e8095d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "5bff2505-24a9-488c-89d8-082e7e8095d6",
+    "createdTime": "2026-01-15T08:38:49.766Z",
+    "lastModifiedBy": "5bff2505-24a9-488c-89d8-082e7e8095d6",
+    "lastModifiedTime": "2026-03-30T06:23:12.244Z"
+  },
+  "access": [
+    "read"
+  ]
+}

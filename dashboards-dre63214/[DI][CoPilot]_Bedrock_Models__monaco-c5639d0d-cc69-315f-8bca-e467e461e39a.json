@@ -1,0 +1,17 @@
+{
+  "id": "monaco-c5639d0d-cc69-315f-8bca-e467e461e39a",
+  "name": "[DI][CoPilot] Bedrock Models",
+  "type": "dashboard",
+  "version": 447,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2026-02-11T09:27:40.335Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:08:58.332Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "id": "dynatrace.clouds.aws-eventbridge",
+  "name": "AWS EventBridge",
+  "type": "dashboard",
+  "description": "Monitor the performance, health, and reliability of your EventBridge with this dashboard.",
+  "version": 5,
+  "owner": "50436aec-8901-4282-ae81-690bd6509b18",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "createdTime": "2026-01-15T12:30:06.276Z",
+    "lastModifiedBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "lastModifiedTime": "2026-03-18T12:47:26.151Z"
+  },
+  "access": [
+    "read"
+  ]
+}

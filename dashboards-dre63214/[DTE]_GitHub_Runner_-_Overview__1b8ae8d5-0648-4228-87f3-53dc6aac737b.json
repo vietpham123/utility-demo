@@ -1,0 +1,17 @@
+{
+  "id": "1b8ae8d5-0648-4228-87f3-53dc6aac737b",
+  "name": "[DTE] GitHub Runner - Overview",
+  "type": "dashboard",
+  "version": 3,
+  "owner": "6c5cca5c-1639-4896-8cbf-573633f8f974",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "6c5cca5c-1639-4896-8cbf-573633f8f974",
+    "createdTime": "2025-07-29T10:01:04.454Z",
+    "lastModifiedBy": "6c5cca5c-1639-4896-8cbf-573633f8f974",
+    "lastModifiedTime": "2025-07-29T11:49:16.847Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-4a9c66f2-f7f3-385b-84a7-cc36f249c834",
+  "name": "[Platform-Services][ArgoCD] Overview",
+  "type": "dashboard",
+  "version": 2963,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2024-12-16T15:16:54.111Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:39.449Z"
+  },
+  "access": [
+    "read"
+  ]
+}

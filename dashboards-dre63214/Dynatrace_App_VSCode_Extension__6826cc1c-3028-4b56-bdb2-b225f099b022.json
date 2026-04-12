@@ -1,0 +1,17 @@
+{
+  "id": "6826cc1c-3028-4b56-bdb2-b225f099b022",
+  "name": "Dynatrace App VSCode Extension",
+  "type": "dashboard",
+  "version": 138,
+  "owner": "3f62c454-1b0f-4c83-b427-636d5c03f263",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "3f62c454-1b0f-4c83-b427-636d5c03f263",
+    "createdTime": "2025-03-24T14:03:52.522Z",
+    "lastModifiedBy": "3f62c454-1b0f-4c83-b427-636d5c03f263",
+    "lastModifiedTime": "2025-09-30T15:19:53.11Z"
+  },
+  "access": [
+    "read"
+  ]
+}

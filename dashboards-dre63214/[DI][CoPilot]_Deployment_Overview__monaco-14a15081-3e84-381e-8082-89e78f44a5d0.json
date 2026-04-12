@@ -1,0 +1,17 @@
+{
+  "id": "monaco-14a15081-3e84-381e-8082-89e78f44a5d0",
+  "name": "[DI][CoPilot] Deployment Overview",
+  "type": "dashboard",
+  "version": 2929,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-01-08T08:50:31.183Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:08:55.497Z"
+  },
+  "access": [
+    "read"
+  ]
+}

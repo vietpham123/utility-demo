@@ -1,0 +1,17 @@
+{
+  "id": "monaco-2be03e88-df38-3944-9d03-f3050f047067",
+  "name": "[BDX] Ingestion Service - Logging",
+  "type": "dashboard",
+  "version": 20,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2026-03-04T13:41:04.522Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-01T17:44:29.275Z"
+  },
+  "access": [
+    "read"
+  ]
+}

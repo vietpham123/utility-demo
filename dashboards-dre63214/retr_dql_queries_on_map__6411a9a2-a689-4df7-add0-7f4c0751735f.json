@@ -1,0 +1,17 @@
+{
+  "id": "6411a9a2-a689-4df7-add0-7f4c0751735f",
+  "name": "retr/dql_queries_on_map",
+  "type": "dashboard",
+  "version": 17,
+  "owner": "e8e3249e-ccf6-4b9f-a4c1-9aebc3e83d54",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "e8e3249e-ccf6-4b9f-a4c1-9aebc3e83d54",
+    "createdTime": "2025-10-31T14:45:42.218Z",
+    "lastModifiedBy": "e8e3249e-ccf6-4b9f-a4c1-9aebc3e83d54",
+    "lastModifiedTime": "2025-11-03T12:18:09.249Z"
+  },
+  "access": [
+    "read"
+  ]
+}

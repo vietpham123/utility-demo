@@ -1,0 +1,17 @@
+{
+  "id": "monaco-78d033fa-058d-38c1-b2ff-0ea64fe02a5e",
+  "name": "[Grail][Query] Query Engine Overview",
+  "type": "dashboard",
+  "version": 1581,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-09-11T10:39:38.588Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:38.925Z"
+  },
+  "access": [
+    "read"
+  ]
+}

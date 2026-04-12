@@ -1,0 +1,17 @@
+{
+  "id": "df9ff3b0-9091-407c-869a-babccffeaf4c",
+  "name": "CI-266",
+  "type": "dashboard",
+  "version": 101,
+  "owner": "4a8db15b-fc93-40dd-a048-398b01a2749e",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "4a8db15b-fc93-40dd-a048-398b01a2749e",
+    "createdTime": "2025-10-03T09:27:03.227Z",
+    "lastModifiedBy": "4a8db15b-fc93-40dd-a048-398b01a2749e",
+    "lastModifiedTime": "2025-10-03T13:54:19.929Z"
+  },
+  "access": [
+    "read"
+  ]
+}

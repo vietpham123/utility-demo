@@ -1,0 +1,17 @@
+{
+  "id": "monaco-177aeea0-3a22-35a6-a2a8-546a61da917e",
+  "name": "[IDP][Kafka] KRaft controllers",
+  "type": "dashboard",
+  "version": 2492,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-04-22T07:03:35.33Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:18.637Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-643204c8-ddb7-3891-9842-063f1dc1b1cf",
+  "name": "[JUNO] Scorecard 0.8",
+  "type": "dashboard",
+  "version": 202,
+  "owner": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+    "createdTime": "2026-01-08T12:45:11.672Z",
+    "lastModifiedBy": "ebdd4261-39cb-4e1b-a663-e9927940cec7",
+    "lastModifiedTime": "2026-04-10T06:47:00.223Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "59a30c5f-3916-4c94-af62-ffcd869a48ae",
+  "name": "OTLP metric ingest in production",
+  "type": "dashboard",
+  "version": 175,
+  "owner": "4a8db15b-fc93-40dd-a048-398b01a2749e",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "4a8db15b-fc93-40dd-a048-398b01a2749e",
+    "createdTime": "2025-07-30T09:55:37.491Z",
+    "lastModifiedBy": "4a8db15b-fc93-40dd-a048-398b01a2749e",
+    "lastModifiedTime": "2025-09-02T08:33:13.277Z"
+  },
+  "access": [
+    "read"
+  ]
+}

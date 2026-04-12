@@ -1,0 +1,17 @@
+{
+  "id": "monaco-c19630a7-d712-3cb7-bbb9-c8796ae9d1e8",
+  "name": "[Platform-Services][Apps-on-GitHub] SDLC Events per App",
+  "type": "dashboard",
+  "version": 2362,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-05-12T08:09:46.851Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:08:59.908Z"
+  },
+  "access": [
+    "read"
+  ]
+}

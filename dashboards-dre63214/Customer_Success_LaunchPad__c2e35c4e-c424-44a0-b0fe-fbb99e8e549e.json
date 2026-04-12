@@ -1,0 +1,17 @@
+{
+  "id": "c2e35c4e-c424-44a0-b0fe-fbb99e8e549e",
+  "name": "Customer Success LaunchPad",
+  "type": "dashboard",
+  "version": 3794,
+  "owner": "2b6e96cf-84c8-40ed-b5aa-8505efd766f2",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "2b6e96cf-84c8-40ed-b5aa-8505efd766f2",
+    "createdTime": "2025-12-31T17:03:03.176Z",
+    "lastModifiedBy": "2b6e96cf-84c8-40ed-b5aa-8505efd766f2",
+    "lastModifiedTime": "2026-04-02T21:17:54.274Z"
+  },
+  "access": [
+    "read"
+  ]
+}

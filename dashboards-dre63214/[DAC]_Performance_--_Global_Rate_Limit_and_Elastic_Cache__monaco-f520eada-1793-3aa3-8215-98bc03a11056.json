@@ -1,0 +1,17 @@
+{
+  "id": "monaco-f520eada-1793-3aa3-8215-98bc03a11056",
+  "name": "[DAC] Performance -- Global Rate Limit and Elastic Cache",
+  "type": "dashboard",
+  "version": 174,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-12-29T09:12:09.335Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-09T13:33:49.577Z"
+  },
+  "access": [
+    "read"
+  ]
+}

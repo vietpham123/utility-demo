@@ -1,0 +1,17 @@
+{
+  "id": "monaco-57d2c11d-9b04-3c18-aa4e-886f308db9e6",
+  "name": "[Cloud Control] Domain Resolution",
+  "type": "dashboard",
+  "version": 75,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-07-03T12:39:40.43Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T13:18:43.539Z"
+  },
+  "access": [
+    "read"
+  ]
+}

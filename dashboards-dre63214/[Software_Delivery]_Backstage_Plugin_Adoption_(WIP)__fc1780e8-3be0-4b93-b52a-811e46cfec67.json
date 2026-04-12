@@ -1,0 +1,17 @@
+{
+  "id": "fc1780e8-3be0-4b93-b52a-811e46cfec67",
+  "name": "[Software Delivery] Backstage Plugin Adoption (WIP)",
+  "type": "dashboard",
+  "version": 61,
+  "owner": "ff3a3d39-b43e-420f-9563-97320edbd23a",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ff3a3d39-b43e-420f-9563-97320edbd23a",
+    "createdTime": "2026-03-04T08:44:39.262Z",
+    "lastModifiedBy": "ff3a3d39-b43e-420f-9563-97320edbd23a",
+    "lastModifiedTime": "2026-03-13T11:26:40.538Z"
+  },
+  "access": [
+    "read"
+  ]
+}

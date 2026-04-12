@@ -1,0 +1,17 @@
+{
+  "id": "1c9d756e-a915-46ed-b8a1-7a16b7c0fe1b",
+  "name": "[AppShell][Dock] Navigation tracking",
+  "type": "dashboard",
+  "version": 870,
+  "owner": "8ebf439e-7a8b-455f-832f-70481f37d137",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "8ebf439e-7a8b-455f-832f-70481f37d137",
+    "createdTime": "2025-05-16T07:38:06.425Z",
+    "lastModifiedBy": "8ebf439e-7a8b-455f-832f-70481f37d137",
+    "lastModifiedTime": "2026-03-04T11:36:09.75Z"
+  },
+  "access": [
+    "read"
+  ]
+}

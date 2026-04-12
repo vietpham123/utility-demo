@@ -1,0 +1,17 @@
+{
+  "id": "ecef5eea-5e8b-4c1e-a12e-8639a59a2ed3",
+  "name": "[DI][CoPilot] High level Perform overview",
+  "type": "dashboard",
+  "version": 174,
+  "owner": "1831d777-b885-435d-af3d-20cdc2c04828",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "1831d777-b885-435d-af3d-20cdc2c04828",
+    "createdTime": "2026-01-26T10:16:35.609Z",
+    "lastModifiedBy": "1831d777-b885-435d-af3d-20cdc2c04828",
+    "lastModifiedTime": "2026-01-29T14:48:27.797Z"
+  },
+  "access": [
+    "read"
+  ]
+}

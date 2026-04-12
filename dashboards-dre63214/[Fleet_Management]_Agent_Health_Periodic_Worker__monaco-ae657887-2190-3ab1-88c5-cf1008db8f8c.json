@@ -1,0 +1,17 @@
+{
+  "id": "monaco-ae657887-2190-3ab1-88c5-cf1008db8f8c",
+  "name": "[Fleet Management] Agent Health Periodic Worker",
+  "type": "dashboard",
+  "version": 1069,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-11-13T12:56:17.032Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:38.095Z"
+  },
+  "access": [
+    "read"
+  ]
+}

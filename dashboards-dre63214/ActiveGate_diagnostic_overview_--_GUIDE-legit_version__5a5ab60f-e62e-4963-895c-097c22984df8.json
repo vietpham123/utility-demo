@@ -1,0 +1,17 @@
+{
+  "id": "5a5ab60f-e62e-4963-895c-097c22984df8",
+  "name": "ActiveGate diagnostic overview -- GUIDE-legit version",
+  "type": "dashboard",
+  "version": 4,
+  "owner": "4a8db15b-fc93-40dd-a048-398b01a2749e",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "4a8db15b-fc93-40dd-a048-398b01a2749e",
+    "createdTime": "2025-12-31T16:33:06.764Z",
+    "lastModifiedBy": "4a8db15b-fc93-40dd-a048-398b01a2749e",
+    "lastModifiedTime": "2026-01-02T16:50:23.345Z"
+  },
+  "access": [
+    "read"
+  ]
+}

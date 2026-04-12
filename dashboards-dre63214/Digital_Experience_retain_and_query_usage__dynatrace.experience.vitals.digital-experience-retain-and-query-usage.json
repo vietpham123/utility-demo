@@ -1,0 +1,18 @@
+{
+  "id": "dynatrace.experience.vitals.digital-experience-retain-and-query-usage",
+  "name": "Digital Experience retain and query usage",
+  "type": "dashboard",
+  "description": "This dashboard provides usage insights for Digital Experience retain and query.",
+  "version": 9,
+  "owner": "50436aec-8901-4282-ae81-690bd6509b18",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "createdTime": "2026-01-13T15:08:19.264Z",
+    "lastModifiedBy": "50436aec-8901-4282-ae81-690bd6509b18",
+    "lastModifiedTime": "2026-04-08T14:57:23.107Z"
+  },
+  "access": [
+    "read"
+  ]
+}

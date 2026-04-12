@@ -1,0 +1,17 @@
+{
+  "id": "monaco-12282e57-e81b-36a7-88c2-f0f6daf4cf84",
+  "name": "[SRE] SFM detailed migration status",
+  "type": "dashboard",
+  "version": 2704,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-03-18T14:37:34.985Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:29.156Z"
+  },
+  "access": [
+    "read"
+  ]
+}

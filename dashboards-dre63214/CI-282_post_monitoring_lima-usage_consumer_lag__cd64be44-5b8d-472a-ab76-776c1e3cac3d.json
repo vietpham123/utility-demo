@@ -1,0 +1,17 @@
+{
+  "id": "cd64be44-5b8d-472a-ab76-776c1e3cac3d",
+  "name": "CI-282 post monitoring:lima-usage consumer lag",
+  "type": "dashboard",
+  "version": 26,
+  "owner": "e4ccb251-b8ba-4b7f-b1dc-ce96eba5d8d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "e4ccb251-b8ba-4b7f-b1dc-ce96eba5d8d6",
+    "createdTime": "2025-11-07T14:32:09.365Z",
+    "lastModifiedBy": "e4ccb251-b8ba-4b7f-b1dc-ce96eba5d8d6",
+    "lastModifiedTime": "2025-11-07T14:54:26.014Z"
+  },
+  "access": [
+    "read"
+  ]
+}

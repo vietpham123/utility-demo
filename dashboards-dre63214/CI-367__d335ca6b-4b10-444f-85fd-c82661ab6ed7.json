@@ -1,0 +1,17 @@
+{
+  "id": "d335ca6b-4b10-444f-85fd-c82661ab6ed7",
+  "name": "CI-367",
+  "type": "dashboard",
+  "version": 95,
+  "owner": "4a8db15b-fc93-40dd-a048-398b01a2749e",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "4a8db15b-fc93-40dd-a048-398b01a2749e",
+    "createdTime": "2026-04-08T10:53:24.463Z",
+    "lastModifiedBy": "4a8db15b-fc93-40dd-a048-398b01a2749e",
+    "lastModifiedTime": "2026-04-08T13:28:54.281Z"
+  },
+  "access": [
+    "read"
+  ]
+}

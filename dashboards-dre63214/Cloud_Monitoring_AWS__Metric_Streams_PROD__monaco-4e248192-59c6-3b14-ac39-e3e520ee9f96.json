@@ -1,0 +1,17 @@
+{
+  "id": "monaco-4e248192-59c6-3b14-ac39-e3e520ee9f96",
+  "name": "Cloud Monitoring AWS: Metric Streams PROD",
+  "type": "dashboard",
+  "version": 361,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-09-23T08:59:28.871Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-09T13:33:50.449Z"
+  },
+  "access": [
+    "read"
+  ]
+}

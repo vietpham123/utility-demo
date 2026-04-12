@@ -1,0 +1,17 @@
+{
+  "id": "6a2a4299-4771-4f9b-826c-ec41e66147b3",
+  "name": "Upgrade readiness",
+  "type": "dashboard",
+  "version": 713,
+  "owner": "8ebf439e-7a8b-455f-832f-70481f37d137",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "8ebf439e-7a8b-455f-832f-70481f37d137",
+    "createdTime": "2025-11-24T11:56:52.592Z",
+    "lastModifiedBy": "8ebf439e-7a8b-455f-832f-70481f37d137",
+    "lastModifiedTime": "2026-03-04T11:35:47.69Z"
+  },
+  "access": [
+    "read"
+  ]
+}

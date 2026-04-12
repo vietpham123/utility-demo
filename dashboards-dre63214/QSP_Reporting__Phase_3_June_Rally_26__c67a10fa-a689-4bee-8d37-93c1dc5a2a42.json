@@ -1,0 +1,17 @@
+{
+  "id": "c67a10fa-a689-4bee-8d37-93c1dc5a2a42",
+  "name": "QSP Reporting: Phase 3 June Rally 26",
+  "type": "dashboard",
+  "version": 6,
+  "owner": "e58de92d-e284-4ba6-a77f-0b176789646f",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "e58de92d-e284-4ba6-a77f-0b176789646f",
+    "createdTime": "2026-03-25T13:43:12.341Z",
+    "lastModifiedBy": "e58de92d-e284-4ba6-a77f-0b176789646f",
+    "lastModifiedTime": "2026-03-25T13:52:56.237Z"
+  },
+  "access": [
+    "read"
+  ]
+}

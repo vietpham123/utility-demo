@@ -1,0 +1,17 @@
+{
+  "id": "da5bbed6-dc7e-426c-80a6-f5a4fd2ca3d1",
+  "name": "TSG Adoption",
+  "type": "dashboard",
+  "version": 70,
+  "owner": "ce5d151d-38da-4b88-b3e0-bd0c6b8541f8",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ce5d151d-38da-4b88-b3e0-bd0c6b8541f8",
+    "createdTime": "2025-11-05T12:33:24.12Z",
+    "lastModifiedBy": "ce5d151d-38da-4b88-b3e0-bd0c6b8541f8",
+    "lastModifiedTime": "2026-02-24T09:06:54.725Z"
+  },
+  "access": [
+    "read"
+  ]
+}

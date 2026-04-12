@@ -1,0 +1,17 @@
+{
+  "id": "ae043263-e0de-4d5d-b596-5d4a04f3c104",
+  "name": "User Preferences — Change Analysis",
+  "type": "dashboard",
+  "version": 8,
+  "owner": "8ebf439e-7a8b-455f-832f-70481f37d137",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "8ebf439e-7a8b-455f-832f-70481f37d137",
+    "createdTime": "2026-04-07T08:50:43.725Z",
+    "lastModifiedBy": "8ebf439e-7a8b-455f-832f-70481f37d137",
+    "lastModifiedTime": "2026-04-07T09:37:03.983Z"
+  },
+  "access": [
+    "read"
+  ]
+}

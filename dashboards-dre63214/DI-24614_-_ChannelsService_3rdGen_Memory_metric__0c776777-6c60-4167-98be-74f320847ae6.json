@@ -1,0 +1,17 @@
+{
+  "id": "0c776777-6c60-4167-98be-74f320847ae6",
+  "name": "DI-24614 - ChannelsService 3rdGen Memory metric",
+  "type": "dashboard",
+  "version": 38,
+  "owner": "cf470deb-846e-4160-905e-3243c4527558",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "cf470deb-846e-4160-905e-3243c4527558",
+    "createdTime": "2025-12-16T12:15:29.775Z",
+    "lastModifiedBy": "cf470deb-846e-4160-905e-3243c4527558",
+    "lastModifiedTime": "2026-03-16T08:28:13.559Z"
+  },
+  "access": [
+    "read"
+  ]
+}

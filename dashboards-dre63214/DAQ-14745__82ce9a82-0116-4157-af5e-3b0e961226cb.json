@@ -1,0 +1,17 @@
+{
+  "id": "82ce9a82-0116-4157-af5e-3b0e961226cb",
+  "name": "DAQ-14745",
+  "type": "dashboard",
+  "version": 1311,
+  "owner": "5bb295fc-d911-40af-bce3-1cb4ad350441",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "5bb295fc-d911-40af-bce3-1cb4ad350441",
+    "createdTime": "2025-10-06T10:23:19.31Z",
+    "lastModifiedBy": "5bb295fc-d911-40af-bce3-1cb4ad350441",
+    "lastModifiedTime": "2026-01-07T15:29:06.292Z"
+  },
+  "access": [
+    "read"
+  ]
+}

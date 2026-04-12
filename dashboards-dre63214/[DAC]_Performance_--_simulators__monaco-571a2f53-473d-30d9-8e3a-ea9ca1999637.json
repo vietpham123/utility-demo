@@ -1,0 +1,17 @@
+{
+  "id": "monaco-571a2f53-473d-30d9-8e3a-ea9ca1999637",
+  "name": "[DAC] Performance -- simulators",
+  "type": "dashboard",
+  "version": 379,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-07-18T10:58:52.093Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-09T13:33:51.364Z"
+  },
+  "access": [
+    "read"
+  ]
+}

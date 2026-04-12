@@ -37,7 +37,21 @@ const crews = [
   { id: 'CREW-005', name: 'Echo Team', lead: 'Robert Adams', members: 3, vehicle: 'Bucket Truck E-2', region: 'Washington-DC', status: 'Available', skills: ['overhead', 'transformer'], currentAssignment: null },
   { id: 'CREW-006', name: 'Foxtrot Team', lead: 'Maria Garcia', members: 4, vehicle: 'Line Truck F-4', region: 'Atlantic-City', status: 'Available', skills: ['overhead', 'underground', 'emergency'], currentAssignment: null },
   { id: 'CREW-007', name: 'Hotel Team', lead: 'David Kim', members: 3, vehicle: 'Bucket Truck H-6', region: 'Wilmington', status: 'Available', skills: ['overhead', 'substation'], currentAssignment: null },
-  { id: 'CREW-008', name: 'India Team', lead: 'Amy Johnson', members: 5, vehicle: 'Emergency Response I-8', region: 'Cherry-Hill', status: 'Available', skills: ['overhead', 'underground', 'substation', 'emergency'], currentAssignment: null }
+  { id: 'CREW-008', name: 'India Team', lead: 'Amy Johnson', members: 5, vehicle: 'Emergency Response I-8', region: 'Cherry-Hill', status: 'Available', skills: ['overhead', 'underground', 'substation', 'emergency'], currentAssignment: null },
+  { id: 'CREW-009', name: 'Juliet Team', lead: 'Carlos Rivera', members: 4, vehicle: 'Bucket Truck J-9', region: 'NewYork', status: 'Available', skills: ['overhead', 'underground', 'transformer'], currentAssignment: null },
+  { id: 'CREW-010', name: 'Kilo Team', lead: 'Priya Sharma', members: 3, vehicle: 'Line Truck K-10', region: 'Boston', status: 'Available', skills: ['overhead', 'tree-trimming', 'cable-splice'], currentAssignment: null },
+  { id: 'CREW-011', name: 'Lima Team', lead: 'Marcus Brown', members: 5, vehicle: 'Bucket Truck L-11', region: 'Atlanta', status: 'Available', skills: ['overhead', 'underground', 'substation'], currentAssignment: null },
+  { id: 'CREW-012', name: 'Mike Team', lead: 'Jennifer Lee', members: 4, vehicle: 'Emergency Response M-12', region: 'Miami', status: 'Available', skills: ['overhead', 'underground', 'emergency'], currentAssignment: null },
+  { id: 'CREW-013', name: 'November Team', lead: 'Kevin O\'Brien', members: 4, vehicle: 'Bucket Truck N-13', region: 'Dallas', status: 'Available', skills: ['overhead', 'transformer', 'substation'], currentAssignment: null },
+  { id: 'CREW-014', name: 'Oscar Team', lead: 'Ana Morales', members: 3, vehicle: 'Line Truck O-14', region: 'Houston', status: 'Available', skills: ['underground', 'cable-splice', 'emergency'], currentAssignment: null },
+  { id: 'CREW-015', name: 'Papa Team', lead: 'Derek Washington', members: 4, vehicle: 'Bucket Truck P-15', region: 'Nashville', status: 'Available', skills: ['overhead', 'underground', 'tree-trimming'], currentAssignment: null },
+  { id: 'CREW-016', name: 'Quebec Team', lead: 'Susan Patel', members: 3, vehicle: 'Splice Van Q-16', region: 'Charlotte', status: 'Available', skills: ['underground', 'cable-splice'], currentAssignment: null },
+  { id: 'CREW-017', name: 'Romeo Team', lead: 'Brian Foster', members: 4, vehicle: 'Bucket Truck R-17', region: 'Orlando', status: 'Available', skills: ['overhead', 'transformer', 'emergency'], currentAssignment: null },
+  { id: 'CREW-018', name: 'Sierra Team', lead: 'Diana Scott', members: 5, vehicle: 'Emergency Response S-18', region: 'Detroit', status: 'Available', skills: ['overhead', 'underground', 'substation', 'emergency'], currentAssignment: null },
+  { id: 'CREW-019', name: 'Tango Team', lead: 'Frank Miller', members: 3, vehicle: 'Line Truck T-19', region: 'Cleveland', status: 'Available', skills: ['overhead', 'tree-trimming'], currentAssignment: null },
+  { id: 'CREW-020', name: 'Uniform Team', lead: 'Rachel Davis', members: 4, vehicle: 'Bucket Truck U-20', region: 'Pittsburgh', status: 'Available', skills: ['overhead', 'underground', 'transformer'], currentAssignment: null },
+  { id: 'CREW-021', name: 'Victor Team', lead: 'Greg Anderson', members: 3, vehicle: 'Splice Van V-21', region: 'StLouis', status: 'Available', skills: ['underground', 'cable-splice', 'substation'], currentAssignment: null },
+  { id: 'CREW-022', name: 'Whiskey Team', lead: 'Emily Thompson', members: 4, vehicle: 'Bucket Truck W-22', region: 'Minneapolis', status: 'Available', skills: ['overhead', 'underground', 'emergency'], currentAssignment: null }
 ];
 
 const dispatchHistory = [];

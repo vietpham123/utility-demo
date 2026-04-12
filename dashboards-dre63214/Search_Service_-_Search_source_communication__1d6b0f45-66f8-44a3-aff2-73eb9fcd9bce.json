@@ -1,0 +1,17 @@
+{
+  "id": "1d6b0f45-66f8-44a3-aff2-73eb9fcd9bce",
+  "name": "Search Service - Search source communication",
+  "type": "dashboard",
+  "version": 21,
+  "owner": "629db9e9-6466-42dd-9558-ff51a1582d56",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "629db9e9-6466-42dd-9558-ff51a1582d56",
+    "createdTime": "2025-04-25T11:29:32.006Z",
+    "lastModifiedBy": "df07b22a-7614-4481-9028-d747ddb21ee3",
+    "lastModifiedTime": "2026-02-20T13:28:23.324Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "6c1cf811-3998-40ff-a0e7-ad4ef682e152",
+  "name": "[GRAIL-40176] Slow QGW startup",
+  "type": "dashboard",
+  "version": 466,
+  "owner": "ac17c97e-0e70-436f-9516-7c4b8a405b80",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "ac17c97e-0e70-436f-9516-7c4b8a405b80",
+    "createdTime": "2025-05-26T12:52:05.615Z",
+    "lastModifiedBy": "ac17c97e-0e70-436f-9516-7c4b8a405b80",
+    "lastModifiedTime": "2025-11-23T12:04:43.74Z"
+  },
+  "access": [
+    "read"
+  ]
+}

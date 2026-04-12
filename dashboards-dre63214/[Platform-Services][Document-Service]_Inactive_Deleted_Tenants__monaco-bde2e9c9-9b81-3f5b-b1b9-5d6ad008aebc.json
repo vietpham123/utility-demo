@@ -1,0 +1,17 @@
+{
+  "id": "monaco-bde2e9c9-9b81-3f5b-b1b9-5d6ad008aebc",
+  "name": "[Platform-Services][Document-Service] Inactive/Deleted Tenants",
+  "type": "dashboard",
+  "version": 1722,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-08-21T09:29:04.889Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:03.472Z"
+  },
+  "access": [
+    "read"
+  ]
+}

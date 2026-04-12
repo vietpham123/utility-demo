@@ -1,0 +1,17 @@
+{
+  "id": "monaco-4ca154cf-5457-3b7a-a894-d7c3d73845b3",
+  "name": "[TSG] FDI - Davis On Grail",
+  "type": "dashboard",
+  "version": 2264,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-05-23T05:46:08.729Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:08:59.073Z"
+  },
+  "access": [
+    "read"
+  ]
+}

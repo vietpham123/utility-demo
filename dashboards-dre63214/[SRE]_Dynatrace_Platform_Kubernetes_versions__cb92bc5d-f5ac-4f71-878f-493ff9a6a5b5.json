@@ -1,0 +1,17 @@
+{
+  "id": "cb92bc5d-f5ac-4f71-878f-493ff9a6a5b5",
+  "name": "[SRE] Dynatrace Platform Kubernetes versions",
+  "type": "dashboard",
+  "version": 256,
+  "owner": "d3f75865-3f14-4dfd-b380-4be3884aa0c1",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "d3f75865-3f14-4dfd-b380-4be3884aa0c1",
+    "createdTime": "2026-02-16T03:38:39.668Z",
+    "lastModifiedBy": "d3f75865-3f14-4dfd-b380-4be3884aa0c1",
+    "lastModifiedTime": "2026-03-17T05:10:24.202Z"
+  },
+  "access": [
+    "read"
+  ]
+}

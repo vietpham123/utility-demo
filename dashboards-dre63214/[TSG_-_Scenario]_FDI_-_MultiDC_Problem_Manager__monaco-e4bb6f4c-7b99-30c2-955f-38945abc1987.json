@@ -1,0 +1,17 @@
+{
+  "id": "monaco-e4bb6f4c-7b99-30c2-955f-38945abc1987",
+  "name": "[TSG - Scenario] FDI - MultiDC Problem Manager",
+  "type": "dashboard",
+  "version": 639,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2024-12-10T02:41:58.538Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T14:54:48.934Z"
+  },
+  "access": [
+    "read"
+  ]
+}

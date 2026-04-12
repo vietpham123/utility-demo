@@ -1,0 +1,17 @@
+{
+  "id": "monaco-67c059ca-9922-35e6-b3a2-e247681b8d02",
+  "name": "[Cloud Control] Cloud Control (prod)",
+  "type": "dashboard",
+  "version": 64,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-08-04T07:08:34.234Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T13:18:43.685Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-00e96bdd-a9b9-38b1-819c-cc0edb8d81bc",
+  "name": "[CLIN][Mirage] Email Service Usage",
+  "type": "dashboard",
+  "version": 27,
+  "owner": "d88f9bb7-05cb-4268-9339-6526c7df822a",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "d88f9bb7-05cb-4268-9339-6526c7df822a",
+    "createdTime": "2025-12-30T14:01:59.821Z",
+    "lastModifiedBy": "d88f9bb7-05cb-4268-9339-6526c7df822a",
+    "lastModifiedTime": "2026-04-02T06:46:30.368Z"
+  },
+  "access": [
+    "read"
+  ]
+}

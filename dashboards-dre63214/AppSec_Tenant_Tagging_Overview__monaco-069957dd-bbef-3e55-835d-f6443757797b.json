@@ -1,0 +1,17 @@
+{
+  "id": "monaco-069957dd-bbef-3e55-835d-f6443757797b",
+  "name": "AppSec Tenant Tagging Overview",
+  "type": "dashboard",
+  "version": 1116,
+  "owner": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+    "createdTime": "2025-02-24T08:43:13.261Z",
+    "lastModifiedBy": "0e2498a0-5a31-45e5-b4db-512a3323e6c4",
+    "lastModifiedTime": "2026-04-10T15:12:35.51Z"
+  },
+  "access": [
+    "read"
+  ]
+}

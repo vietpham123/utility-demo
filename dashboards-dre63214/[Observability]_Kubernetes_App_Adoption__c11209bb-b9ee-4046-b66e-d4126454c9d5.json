@@ -1,0 +1,17 @@
+{
+  "id": "c11209bb-b9ee-4046-b66e-d4126454c9d5",
+  "name": "[Observability] Kubernetes App Adoption",
+  "type": "dashboard",
+  "version": 8,
+  "owner": "7d90b9bd-38a9-4630-9214-dd8dadc9843e",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "7d90b9bd-38a9-4630-9214-dd8dadc9843e",
+    "createdTime": "2025-04-29T07:28:26.528Z",
+    "lastModifiedBy": "7d90b9bd-38a9-4630-9214-dd8dadc9843e",
+    "lastModifiedTime": "2025-09-25T14:56:29.476Z"
+  },
+  "access": [
+    "read"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "monaco-ff39c9f6-520c-3db8-80a4-1175a7378589",
+  "name": "[IDP][RabbitMQ] Quorum Queues",
+  "type": "dashboard",
+  "version": 240,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2026-03-10T13:49:37.077Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:08:54.655Z"
+  },
+  "access": [
+    "read"
+  ]
+}

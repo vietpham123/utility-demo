@@ -1,0 +1,17 @@
+{
+  "id": "59b4ee77-5119-46cd-9acf-f385f5419d0d",
+  "name": "Is intent used?",
+  "type": "dashboard",
+  "version": 98,
+  "owner": "b6b61d03-0e7f-49ef-ab97-672edee5cfa5",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "3c5c6447-034c-40a1-8135-2b80dba2d178",
+    "createdTime": "2025-07-23T12:45:42.018Z",
+    "lastModifiedBy": "3c5c6447-034c-40a1-8135-2b80dba2d178",
+    "lastModifiedTime": "2025-11-06T13:13:27.849Z"
+  },
+  "access": [
+    "read"
+  ]
+}

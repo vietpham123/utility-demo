@@ -1,0 +1,17 @@
+{
+  "id": "21ffc5f9-f966-4122-b314-e1a7914da855",
+  "name": "PS-35604 | RabbitMQ - queue celery-lowprio",
+  "type": "dashboard",
+  "version": 395,
+  "owner": "3abf71f5-b7e3-445e-8154-28c67c31708d",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "3abf71f5-b7e3-445e-8154-28c67c31708d",
+    "createdTime": "2025-08-08T03:39:49.313Z",
+    "lastModifiedBy": "3abf71f5-b7e3-445e-8154-28c67c31708d",
+    "lastModifiedTime": "2025-10-04T06:16:58.427Z"
+  },
+  "access": [
+    "read"
+  ]
+}

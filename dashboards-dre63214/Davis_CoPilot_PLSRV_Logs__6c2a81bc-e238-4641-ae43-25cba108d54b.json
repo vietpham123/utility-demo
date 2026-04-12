@@ -1,0 +1,17 @@
+{
+  "id": "6c2a81bc-e238-4641-ae43-25cba108d54b",
+  "name": "Davis CoPilot PLSRV Logs",
+  "type": "dashboard",
+  "version": 31,
+  "owner": "1831d777-b885-435d-af3d-20cdc2c04828",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "1831d777-b885-435d-af3d-20cdc2c04828",
+    "createdTime": "2025-05-15T13:22:19.355Z",
+    "lastModifiedBy": "1831d777-b885-435d-af3d-20cdc2c04828",
+    "lastModifiedTime": "2026-04-09T06:17:25.883Z"
+  },
+  "access": [
+    "read"
+  ]
+}

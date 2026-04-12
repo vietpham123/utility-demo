@@ -334,7 +334,7 @@ def simulate_notifications():
     # Create some sample notifications based on recent activity
     sample_outage = {
         'outageId': f'OUT-{str(random.randint(1, 200)).zfill(3)}',
-        'location': random.choice(['Chicago, IL', 'Baltimore, MD', 'Philadelphia, PA', 'Washington, DC']),
+        'location': random.choice(['Chicago, IL', 'Baltimore, MD', 'Philadelphia, PA', 'Washington, DC', 'New York, NY', 'Boston, MA', 'Atlanta, GA', 'Miami, FL', 'Dallas, TX', 'Houston, TX', 'Nashville, TN', 'Charlotte, NC', 'Orlando, FL', 'Detroit, MI', 'Cleveland, OH', 'Pittsburgh, PA', 'St. Louis, MO', 'Minneapolis, MN']),
         'etr': datetime.now(timezone.utc).isoformat(),
         'crewName': random.choice(['Alpha Team', 'Beta Team', 'Delta Team', 'Gamma Team']),
         'affectedCustomers': random.randint(50, 2000)

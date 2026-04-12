@@ -1,0 +1,17 @@
+{
+  "id": "monaco-40420897-6ceb-3cb4-980a-0e7fe197db21",
+  "name": "[SRE] SLO Overview",
+  "type": "dashboard",
+  "version": 82,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-10-30T11:07:08.853Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T17:15:13.348Z"
+  },
+  "access": [
+    "read"
+  ]
+}

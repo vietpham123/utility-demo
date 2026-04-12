@@ -1,0 +1,17 @@
+{
+  "id": "5560de74-e1fe-405f-8cb5-2dbf8e1c54f1",
+  "name": "[Cloud Automation] Connectors Overview",
+  "type": "dashboard",
+  "version": 193,
+  "owner": "98da8078-9577-43a2-8712-82519190e5c9",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "98da8078-9577-43a2-8712-82519190e5c9",
+    "createdTime": "2025-12-12T12:35:10.49Z",
+    "lastModifiedBy": "98da8078-9577-43a2-8712-82519190e5c9",
+    "lastModifiedTime": "2026-01-20T16:45:26.231Z"
+  },
+  "access": [
+    "read"
+  ]
+}

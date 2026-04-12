@@ -1,0 +1,17 @@
+{
+  "id": "monaco-4b5a1e3a-f0f7-3146-ae3d-da29dd25ff9d",
+  "name": "[DAC] Troubleshooting -- GCP smartscape poller",
+  "type": "dashboard",
+  "version": 69,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2026-03-23T10:43:28.047Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-09T13:33:53.067Z"
+  },
+  "access": [
+    "read"
+  ]
+}

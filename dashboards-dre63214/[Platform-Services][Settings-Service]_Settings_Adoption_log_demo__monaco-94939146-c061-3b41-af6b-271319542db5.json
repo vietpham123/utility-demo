@@ -1,0 +1,17 @@
+{
+  "id": "monaco-94939146-c061-3b41-af6b-271319542db5",
+  "name": "[Platform-Services][Settings-Service] Settings Adoption log demo",
+  "type": "dashboard",
+  "version": 1465,
+  "owner": "c3358523-17c3-4270-994c-09c45bfa97d6",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "createdTime": "2025-09-29T08:51:40.916Z",
+    "lastModifiedBy": "c3358523-17c3-4270-994c-09c45bfa97d6",
+    "lastModifiedTime": "2026-04-10T15:09:10.286Z"
+  },
+  "access": [
+    "read"
+  ]
+}

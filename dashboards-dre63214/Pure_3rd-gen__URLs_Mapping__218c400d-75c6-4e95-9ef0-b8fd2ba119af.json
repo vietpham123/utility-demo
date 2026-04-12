@@ -1,0 +1,17 @@
+{
+  "id": "218c400d-75c6-4e95-9ef0-b8fd2ba119af",
+  "name": "Pure 3rd-gen: URLs Mapping",
+  "type": "dashboard",
+  "version": 381,
+  "owner": "fde3f116-d038-47f3-b1a5-671d2b1cf5d3",
+  "isPrivate": false,
+  "modificationInfo": {
+    "createdBy": "fde3f116-d038-47f3-b1a5-671d2b1cf5d3",
+    "createdTime": "2025-07-08T12:46:16.695Z",
+    "lastModifiedBy": "fde3f116-d038-47f3-b1a5-671d2b1cf5d3",
+    "lastModifiedTime": "2026-04-03T05:58:59.408Z"
+  },
+  "access": [
+    "read"
+  ]
+}
