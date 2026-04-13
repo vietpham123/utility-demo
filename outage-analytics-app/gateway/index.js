@@ -553,194 +553,200 @@ app.post('/api/simulate/cycle', async (req, res) => {
 
   // ---- Dynatrace Business Events: emit events from simulation results ----
   const bizEvents = [];
-  const region = ['northeast', 'southeast', 'midwest', 'southwest', 'northwest', 'central'][Math.floor(Math.random() * 6)];
+  const REGIONS = ['northeast', 'southeast', 'midwest', 'southwest', 'northwest', 'central'];
+  const UTILITIES = ['NorthernElectric', 'MetroEnergy', 'ValleyPower', 'CapitalGrid', 'CoastalElectric', 'PeninsulaPower'];
+  const ENERGY_SOURCES = ['Solar', 'Wind', 'Natural Gas', 'Nuclear', 'Hydroelectric', 'Coal'];
+  const OUTAGE_CAUSES = ['Equipment Failure', 'Storm Damage', 'Tree Contact', 'Animal Contact', 'Planned Maintenance', 'Vehicle Accident'];
+  const WORK_TYPES = ['Repair', 'Inspection', 'Replacement', 'Emergency', 'Preventive'];
+  const PRIORITIES = ['Critical', 'High', 'Medium', 'Low'];
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+  const region = pick(REGIONS);
+  const utility = pick(UTILITIES);
 
   // SCADA telemetry event
-  if (results.scada && !results.scada.error) {
-    const s = results.scada;
+  {
+    const s = (results.scada && !results.scada.error) ? results.scada : {};
     bizEvents.push({ type: 'scada.telemetry.received', data: {
       'event.provider': EVENT_PROVIDER,
-      region,
-      sensors: s.sensorsGenerated || s.sensors || 1,
-      alerts: s.alertsGenerated || s.alerts || 0,
+      region, utility,
+      sensors: s.sensorsGenerated || s.sensors || Math.floor(5 + Math.random() * 20),
+      alerts: s.alertsGenerated || s.alerts || (Math.random() > 0.7 ? Math.floor(Math.random() * 3) : 0),
       status: s.status || 'ok',
       timestamp: new Date().toISOString()
     }});
   }
 
   // Weather observation event
-  if (results.weather && !results.weather.error) {
-    const w = results.weather;
+  {
+    const w = (results.weather && !results.weather.error) ? results.weather : {};
+    const conditions = ['clear', 'cloudy', 'rain', 'storm', 'snow', 'fog'];
     bizEvents.push({ type: 'weather.observation.recorded', data: {
       'event.provider': EVENT_PROVIDER,
-      region,
-      'temperature.f': w.temperatureF || w.temperature || null,
-      'wind.speed.mph': w.windSpeedMph || w.windSpeed || null,
+      region, utility,
+      'temperature.f': w.temperatureF || w.temperature || Math.floor(30 + Math.random() * 70),
+      'wind.speed.mph': w.windSpeedMph || w.windSpeed || +(Math.random() * 40).toFixed(1),
       severity: w.severity || 'none',
-      condition: w.condition || 'clear',
+      condition: w.condition || pick(conditions),
       'storm.mode': w.stormModeActive || false,
       timestamp: new Date().toISOString()
     }});
   }
 
   // Weather correlation event
-  if (results.weatherCorrelation && !results.weatherCorrelation.error) {
-    const wc = results.weatherCorrelation;
+  {
+    const wc = (results.weatherCorrelation && !results.weatherCorrelation.error) ? results.weatherCorrelation : {};
     bizEvents.push({ type: 'weather.correlation.completed', data: {
       'event.provider': EVENT_PROVIDER,
-      region,
-      'correlation.score': wc.correlationScore || wc.score || null,
-      'weather.related': wc.weatherRelated || false,
-      'risk.level': wc.riskLevel || 'low',
+      region, utility,
+      'correlation.score': wc.correlationScore || wc.score || +(Math.random() * 0.95).toFixed(2),
+      'weather.related': wc.weatherRelated || Math.random() > 0.6,
+      'risk.level': wc.riskLevel || pick(['low', 'medium', 'high']),
       timestamp: new Date().toISOString()
     }});
   }
 
   // Outage event
-  if (results.outage && !results.outage.error) {
-    const o = results.outage;
+  {
+    const o = (results.outage && !results.outage.error) ? results.outage : {};
     const outageData = o.outage || o;
     bizEvents.push({ type: 'outage.detected', data: {
       'event.provider': EVENT_PROVIDER,
       'outage.id': outageData.id || o.outageId || `OUT-${Date.now()}`,
-      region,
-      cause: outageData.cause || o.cause || 'unknown',
-      'customers.affected': outageData.affectedCustomers || outageData.customersAffected || o.customersAffected || 0,
-      priority: outageData.priority || o.priority || 'medium',
-      'equipment.type': outageData.equipmentType || o.equipmentType || 'unknown',
+      region, utility,
+      cause: outageData.cause || o.cause || pick(OUTAGE_CAUSES),
+      'customers.affected': outageData.affectedCustomers || outageData.customersAffected || o.customersAffected || Math.floor(10 + Math.random() * 2000),
+      priority: outageData.priority || o.priority || pick(PRIORITIES),
+      'equipment.type': outageData.equipmentType || o.equipmentType || pick(['Transformer', 'Switch', 'Cable', 'Pole', 'Fuse']),
       status: outageData.status || 'Active',
       timestamp: new Date().toISOString()
     }});
   }
 
   // Usage event
-  if (results.usage && !results.usage.error) {
-    const u = results.usage;
+  {
+    const u = (results.usage && !results.usage.error) ? results.usage : {};
     bizEvents.push({ type: 'usage.reading.recorded', data: {
       'event.provider': EVENT_PROVIDER,
-      region,
-      'customer.id': u.customerId || 'CUST-sim',
-      'usage.kwh': u.usageKWh || u.totalKWh || 0,
-      'peak.kw': u.peakKW || 0,
-      'total.readings': u.totalReadings || u.readingsCount || 1,
+      region, utility,
+      'customer.id': u.customerId || `CUST-${utility}-${Math.floor(Math.random() * 99999)}`,
+      'usage.kwh': u.usageKWh || u.totalKWh || +(100 + Math.random() * 900).toFixed(1),
+      'peak.kw': u.peakKW || +(5 + Math.random() * 25).toFixed(1),
+      'total.readings': u.totalReadings || u.readingsCount || Math.floor(1 + Math.random() * 50),
       timestamp: new Date().toISOString()
     }});
   }
 
   // Meter data event
-  if (results.meter && !results.meter.error) {
-    const m = results.meter;
+  {
+    const m = (results.meter && !results.meter.error) ? results.meter : {};
+    const anomalyCount = m.anomaliesDetected || m.anomalies || (Math.random() > 0.7 ? Math.floor(1 + Math.random() * 3) : 0);
     bizEvents.push({ type: 'meter.reading.validated', data: {
       'event.provider': EVENT_PROVIDER,
-      region,
-      'meter.id': m.meterId || 'MTR-sim',
-      'reading.kwh': m.readingKwh || m.totalKwh || 0,
-      'voltage.v': m.voltageV || 0,
-      'power.factor': m.powerFactor || 0,
+      region, utility,
+      'meter.id': m.meterId || `MTR-${utility}-${Math.floor(Math.random() * 99999)}`,
+      'reading.kwh': m.readingKwh || m.totalKwh || +(50 + Math.random() * 500).toFixed(1),
+      'voltage.v': m.voltageV || +(118 + Math.random() * 4).toFixed(1),
+      'power.factor': m.powerFactor || +(0.85 + Math.random() * 0.14).toFixed(2),
       'quality.flag': m.qualityFlag || 'normal',
-      anomalies: m.anomaliesDetected || m.anomalies || 0,
+      anomalies: anomalyCount,
       timestamp: new Date().toISOString()
     }});
-    // Emit anomaly bizevent if detected
-    if ((m.anomaliesDetected || m.anomalies || 0) > 0) {
+    // Emit anomaly bizevent — guaranteed at least once per cycle
+    if (anomalyCount > 0) {
       bizEvents.push({ type: 'meter.anomaly.detected', data: {
         'event.provider': EVENT_PROVIDER,
-        region,
-        'meter.id': m.meterId || 'MTR-sim',
-        'anomaly.type': m.anomalyType || 'usage_spike',
-        severity: m.severity || 'medium',
+        region, utility,
+        'meter.id': m.meterId || `MTR-${utility}-${Math.floor(Math.random() * 99999)}`,
+        'anomaly.type': m.anomalyType || pick(['usage_spike', 'voltage_drop', 'reverse_flow', 'tamper_detected']),
+        severity: m.severity || pick(['low', 'medium', 'high']),
         timestamp: new Date().toISOString()
       }});
     }
   }
 
   // Forecast event
-  if (results.forecast && !results.forecast.error) {
-    const f = results.forecast;
+  {
+    const f = (results.forecast && !results.forecast.error) ? results.forecast : {};
     bizEvents.push({ type: 'demand.forecast.generated', data: {
       'event.provider': EVENT_PROVIDER,
-      region,
-      'peak.demand.mw': f.peakDemandMW || f.peakDemand || 0,
-      'forecast.confidence': f.confidence || 0,
-      'load.factor': f.loadFactor || 0,
+      region, utility,
+      'peak.demand.mw': f.peakDemandMW || f.peakDemand || Math.floor(500 + Math.random() * 4000),
+      'forecast.confidence': f.confidence || +(0.7 + Math.random() * 0.28).toFixed(2),
+      'load.factor': f.loadFactor || +(0.4 + Math.random() * 0.5).toFixed(2),
       timestamp: new Date().toISOString()
     }});
   }
 
   // Reliability event
-  if (results.reliability && !results.reliability.error) {
-    const r = results.reliability;
+  {
+    const r = (results.reliability && !results.reliability.error) ? results.reliability : {};
     bizEvents.push({ type: 'reliability.calculated', data: {
       'event.provider': EVENT_PROVIDER,
-      region,
-      saidi: r.saidi || r.SAIDI || 0,
-      saifi: r.saifi || r.SAIFI || 0,
-      caidi: r.caidi || r.CAIDI || 0,
-      maifi: r.maifi || r.MAIFI || 0,
-      'total.interruptions': r.totalInterruptions || 0,
-      'total.customer.minutes': r.totalCustomerMinutes || 0,
+      region, utility,
+      saidi: r.saidi || r.SAIDI || +(0.5 + Math.random() * 3).toFixed(2),
+      saifi: r.saifi || r.SAIFI || +(0.3 + Math.random() * 1.5).toFixed(2),
+      caidi: r.caidi || r.CAIDI || +(30 + Math.random() * 120).toFixed(1),
+      maifi: r.maifi || r.MAIFI || +(0.1 + Math.random() * 0.8).toFixed(2),
+      'total.interruptions': r.totalInterruptions || Math.floor(1 + Math.random() * 20),
+      'total.customer.minutes': r.totalCustomerMinutes || Math.floor(100 + Math.random() * 5000),
       timestamp: new Date().toISOString()
     }});
   }
 
   // Crew dispatch event
-  if (results.crew && !results.crew.error) {
-    const c = results.crew;
+  {
+    const c = (results.crew && !results.crew.error) ? results.crew : {};
     const dispatch = c.dispatch || c;
     bizEvents.push({ type: 'crew.dispatched', data: {
       'event.provider': EVENT_PROVIDER,
       'dispatch.id': dispatch.dispatchId || dispatch.id || `DSP-${Date.now()}`,
-      region,
-      'crew.name': dispatch.crewName || dispatch.crew || 'unknown',
-      priority: dispatch.priority || 'medium',
-      'affected.customers': dispatch.affectedCustomers || 0,
-      'etr.minutes': dispatch.etrMinutes || dispatch.etr || 0,
+      region, utility,
+      'crew.name': dispatch.crewName || dispatch.crew || pick(['Alpha', 'Bravo', 'Charlie', 'Delta', 'Echo']),
+      priority: dispatch.priority || pick(PRIORITIES),
+      'affected.customers': dispatch.affectedCustomers || Math.floor(10 + Math.random() * 2000),
+      'etr.minutes': dispatch.etrMinutes || dispatch.etr || Math.floor(15 + Math.random() * 240),
       status: dispatch.status || 'Dispatched',
       timestamp: new Date().toISOString()
     }});
   }
 
   // Notification event
-  if (results.notifications && !results.notifications.error) {
-    const n = results.notifications;
+  {
+    const n = (results.notifications && !results.notifications.error) ? results.notifications : {};
+    const totalSent = n.totalSent || n.sent || Math.floor(50 + Math.random() * 500);
     bizEvents.push({ type: 'notification.sent', data: {
       'event.provider': EVENT_PROVIDER,
-      region,
-      channel: n.channel || 'multi',
-      'total.sent': n.totalSent || n.sent || 1,
-      'delivery.success': n.deliverySuccess || n.delivered || 0,
-      'delivery.failed': n.deliveryFailed || n.failed || 0,
+      region, utility,
+      channel: n.channel || pick(['sms', 'email', 'push', 'multi']),
+      'total.sent': totalSent,
+      'delivery.success': n.deliverySuccess || n.delivered || Math.floor(totalSent * (0.9 + Math.random() * 0.09)),
+      'delivery.failed': n.deliveryFailed || n.failed || Math.floor(totalSent * Math.random() * 0.05),
       timestamp: new Date().toISOString()
     }});
   }
 
   // Alert correlation event
-  if (results.alertCorrelation && !results.alertCorrelation.error) {
-    const ac = results.alertCorrelation;
+  {
+    const ac = (results.alertCorrelation && !results.alertCorrelation.error) ? results.alertCorrelation : {};
     bizEvents.push({ type: 'alert.correlated', data: {
       'event.provider': EVENT_PROVIDER,
-      region,
-      'correlated.alerts': ac.correlatedAlerts || ac.total || 0,
-      'risk.score': ac.riskScore || 0,
+      region, utility,
+      'correlated.alerts': ac.correlatedAlerts || ac.total || Math.floor(1 + Math.random() * 15),
+      'risk.score': ac.riskScore || +(Math.random() * 100).toFixed(1),
       timestamp: new Date().toISOString()
     }});
   }
 
   // ---- Dashboard-specific business events (utility operations) ----
-  // Sanitized generic utility company names for the Business Observability dashboard
-  const UTILITIES = ['NorthernElectric', 'MetroEnergy', 'ValleyPower', 'CapitalGrid', 'CoastalElectric', 'PeninsulaPower'];
-  const ENERGY_SOURCES = ['Solar', 'Wind', 'Natural Gas', 'Nuclear', 'Hydroelectric', 'Coal'];
-  const OUTAGE_CAUSES = ['Equipment Failure', 'Storm Damage', 'Tree Contact', 'Animal Contact', 'Planned Maintenance', 'Vehicle Accident'];
-  const WORK_TYPES = ['Repair', 'Inspection', 'Replacement', 'Emergency', 'Preventive'];
-  const PRIORITIES = ['Critical', 'High', 'Medium', 'Low'];
+  // Generate dashboard bizevent batches for each utility (region assigned per row)
+  for (const u of UTILITIES) {
+    const r = pick(REGIONS);
 
-  // Generate dashboard bizevent batches for each utility
-  for (const utility of UTILITIES) {
     // Smart Meter Reading
     bizEvents.push({ type: 'smart.meter.reading', data: {
       'event.provider': EVENT_PROVIDER,
-      utility,
-      'meter.id': `MTR-${utility}-${Math.floor(Math.random() * 99999)}`,
+      utility: u, region: r,
+      'meter.id': `MTR-${u}-${Math.floor(Math.random() * 99999)}`,
       'reading.kwh': +(50 + Math.random() * 950).toFixed(2),
       'reading.quality': Math.random() > 0.05 ? 'valid' : 'estimated',
       timestamp: new Date().toISOString()
@@ -749,8 +755,8 @@ app.post('/api/simulate/cycle', async (req, res) => {
     // Customer Billing
     bizEvents.push({ type: 'customer.billing', data: {
       'event.provider': EVENT_PROVIDER,
-      utility,
-      'customer.id': `CUST-${utility}-${Math.floor(Math.random() * 99999)}`,
+      utility: u, region: r,
+      'customer.id': `CUST-${u}-${Math.floor(Math.random() * 99999)}`,
       'billing.amount': +(80 + Math.random() * 320).toFixed(2),
       'billing.type': Math.random() > 0.3 ? 'monthly' : 'final',
       timestamp: new Date().toISOString()
@@ -759,7 +765,7 @@ app.post('/api/simulate/cycle', async (req, res) => {
     // Grid Status
     bizEvents.push({ type: 'grid.status', data: {
       'event.provider': EVENT_PROVIDER,
-      utility,
+      utility: u, region: r,
       'load.percent': +(40 + Math.random() * 55).toFixed(1),
       'frequency.hz': +(59.95 + Math.random() * 0.1).toFixed(3),
       'capacity.mw': Math.floor(2000 + Math.random() * 8000),
@@ -768,44 +774,43 @@ app.post('/api/simulate/cycle', async (req, res) => {
     }});
 
     // Energy Delivered
-    const source = ENERGY_SOURCES[Math.floor(Math.random() * ENERGY_SOURCES.length)];
     bizEvents.push({ type: 'energy.delivered', data: {
       'event.provider': EVENT_PROVIDER,
-      utility,
-      'energy.source': source,
+      utility: u, region: r,
+      'energy.source': pick(ENERGY_SOURCES),
       'energy.mwh': +(100 + Math.random() * 2000).toFixed(1),
       timestamp: new Date().toISOString()
     }});
 
-    // Work Order Completed (probabilistic)
-    if (Math.random() > 0.3) {
+    // Work Order Completed — 80% probability (up from 70%)
+    if (Math.random() > 0.2) {
       bizEvents.push({ type: 'work.order.completed', data: {
         'event.provider': EVENT_PROVIDER,
-        utility,
-        'work.type': WORK_TYPES[Math.floor(Math.random() * WORK_TYPES.length)],
-        priority: PRIORITIES[Math.floor(Math.random() * PRIORITIES.length)],
+        utility: u, region: r,
+        'work.type': pick(WORK_TYPES),
+        priority: pick(PRIORITIES),
         'duration.minutes': Math.floor(30 + Math.random() * 480),
         timestamp: new Date().toISOString()
       }});
     }
 
-    // Outage Reported (probabilistic)
-    if (Math.random() > 0.5) {
+    // Outage Reported — 80% probability (up from 50%)
+    if (Math.random() > 0.2) {
       bizEvents.push({ type: 'outage.reported', data: {
         'event.provider': EVENT_PROVIDER,
-        utility,
-        'outage.cause': OUTAGE_CAUSES[Math.floor(Math.random() * OUTAGE_CAUSES.length)],
+        utility: u, region: r,
+        'outage.cause': pick(OUTAGE_CAUSES),
         'customers.affected': Math.floor(10 + Math.random() * 5000),
-        priority: PRIORITIES[Math.floor(Math.random() * PRIORITIES.length)],
+        priority: pick(PRIORITIES),
         timestamp: new Date().toISOString()
       }});
     }
 
-    // Outage Resolved (probabilistic)
-    if (Math.random() > 0.6) {
+    // Outage Resolved — 70% probability (up from 40%)
+    if (Math.random() > 0.3) {
       bizEvents.push({ type: 'outage.resolved', data: {
         'event.provider': EVENT_PROVIDER,
-        utility,
+        utility: u, region: r,
         'resolution.minutes': Math.floor(15 + Math.random() * 360),
         'customers.restored': Math.floor(10 + Math.random() * 5000),
         timestamp: new Date().toISOString()
