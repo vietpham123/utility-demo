@@ -127,7 +127,7 @@
     "3": {
       "title": "\u26a1 Outages Detected",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"outage.detected\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize totalOutages = count()",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"outage.detected\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize totalOutages = count()",
       "visualization": "singleValue",
       "visualizationSettings": {
         "singleValue": {
@@ -191,7 +191,7 @@
     "4": {
       "title": "\ud83d\ude9b Crew Dispatches",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"crew.dispatched\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize totalDispatches = count()",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"crew.dispatched\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize totalDispatches = count()",
       "visualization": "singleValue",
       "visualizationSettings": {
         "singleValue": {
@@ -246,7 +246,7 @@
     "5": {
       "title": "\ud83d\udcca Avg SAIDI (Reliability)",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"reliability.calculated\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize avgSAIDI = avg(saidi)",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"reliability.calculated\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize avgSAIDI = avg(saidi)",
       "visualization": "singleValue",
       "visualizationSettings": {
         "singleValue": {
@@ -285,7 +285,7 @@
     "6": {
       "title": "\ud83d\udc65 Avg Customers Affected",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"outage.detected\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize avgCustomers = avg(customers.affected)",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"outage.detected\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize avgCustomers = avg(customers.affected)",
       "visualization": "singleValue",
       "visualizationSettings": {
         "singleValue": {
@@ -324,7 +324,7 @@
     "7": {
       "title": "\ud83d\udd14 Notifications Sent",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"notification.sent\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize notifCount = count(), totalSent = sum(total.sent)",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"notification.sent\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize notifCount = count(), totalSent = sum(total.sent)",
       "visualization": "singleValue",
       "visualizationSettings": {
         "singleValue": {
@@ -379,7 +379,7 @@
     "8": {
       "title": "\ud83d\udea8 Alert Correlations",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"alert.correlated\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize alertCount = count(), avgRiskScore = avg(risk.score)",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"alert.correlated\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize alertCount = count(), avgRiskScore = avg(risk.score)",
       "visualization": "singleValue",
       "visualizationSettings": {
         "singleValue": {
@@ -443,7 +443,7 @@
     "9": {
       "title": "\ud83d\udcc8 Outages & Crew Dispatches Over Time",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| filter event.type == \"outage.detected\" or event.type == \"crew.dispatched\" or event.type == \"outage.reported\" or event.type == \"outage.resolved\"\n| makeTimeseries detected = countIf(event.type == \"outage.detected\"), reported = countIf(event.type == \"outage.reported\"), resolved = countIf(event.type == \"outage.resolved\"), dispatches = countIf(event.type == \"crew.dispatched\"), bins:40",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| filter event.type == \"outage.detected\" or event.type == \"crew.dispatched\" or event.type == \"outage.reported\" or event.type == \"outage.resolved\"\n| makeTimeseries detected = countIf(event.type == \"outage.detected\"), reported = countIf(event.type == \"outage.reported\"), resolved = countIf(event.type == \"outage.resolved\"), dispatches = countIf(event.type == \"crew.dispatched\"), bins:40",
       "visualization": "lineChart",
       "visualizationSettings": {
         "chartSettings": {
@@ -512,7 +512,7 @@
     "10": {
       "title": "\u26a1 Outages by Cause & Customers Affected",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"outage.detected\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize outages = count(), customersAffected = sum(customers.affected), by:{cause}\n| sort customersAffected desc",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"outage.detected\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize outages = count(), customersAffected = sum(customers.affected), by:{cause}\n| sort customersAffected desc",
       "visualization": "barChart",
       "visualizationSettings": {
         "chartSettings": {
@@ -553,7 +553,7 @@
     "11": {
       "title": "\ud83d\ude9b Crew Dispatch by Region & Priority",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"crew.dispatched\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize dispatches = count(), avgETR = avg(etr.minutes), totalCustomers = sum(affected.customers), by:{region, priority}\n| sort dispatches desc",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"crew.dispatched\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize dispatches = count(), avgETR = avg(etr.minutes), totalCustomers = sum(affected.customers), by:{region, priority}\n| sort dispatches desc",
       "visualization": "table",
       "visualizationSettings": {
         "thresholds": [
@@ -619,7 +619,7 @@
     "12": {
       "title": "\ud83d\udcca Reliability Indices Trend (SAIDI/SAIFI/CAIDI)",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"reliability.calculated\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| makeTimeseries avgSAIDI = avg(saidi), avgSAIFI = avg(saifi), avgCAIDI = avg(caidi), bins:30",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"reliability.calculated\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| makeTimeseries avgSAIDI = avg(saidi), avgSAIFI = avg(saifi), avgCAIDI = avg(caidi), bins:30",
       "visualization": "lineChart",
       "visualizationSettings": {
         "chartSettings": {
@@ -681,7 +681,7 @@
     "13": {
       "title": "\ud83d\udccb All Business Events by Type",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize eventCount = count(), by:{event.type}\n| sort eventCount desc",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize eventCount = count(), by:{event.type}\n| sort eventCount desc",
       "visualization": "barChart",
       "visualizationSettings": {
         "chartSettings": {
@@ -767,7 +767,7 @@
     "15": {
       "title": "\ud83d\udce1 SCADA Telemetry Volume",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"scada.telemetry.received\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize scadaCount = count(), totalSensors = sum(sensors), totalAlerts = sum(alerts)",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"scada.telemetry.received\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize scadaCount = count(), totalSensors = sum(sensors), totalAlerts = sum(alerts)",
       "visualization": "singleValue",
       "visualizationSettings": {
         "singleValue": {
@@ -822,7 +822,7 @@
     "16": {
       "title": "\ud83c\udf24\ufe0f Weather Observations",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"weather.observation.recorded\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize weatherCount = count()",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"weather.observation.recorded\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize weatherCount = count()",
       "visualization": "singleValue",
       "visualizationSettings": {
         "singleValue": {
@@ -877,7 +877,7 @@
     "17": {
       "title": "\ud83d\udd0c Weather Correlations",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"weather.correlation.completed\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize correlations = count(), avgCorrelationScore = avg(correlation.score)",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"weather.correlation.completed\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize correlations = count(), avgCorrelationScore = avg(correlation.score)",
       "visualization": "singleValue",
       "visualizationSettings": {
         "singleValue": {
@@ -932,7 +932,7 @@
     "18": {
       "title": "\ud83d\udcca Demand Forecasts",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"demand.forecast.generated\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize forecasts = count(), avgPeakDemand = avg(peak.demand.mw), avgConfidence = avg(forecast.confidence)",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"demand.forecast.generated\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize forecasts = count(), avgPeakDemand = avg(peak.demand.mw), avgConfidence = avg(forecast.confidence)",
       "visualization": "singleValue",
       "visualizationSettings": {
         "singleValue": {
@@ -987,7 +987,7 @@
     "19": {
       "title": "\ud83c\udf29\ufe0f Weather Conditions Distribution",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"weather.observation.recorded\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize observations = count(), by:{condition, severity}\n| sort observations desc",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"weather.observation.recorded\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize observations = count(), by:{condition, severity}\n| sort observations desc",
       "visualization": "donutChart",
       "visualizationSettings": {
         "chartSettings": {
@@ -1023,7 +1023,7 @@
     "20": {
       "title": "\ud83c\udf29\ufe0f Weather Severity Distribution",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"weather.observation.recorded\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize observations = count(), by:{severity}",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"weather.observation.recorded\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize observations = count(), by:{severity}",
       "visualization": "donutChart",
       "visualizationSettings": {
         "chartSettings": {
@@ -1073,7 +1073,7 @@
     "21": {
       "title": "\ud83c\udf21\ufe0f Weather Correlation \u2014 Risk Level Analysis",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"weather.correlation.completed\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize correlations = count(), avgScore = avg(correlation.score), weatherRelated = countIf(weather.related == true), by:{region, risk.level}\n| sort avgScore desc",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"weather.correlation.completed\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize correlations = count(), avgScore = avg(correlation.score), weatherRelated = countIf(weather.related == true), by:{region, risk.level}\n| sort avgScore desc",
       "visualization": "table",
       "visualizationSettings": {
         "thresholds": [
@@ -1128,7 +1128,7 @@
     "22": {
       "title": "\ud83d\udcc8 Demand Forecast Trend \u2014 Peak Demand & Confidence",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"demand.forecast.generated\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| makeTimeseries avgPeakDemand = avg(peak.demand.mw), avgConfidence = avg(forecast.confidence), avgLoadFactor = avg(load.factor), bins:30",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"demand.forecast.generated\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| makeTimeseries avgPeakDemand = avg(peak.demand.mw), avgConfidence = avg(forecast.confidence), avgLoadFactor = avg(load.factor), bins:30",
       "visualization": "lineChart",
       "visualizationSettings": {
         "chartSettings": {
@@ -1190,7 +1190,7 @@
     "23": {
       "title": "\ud83d\udce1 SCADA Telemetry by Region \u2014 Sensors & Alerts",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"scada.telemetry.received\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize events = count(), totalSensors = sum(sensors), totalAlerts = sum(alerts), by:{region, status}\n| sort totalAlerts desc",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"scada.telemetry.received\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize events = count(), totalSensors = sum(sensors), totalAlerts = sum(alerts), by:{region, status}\n| sort totalAlerts desc",
       "visualization": "table",
       "visualizationSettings": {
         "thresholds": [
@@ -1283,7 +1283,7 @@
     "25": {
       "title": "\u26a1 Smart Meter Readings",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"smart.meter.reading\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize totalReadings = count()",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"smart.meter.reading\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize totalReadings = count()",
       "visualization": "singleValue",
       "visualizationSettings": {
         "singleValue": {
@@ -1338,7 +1338,7 @@
     "26": {
       "title": "\ud83d\udcb0 Billing Events",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"customer.billing\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize totalBilling = count(), avgAmount = avg(billing.amount)",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"customer.billing\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize totalBilling = count(), avgAmount = avg(billing.amount)",
       "visualization": "singleValue",
       "visualizationSettings": {
         "singleValue": {
@@ -1393,7 +1393,7 @@
     "27": {
       "title": "\ud83d\udcc8 Meter Readings Validated",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"meter.reading.validated\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize validated = count(), avgKwh = avg(reading.kwh), anomalies = sum(anomalies)",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"meter.reading.validated\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize validated = count(), avgKwh = avg(reading.kwh), anomalies = sum(anomalies)",
       "visualization": "singleValue",
       "visualizationSettings": {
         "singleValue": {
@@ -1448,7 +1448,7 @@
     "28": {
       "title": "\u26a0\ufe0f Meter Anomalies",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"meter.anomaly.detected\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize anomalies = count()",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"meter.anomaly.detected\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize anomalies = count()",
       "visualization": "singleValue",
       "visualizationSettings": {
         "singleValue": {
@@ -1512,7 +1512,7 @@
     "29": {
       "title": "\ud83d\udcca Grid Status by Utility \u2014 Load % & Frequency",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"grid.status\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize avgLoad = avg(load.percent), avgFreq = avg(frequency.hz), avgCapacity = avg(capacity.mw), avgDemand = avg(demand.mw), readings = count(), by:{utility}\n| sort avgLoad desc",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"grid.status\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize avgLoad = avg(load.percent), avgFreq = avg(frequency.hz), avgCapacity = avg(capacity.mw), avgDemand = avg(demand.mw), readings = count(), by:{utility}\n| sort avgLoad desc",
       "visualization": "table",
       "visualizationSettings": {
         "thresholds": [
@@ -1581,7 +1581,7 @@
     "30": {
       "title": "\ud83d\udcc8 Smart Meter Readings Over Time",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"smart.meter.reading\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| makeTimeseries readings = count(), avgKwh = avg(reading.kwh), bins:30",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"smart.meter.reading\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| makeTimeseries readings = count(), avgKwh = avg(reading.kwh), bins:30",
       "visualization": "lineChart",
       "visualizationSettings": {
         "chartSettings": {
@@ -1634,7 +1634,7 @@
     "31": {
       "title": "\ud83d\udcb5 Billing by Utility (Revenue Distribution)",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"customer.billing\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize totalRevenue = sum(billing.amount), billingCount = count(), avgBill = avg(billing.amount), by:{utility}\n| sort totalRevenue desc",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"customer.billing\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize totalRevenue = sum(billing.amount), billingCount = count(), avgBill = avg(billing.amount), by:{utility}\n| sort totalRevenue desc",
       "visualization": "donutChart",
       "visualizationSettings": {
         "chartSettings": {
@@ -1670,7 +1670,7 @@
     "32": {
       "title": "\u26a1 Energy Delivered by Source",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"energy.delivered\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize totalMwh = sum(energy.mwh), deliveries = count(), by:{energy.source}\n| sort totalMwh desc",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"energy.delivered\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize totalMwh = sum(energy.mwh), deliveries = count(), by:{energy.source}\n| sort totalMwh desc",
       "visualization": "donutChart",
       "visualizationSettings": {
         "chartSettings": {
@@ -1706,7 +1706,7 @@
     "33": {
       "title": "\ud83d\udcca Meter Anomalies by Type & Severity",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"meter.anomaly.detected\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize anomalies = count(), by:{anomaly.type, severity, region}\n| sort anomalies desc",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"meter.anomaly.detected\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize anomalies = count(), by:{anomaly.type, severity, region}\n| sort anomalies desc",
       "visualization": "table",
       "visualizationSettings": {
         "thresholds": [
@@ -1761,7 +1761,7 @@
     "34": {
       "title": "\ud83d\udcca Usage Readings by Region",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"usage.reading.recorded\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize readings = count(), avgUsage = avg(usage.kwh), avgPeak = avg(peak.kw), totalReadings = sum(total.readings), by:{region}\n| sort readings desc",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"usage.reading.recorded\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize readings = count(), avgUsage = avg(usage.kwh), avgPeak = avg(peak.kw), totalReadings = sum(total.readings), by:{region}\n| sort readings desc",
       "visualization": "table",
       "visualizationSettings": {
         "thresholds": [],
@@ -1805,7 +1805,7 @@
     "35": {
       "title": "\ud83d\udd27 Work Orders by Type & Priority",
       "type": "data",
-      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"work.order.completed\"\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize orders = count(), avgMinutes = avg(duration.minutes), by:{work.type, priority}\n| sort orders desc",
+      "query": "fetch bizevents\n| filter event.provider == \"genericutility.event.provider\" and event.type == \"work.order.completed\"\n| filter NOT in(utility, {\"ComEd\",\"BGE\",\"PECO\",\"Pepco\",\"DelmarvaPower\",\"AtlanticCityElectric\"})\n| filter in(utility,$Utility) or isNull($Utility)\n| filter in(region,$Region) or isNull($Region)\n| summarize orders = count(), avgMinutes = avg(duration.minutes), by:{work.type, priority}\n| sort orders desc",
       "visualization": "table",
       "visualizationSettings": {
         "thresholds": [
