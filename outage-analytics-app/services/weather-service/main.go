@@ -36,6 +36,7 @@ var (
 	mu           sync.RWMutex
 	requestCount int64
 	errorCount   int64
+	scadaServiceURL string
 )
 
 // ============================================================
@@ -601,6 +602,16 @@ func handleSimulate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Fetch ground-truth sensor data from SCADA service (adds PurePath depth)
+	scadaClient := &http.Client{Timeout: 3 * time.Second}
+	scadaResp, scadaErr := scadaClient.Get(scadaServiceURL + "/api/scada/summary")
+	if scadaErr != nil {
+		logger.Warn("SCADA service enrichment failed (non-critical)", zap.Error(scadaErr))
+	} else {
+		scadaResp.Body.Close()
+		logger.Info("Fetched SCADA sensor data for weather correlation", zap.Int("status", scadaResp.StatusCode))
+	}
+
 	updateAllRegions()
 
 	// Count storm-mode regions
@@ -852,6 +863,12 @@ func weatherUpdateLoop() {
 func main() {
 	initLogger()
 	defer logger.Sync()
+
+	// Initialize service URLs
+	scadaServiceURL = os.Getenv("SCADA_SERVICE_URL")
+	if scadaServiceURL == "" {
+		scadaServiceURL = "http://scada-service:8080"
+	}
 
 	logger.Info("Starting Weather Correlation Service (Go)")
 

@@ -4,6 +4,7 @@ from flask import Flask, jsonify, request
 import psycopg2
 import psycopg2.extras
 from celery import Celery
+import requests as http_requests
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(message)s')
@@ -20,6 +21,7 @@ DB_CONFIG = {
     'password': os.getenv('DB_PASSWORD', os.getenv('DB_PASSWORD'))
 }
 RABBITMQ_URL = os.getenv('RABBITMQ_URL', os.getenv('RABBITMQ_URL'))
+CUSTOMER_SERVICE_URL = os.getenv('CUSTOMER_SERVICE_URL', 'http://customer-service:4567')
 
 # Celery configuration
 celery_app = Celery('notifications', broker=RABBITMQ_URL, backend='rpc://')
@@ -332,6 +334,18 @@ def simulate_notifications():
         return jsonify({'error': 'Template rendering failure', 'type': 'RenderError'}), 500
 
     results = {'created': 0, 'channels': {'sms': 0, 'email': 0, 'push': 0}}
+
+    # Enrich with real customer data from customer-service (adds PurePath depth)
+    try:
+        region = random.choice(['Chicago-Metro', 'Baltimore-Metro', 'Philadelphia-Metro', 'DC-Metro', 'Atlantic-Coast', 'Delaware-Valley'])
+        cust_resp = http_requests.get(f"{CUSTOMER_SERVICE_URL}/api/customers/region/{region}", timeout=3)
+        if cust_resp.status_code == 200:
+            cust_data = cust_resp.json()
+            log.info(f"Fetched {cust_data.get('total', 0)} customers from customer-service for region {region}")
+        else:
+            log.warning(f"Customer-service returned {cust_resp.status_code} for region {region}")
+    except Exception as e:
+        log.warning(f"Customer-service lookup failed (non-critical): {e}")
 
     # Create some sample notifications based on recent activity
     sample_outage = {

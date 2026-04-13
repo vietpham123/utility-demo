@@ -2,10 +2,14 @@ const express = require('express');
 const { Pool } = require('pg');
 const Redis = require('ioredis');
 const { Kafka } = require('kafkajs');
+const http = require('http');
 const logger = require('./logger');
 
 const app = express();
 app.use(express.json());
+
+const WEATHER_SERVICE_URL = process.env.WEATHER_SERVICE_URL || 'http://weather-service:8080';
+const USAGE_SERVICE_URL = process.env.USAGE_SERVICE_URL || 'http://usage-service:3000';
 
 const pool = new Pool({
   host: process.env.DB_HOST || 'timescaledb',
@@ -252,6 +256,45 @@ app.post('/api/forecast/simulate', async (req, res) => {
   }
 
   try {
+    // Fetch real weather data from weather-service for forecast enrichment (adds PurePath depth)
+    let weatherData = null;
+    try {
+      weatherData = await new Promise((resolve, reject) => {
+        const req = http.get(`${WEATHER_SERVICE_URL}/api/weather/conditions`, { timeout: 3000 }, (res) => {
+          let data = '';
+          res.on('data', chunk => data += chunk);
+          res.on('end', () => {
+            try { resolve(JSON.parse(data)); } catch (e) { resolve(null); }
+          });
+        });
+        req.on('error', reject);
+        req.on('timeout', () => { req.destroy(); reject(new Error('timeout')); });
+      });
+      if (weatherData) {
+        logger.info('Fetched weather data from weather-service for forecast model', { regions: Array.isArray(weatherData) ? weatherData.length : 1 });
+      }
+    } catch (err) {
+      logger.warn('Weather-service fetch failed (non-critical)', { error: err.message });
+    }
+
+    // Fetch recent usage data from usage-service (adds another PurePath hop)
+    try {
+      await new Promise((resolve, reject) => {
+        const req = http.get(`${USAGE_SERVICE_URL}/api/usage/summary`, { timeout: 3000 }, (res) => {
+          let data = '';
+          res.on('data', chunk => data += chunk);
+          res.on('end', () => {
+            logger.info('Fetched usage summary from usage-service');
+            resolve();
+          });
+        });
+        req.on('error', reject);
+        req.on('timeout', () => { req.destroy(); reject(new Error('timeout')); });
+      });
+    } catch (err) {
+      logger.warn('Usage-service fetch failed (non-critical)', { error: err.message });
+    }
+
     const forecasts = generateForecasts();
     logger.debug('Forecasts generated', { count: forecasts.length, areas: areas.length, cycle: forecastCycleCount });
     await persistForecasts(forecasts);

@@ -4,6 +4,7 @@ from flask import Flask, jsonify, request
 import psycopg2
 import psycopg2.extras
 from kafka import KafkaConsumer, KafkaProducer
+import requests as http_requests
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(message)s')
@@ -33,6 +34,8 @@ else:
         'password': os.getenv('DB_PASSWORD', '')
     }
 KAFKA_BROKER = os.getenv('KAFKA_BROKERS', os.getenv('KAFKA_BROKER', 'kafka:9092'))
+OUTAGE_SERVICE_URL = os.getenv('OUTAGE_SERVICE_URL', 'http://outage-service:3000')
+SCADA_SERVICE_URL = os.getenv('SCADA_SERVICE_URL', 'http://scada-service:8080')
 TOTAL_CUSTOMERS = 2_400_000  # ~2.4M customers served across 17 service territory states
 
 # In-memory state
@@ -225,6 +228,23 @@ def trigger_calculate():
             'calculation': calculation_count + 1
         }), 500
 
+    # Enrich calculation with live data from upstream services (adds PurePath depth)
+    active_outages = 0
+    try:
+        outage_resp = http_requests.get(f"{OUTAGE_SERVICE_URL}/api/outages/active", timeout=3)
+        if outage_resp.status_code == 200:
+            active_outages = len(outage_resp.json()) if isinstance(outage_resp.json(), list) else outage_resp.json().get('count', 0)
+            log.info(f"Fetched active outages from outage-service: {active_outages}")
+    except Exception as e:
+        log.warning(f"Outage-service enrichment failed (non-critical): {e}")
+
+    try:
+        scada_resp = http_requests.get(f"{SCADA_SERVICE_URL}/api/scada/summary", timeout=3)
+        if scada_resp.status_code == 200:
+            log.info(f"Fetched SCADA summary for reliability correlation")
+    except Exception as e:
+        log.warning(f"SCADA-service enrichment failed (non-critical): {e}")
+
     try:
         calculate_indices()
     except ConnectionError as e:
@@ -234,6 +254,7 @@ def trigger_calculate():
 
     return jsonify({
         'status': 'Calculation cycle complete',
+        'activeOutages': active_outages,
         **current_indices
     })
 

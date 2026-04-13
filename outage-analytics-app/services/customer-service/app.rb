@@ -4,10 +4,14 @@ require 'json'
 require 'securerandom'
 require 'digest'
 require 'time'
+require 'net/http'
+require 'uri'
 
 set :bind, '0.0.0.0'
 set :port, 4567
 set :show_exceptions, false
+
+AUDIT_SERVICE_URL = ENV['AUDIT_SERVICE_URL'] || 'http://audit-service:8090'
 
 # ============================================================
 # Customer Service (Ruby/Sinatra) — User auth, profiles, search
@@ -226,6 +230,21 @@ end
 get '/api/customers/region/:region' do
   region = params['region']
   results = CUSTOMERS.select { |c| c[:region].downcase.include?(region.downcase) }
+
+  # Log data access to audit-service (adds PurePath depth)
+  begin
+    uri = URI("#{AUDIT_SERVICE_URL}/api/audit/log")
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.open_timeout = 2
+    http.read_timeout = 2
+    req = Net::HTTP::Post.new(uri.path, 'Content-Type' => 'application/json')
+    req.body = { action: 'customer_region_lookup', region: region, resultCount: results.length, timestamp: Time.now.iso8601 }.to_json
+    resp = http.request(req)
+    puts "AUDIT: Logged customer region lookup to audit-service (status=#{resp.code})"
+  rescue => e
+    puts "AUDIT: audit-service log failed (non-critical): #{e.message}"
+  end
+
   json(
     region: region,
     customers: results.first(50),

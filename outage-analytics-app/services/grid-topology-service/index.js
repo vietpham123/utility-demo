@@ -2,10 +2,13 @@ const express = require('express');
 const { Pool } = require('pg');
 const Redis = require('ioredis');
 const { Kafka } = require('kafkajs');
+const http = require('http');
 const logger = require('./logger');
 
 const app = express();
 app.use(express.json());
+
+const SCADA_SERVICE_URL = process.env.SCADA_SERVICE_URL || 'http://scada-service:8080';
 
 const pool = new Pool({
   host: process.env.DB_HOST || 'timescaledb',
@@ -282,6 +285,28 @@ app.get('/api/grid/stats', async (req, res) => {
       transformers: { count: parseInt(trxs.rows[0].count), totalCapacityKVA: parseFloat(trxs.rows[0].total_capacity) },
       servicePoints: { count: parseInt(sps.rows[0].count) }
     };
+
+    // Enrich grid stats with live SCADA sensor data (adds PurePath depth)
+    try {
+      const scadaData = await new Promise((resolve, reject) => {
+        const req = http.get(`${SCADA_SERVICE_URL}/api/scada/summary`, { timeout: 3000 }, (res) => {
+          let data = '';
+          res.on('data', chunk => data += chunk);
+          res.on('end', () => {
+            try { resolve(JSON.parse(data)); } catch (e) { resolve(null); }
+          });
+        });
+        req.on('error', reject);
+        req.on('timeout', () => { req.destroy(); reject(new Error('timeout')); });
+      });
+      if (scadaData) {
+        stats.scadaSensors = scadaData.totalSensors || scadaData.sensorCount || 0;
+        logger.info('Enriched grid stats with SCADA sensor data', { sensors: stats.scadaSensors });
+      }
+    } catch (err) {
+      logger.warn('SCADA service enrichment failed (non-critical)', { error: err.message });
+    }
+
     await redis.setex('grid:stats', CACHE_TTL, JSON.stringify(stats)).catch(() => {});
     logger.info('GET /api/grid/stats');
     res.json(stats);

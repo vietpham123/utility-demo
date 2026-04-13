@@ -10,6 +10,9 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.client.RestTemplate;
+
 @RestController
 @RequestMapping("/api/meter-data")
 public class MeterDataController {
@@ -19,6 +22,12 @@ public class MeterDataController {
 
     @Autowired
     private MeterSimulatorService simulator;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Value("${grid.topology.service.url:http://grid-topology-service:3000}")
+    private String gridTopologyServiceUrl;
 
     @GetMapping("/readings")
     public Object getReadings(
@@ -123,6 +132,18 @@ public class MeterDataController {
     @PostMapping("/simulate")
     public Object simulate() {
         log.info("POST /api/meter-data/simulate - triggering simulation cycle");
+
+        // Fetch grid topology stats for meter location validation (adds PurePath depth)
+        try {
+            String gridStatsUrl = gridTopologyServiceUrl + "/api/grid/stats";
+            @SuppressWarnings("unchecked")
+            Map<String, Object> gridStats = restTemplate.getForObject(gridStatsUrl, Map.class);
+            if (gridStats != null) {
+                log.info("Fetched grid topology stats for meter validation: substations={}", gridStats.get("substations"));
+            }
+        } catch (Exception e) {
+            log.warn("Grid-topology-service enrichment failed (non-critical): {}", e.getMessage());
+        }
 
         // ~5% chance: simulate VEE pipeline failure
         if (ThreadLocalRandom.current().nextDouble() < 0.05) {
