@@ -124,7 +124,7 @@ async function loadUserDropdown() {
 window.selectDemoUser = function(username) {
     if (!username) return;
     document.getElementById('login-username').value = username;
-    document.getElementById('login-password').value = 'utility2026';
+    document.getElementById('login-password').value = window.__DEMO_PASSWORD || 'changeme';
 }
 
 window.doLogin = async function() {

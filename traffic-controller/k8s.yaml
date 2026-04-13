@@ -49,7 +49,7 @@ spec:
       serviceAccountName: traffic-controller
       containers:
       - name: traffic-controller
-        image: vietregistry.azurecr.io/traffic-controller:latest
+        image: <YOUR_REGISTRY>/traffic-controller:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8080

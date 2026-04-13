@@ -17,7 +17,7 @@
 const { chromium } = require('playwright');
 
 const APP_MODE = process.env.APP_MODE || 'utility';
-const APP_URL = process.env.APP_URL || 'https://utility.vptesttools.my';
+const APP_URL = process.env.APP_URL || 'https://localhost';
 const CONCURRENT_USERS = parseInt(process.env.CONCURRENT_USERS || '3', 10);
 const SESSION_INTERVAL = parseInt(process.env.SESSION_INTERVAL || '60', 10) * 1000;
 const MAX_SESSION_MS = parseInt(process.env.MAX_SESSION_MINUTES || '10', 10) * 60 * 1000;
@@ -243,7 +243,7 @@ async function runUtilitySession(browser,slotId){
       const sel=page.locator('#login-user-select');
       if(await sel.isVisible().catch(()=>false))await sel.selectOption(p.username);
       await page.fill('#login-username',p.username);
-      await page.fill('#login-password','utility2026');
+      await page.fill('#login-password', process.env.DEMO_PASSWORD || 'changeme');
       await rSleep(0.5,1);await page.click('#login-submit');await rSleep(2,4);
     }
     // Wait for Dynatrace RUM agent to load, then identify user and send rich session properties

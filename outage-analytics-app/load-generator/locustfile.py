@@ -23,7 +23,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("ui-nav")
 
 # Password from env or default
-DEMO_PASSWORD = os.getenv("DEMO_PASSWORD", "utility2026")
+DEMO_PASSWORD = os.getenv("DEMO_PASSWORD", "changeme")
 
 # All 15 demo usernames — password is shared
 DEMO_USERNAMES = [

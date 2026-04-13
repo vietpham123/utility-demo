@@ -17,13 +17,13 @@ spec:
     spec:
       containers:
       - name: browser-traffic-gen
-        image: vietregistry.azurecr.io/browser-traffic-gen:latest
+        image: <YOUR_REGISTRY>/browser-traffic-gen:latest
         imagePullPolicy: Always
         env:
         - name: APP_MODE
           value: "utility"
         - name: APP_URL
-          value: "https://utraffic.vptesttools.my"
+          value: "https://<YOUR_APP_DOMAIN>"
         - name: CONCURRENT_USERS
           value: "3"
         - name: MAX_SESSION_MINUTES
