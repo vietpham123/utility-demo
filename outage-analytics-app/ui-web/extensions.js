@@ -6,6 +6,26 @@
 (function() {
 'use strict';
 
+// --- Dynatrace RUM Helper ---
+const dtApi = {
+    identify: (user) => { try { if (typeof dtrum !== 'undefined' && dtrum.identifyUser) dtrum.identifyUser(user); } catch(e) {} },
+    sessionProps: (longs, doubles, strings) => { try { if (typeof dtrum !== 'undefined' && dtrum.sendSessionProperties) dtrum.sendSessionProperties(longs, doubles, strings); } catch(e) {} },
+    enterAction: (name) => { try { if (typeof dtrum !== 'undefined' && dtrum.enterAction) return dtrum.enterAction(name); } catch(e) {} return null; },
+    leaveAction: (id) => { try { if (typeof dtrum !== 'undefined' && dtrum.leaveAction && id) dtrum.leaveAction(id); } catch(e) {} },
+    reportError: (msg, parent) => { try { if (typeof dtrum !== 'undefined' && dtrum.reportError) dtrum.reportError(msg, parent); } catch(e) {} },
+    reportString: (key, val) => { try { if (typeof dtrum !== 'undefined' && dtrum.sendSessionProperties) dtrum.sendSessionProperties(null, null, {[key]: val}); } catch(e) {} },
+    reportInt: (key, val) => { try { if (typeof dtrum !== 'undefined' && dtrum.sendSessionProperties) dtrum.sendSessionProperties({[key]: val}, null, null); } catch(e) {} },
+    reportDouble: (key, val) => { try { if (typeof dtrum !== 'undefined' && dtrum.sendSessionProperties) dtrum.sendSessionProperties(null, {[key]: val}, null); } catch(e) {} },
+};
+
+// Track user engagement
+let sectionsVisited = new Set();
+let actionCount = 0;
+let apiErrorCount = 0;
+let searchCount = 0;
+let exportCount = 0;
+let sessionStartTime = Date.now();
+
 // --- State ---
 let currentUser = null;
 let wsConnection = null;
@@ -30,6 +50,13 @@ function handleRoute() {
         'crew','notifications','weather','health','featureflags','customers','pricing',
         'workorders','auditlog','alertcorrelation','settings','livefeed'];
     if (validSections.includes(sectionClean)) {
+        // Track navigation as custom RUM action
+        const navActionId = dtApi.enterAction('Navigate to ' + sectionClean);
+        sectionsVisited.add(sectionClean);
+        actionCount++;
+        dtApi.reportInt('sections_visited', sectionsVisited.size);
+        dtApi.reportInt('action_count', actionCount);
+        dtApi.reportString('current_section', sectionClean);
         if (entityId && typeof showDetailView === 'function') {
             showDetailView(sectionClean, decodeURIComponent(entityId));
         } else {
@@ -44,6 +71,7 @@ function handleRoute() {
                 if (typeof currentSection !== 'undefined') currentSection = sectionClean;
                 if (typeof fetchData === 'function') fetchData();
                 fetchExtendedData(sectionClean);
+                dtApi.leaveAction(navActionId);
             }
         }
     }
@@ -106,6 +134,8 @@ window.doLogin = async function() {
     const btn = document.getElementById('login-submit');
     if (!username || !password) { errEl.textContent = 'Please enter username and password'; errEl.style.display = 'block'; return; }
     btn.disabled = true; btn.textContent = 'Signing in...';
+    const loginActionId = dtApi.enterAction('Login - ' + username);
+    const loginStart = Date.now();
     try {
         const resp = await fetch('/api/auth/login', {
             method: 'POST', headers: {'Content-Type':'application/json'},
@@ -113,17 +143,31 @@ window.doLogin = async function() {
         });
         const data = await resp.json();
         if (resp.ok && data.token) {
-            currentUser = { username: data.user?.username || username, name: data.user?.name || username, token: data.token, role: data.user?.role || 'operator' };
+            currentUser = { username: data.user?.username || username, name: data.user?.name || username, token: data.token, role: data.user?.role || 'operator', region: data.user?.region || 'unknown' };
             sessionStorage.setItem('utility_user', JSON.stringify(currentUser));
+            // Identify user and send rich session properties
+            dtApi.identify(username);
+            dtApi.sessionProps(
+                { login_duration_ms: Date.now() - loginStart },
+                null,
+                { user_role: currentUser.role, user_region: currentUser.region, user_name: currentUser.name, login_method: 'form', app_version: '2.0' }
+            );
+            sessionStartTime = Date.now();
+            dtApi.leaveAction(loginActionId);
             showApp();
         } else {
             errEl.textContent = data.error || 'Invalid credentials';
             errEl.style.display = 'block';
+            dtApi.reportError('Login failed: ' + (data.error || 'invalid credentials'), loginActionId);
+            dtApi.leaveAction(loginActionId);
         }
     } catch(e) {
         // Fallback: allow demo login without customer-service
-        currentUser = { username, name: username, token: 'demo-token', role: 'operator' };
+        currentUser = { username, name: username, token: 'demo-token', role: 'operator', region: 'unknown' };
         sessionStorage.setItem('utility_user', JSON.stringify(currentUser));
+        dtApi.identify(username);
+        dtApi.sessionProps(null, null, { user_role: 'operator', login_method: 'fallback', app_version: '2.0' });
+        dtApi.leaveAction(loginActionId);
         showApp();
     }
     btn.disabled = false; btn.textContent = 'Sign In';
@@ -155,13 +199,20 @@ window.handleSearch = function(e) {
     const results = document.getElementById('search-results');
     if (q.length < 2) { results.classList.remove('show'); return; }
     searchTimeout = setTimeout(async () => {
+        const searchActionId = dtApi.enterAction('Search - ' + q);
+        searchCount++;
+        dtApi.reportInt('search_count', searchCount);
+        dtApi.reportString('last_search_query', q);
         try {
             const resp = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
             const data = await resp.json();
             renderSearchResults(data.results || {}, results);
+            dtApi.leaveAction(searchActionId);
         } catch(err) {
             results.innerHTML = '<div class="search-item">Search unavailable</div>';
             results.classList.add('show');
+            dtApi.reportError('Search failed: ' + err.message, searchActionId);
+            dtApi.leaveAction(searchActionId);
         }
     }, 300);
 };
@@ -271,6 +322,11 @@ function renderPagination(containerId, currentPage, totalPages, onPageChange) {
 // --- CSV Export ---
 window.exportCSV = function(data, filename) {
     if (!data || data.length === 0) { showToast('No data to export', 'error'); return; }
+    const exportActionId = dtApi.enterAction('Export CSV - ' + filename);
+    exportCount++;
+    dtApi.reportInt('export_count', exportCount);
+    dtApi.reportString('last_export_file', filename);
+    dtApi.reportInt('export_row_count', data.length);
     const headers = Object.keys(data[0]);
     const csv = [headers.join(','), ...data.map(row => headers.map(h => {
         let val = String(row[h] || '');
@@ -284,6 +340,7 @@ window.exportCSV = function(data, filename) {
     document.body.appendChild(a); a.click(); a.remove();
     URL.revokeObjectURL(url);
     showToast(`Exported ${data.length} rows to ${filename}`, 'success');
+    dtApi.leaveAction(exportActionId);
 };
 
 // --- Error State ---
@@ -300,7 +357,12 @@ function renderError(containerId, message, retryFn) {
 // --- Fetch helpers ---
 async function fetchJ(url) {
     const r = await fetch(url);
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    if (!r.ok) {
+        apiErrorCount++;
+        dtApi.reportInt('api_error_count', apiErrorCount);
+        dtApi.reportError('API Error ' + r.status + ': ' + url);
+        throw new Error(`HTTP ${r.status}`);
+    }
     return r.json();
 }
 
@@ -442,6 +504,8 @@ window.calculateRate = async function() {
     const kwh = document.getElementById('calc-kwh')?.value || 1000;
     const result = document.getElementById('calc-result');
     if (!result) return;
+    const calcActionId = dtApi.enterAction('Calculate Rate - ' + rateClass + ' ' + kwh + 'kWh');
+    dtApi.reportDouble('calculated_kwh', parseFloat(kwh));
     try {
         const data = await fetchJ(`/api/pricing/calculate?rateClass=${rateClass}&region=${region}&kwh=${kwh}`);
         result.style.display = 'block';
@@ -454,7 +518,12 @@ window.calculateRate = async function() {
             <div style="font-size:11px;color:#8b949e;margin-top:4px;">Estimated monthly cost for ${kwh} kWh (${data.rateClassName || rateClass})</div>
             <div style="margin-top:6px;font-size:11px;color:#8b949e;">${bkParts.join(' · ')}</div>
             <div style="margin-top:4px;font-size:11px;color:#8b949e;">Rate: $${(data.totalRatePerKwh||0).toFixed(4)}/kWh ${data.isPeakPeriod ? '(Peak)' : '(Off-Peak)'}</div>`;
-    } catch(e) { result.style.display = 'block'; result.innerHTML = `<span style="color:#f85149">Calculation failed: ${e.message}</span>`; }
+        dtApi.reportDouble('calculated_cost', total);
+        dtApi.leaveAction(calcActionId);
+    } catch(e) { result.style.display = 'block'; result.innerHTML = `<span style="color:#f85149">Calculation failed: ${e.message}</span>`;
+        dtApi.reportError('Rate calculation failed: ' + e.message, calcActionId);
+        dtApi.leaveAction(calcActionId);
+    }
 };
 
 // --- Work Orders ---
@@ -523,12 +592,20 @@ window.submitWorkOrder = async function() {
         description: document.getElementById('wo-desc')?.value,
         assignedTo: document.getElementById('wo-assigned')?.value
     };
+    const woActionId = dtApi.enterAction('Create Work Order - ' + wo.type + ' (' + wo.priority + ')');
     try {
         await fetch('/api/work-orders', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(wo) });
         if (typeof closeModal === 'function') closeModal();
         showToast('Work order created successfully', 'success');
+        dtApi.reportString('last_wo_type', wo.type);
+        dtApi.reportString('last_wo_priority', wo.priority);
+        dtApi.leaveAction(woActionId);
         fetchWorkOrders();
-    } catch(e) { showToast('Failed to create work order: ' + e.message, 'error'); }
+    } catch(e) {
+        showToast('Failed to create work order: ' + e.message, 'error');
+        dtApi.reportError('Work order creation failed: ' + e.message, woActionId);
+        dtApi.leaveAction(woActionId);
+    }
 };
 
 // --- Audit Log ---
@@ -681,6 +758,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // Enter key on search
     const searchInput = document.getElementById('search-input');
     if (searchInput) searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') e.preventDefault(); });
+
+    // Periodically report session engagement metrics to Dynatrace RUM
+    setInterval(() => {
+        if (!currentUser) return;
+        const sessionDurationMin = Math.round((Date.now() - sessionStartTime) / 60000);
+        dtApi.reportInt('session_duration_min', sessionDurationMin);
+        dtApi.reportInt('sections_visited', sectionsVisited.size);
+        dtApi.reportInt('total_actions', actionCount);
+    }, 60000);
+
+    // Track page visibility changes (tab switching)
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            dtApi.reportString('tab_state', 'hidden');
+        } else {
+            dtApi.reportString('tab_state', 'visible');
+            actionCount++;
+            dtApi.reportInt('total_actions', actionCount);
+        }
+    });
 });
 
 })();

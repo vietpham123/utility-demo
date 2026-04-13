@@ -22,22 +22,28 @@ const CONCURRENT_USERS = parseInt(process.env.CONCURRENT_USERS || '3', 10);
 const SESSION_INTERVAL = parseInt(process.env.SESSION_INTERVAL || '60', 10) * 1000;
 const MAX_SESSION_MS = parseInt(process.env.MAX_SESSION_MINUTES || '10', 10) * 60 * 1000;
 
+// Regions and departments for realistic session property diversity
+const REGIONS = ['Northeast','Mid-Atlantic','Southeast','Midwest','Southwest','West Coast'];
+const DEPARTMENTS = { operator:'Grid Operations', engineer:'Engineering', manager:'Management', analyst:'Analytics',
+  dispatcher:'Field Operations', supervisor:'Supervision', technician:'Maintenance', director:'Executive' };
+const SHIFTS = ['Day','Night','Swing','Overnight'];
+
 const PERSONAS = [
-  { username: 'operator_jones', role: 'operator', journeys: ['storm_response','outage_triage','routine_monitoring'], weight: 3 },
-  { username: 'engineer_chen', role: 'engineer', journeys: ['scada_investigation','grid_inspection','reliability_review'], weight: 2 },
-  { username: 'manager_smith', role: 'manager', journeys: ['executive_overview','reliability_review','storm_response'], weight: 2 },
-  { username: 'analyst_garcia', role: 'analyst', journeys: ['reliability_review','meter_anomaly','pricing_analysis'], weight: 2 },
-  { username: 'dispatcher_lee', role: 'dispatcher', journeys: ['crew_dispatch','outage_triage','storm_response'], weight: 3 },
-  { username: 'supervisor_patel', role: 'supervisor', journeys: ['executive_overview','crew_dispatch','customer_callback'], weight: 2 },
-  { username: 'technician_wong', role: 'technician', journeys: ['scada_investigation','grid_inspection','outage_triage'], weight: 2 },
-  { username: 'director_johnson', role: 'director', journeys: ['executive_overview','reliability_review','audit_review'], weight: 1 },
-  { username: 'operator_brown', role: 'operator', journeys: ['routine_monitoring','outage_triage','weather_check'], weight: 2 },
-  { username: 'engineer_martinez', role: 'engineer', journeys: ['grid_inspection','scada_investigation','alert_correlation'], weight: 2 },
-  { username: 'analyst_taylor', role: 'analyst', journeys: ['meter_anomaly','pricing_analysis','reliability_review'], weight: 1 },
-  { username: 'dispatcher_harris', role: 'dispatcher', journeys: ['crew_dispatch','storm_response','customer_callback'], weight: 2 },
-  { username: 'technician_clark', role: 'technician', journeys: ['scada_investigation','outage_triage','workorder_management'], weight: 1 },
-  { username: 'manager_lewis', role: 'manager', journeys: ['executive_overview','audit_review','customer_callback'], weight: 1 },
-  { username: 'operator_robinson', role: 'operator', journeys: ['routine_monitoring','weather_check','outage_triage'], weight: 1 },
+  { username: 'operator_jones', role: 'operator', region: 'Northeast', journeys: ['storm_response','outage_triage','routine_monitoring'], weight: 3 },
+  { username: 'engineer_chen', role: 'engineer', region: 'Mid-Atlantic', journeys: ['scada_investigation','grid_inspection','reliability_review'], weight: 2 },
+  { username: 'manager_smith', role: 'manager', region: 'Northeast', journeys: ['executive_overview','reliability_review','storm_response'], weight: 2 },
+  { username: 'analyst_garcia', role: 'analyst', region: 'Southeast', journeys: ['reliability_review','meter_anomaly','pricing_analysis'], weight: 2 },
+  { username: 'dispatcher_lee', role: 'dispatcher', region: 'Midwest', journeys: ['crew_dispatch','outage_triage','storm_response'], weight: 3 },
+  { username: 'supervisor_patel', role: 'supervisor', region: 'Northeast', journeys: ['executive_overview','crew_dispatch','customer_callback'], weight: 2 },
+  { username: 'technician_wong', role: 'technician', region: 'West Coast', journeys: ['scada_investigation','grid_inspection','outage_triage'], weight: 2 },
+  { username: 'director_johnson', role: 'director', region: 'Mid-Atlantic', journeys: ['executive_overview','reliability_review','audit_review'], weight: 1 },
+  { username: 'operator_brown', role: 'operator', region: 'Southeast', journeys: ['routine_monitoring','outage_triage','weather_check'], weight: 2 },
+  { username: 'engineer_martinez', role: 'engineer', region: 'Southwest', journeys: ['grid_inspection','scada_investigation','alert_correlation'], weight: 2 },
+  { username: 'analyst_taylor', role: 'analyst', region: 'Midwest', journeys: ['meter_anomaly','pricing_analysis','reliability_review'], weight: 1 },
+  { username: 'dispatcher_harris', role: 'dispatcher', region: 'Southeast', journeys: ['crew_dispatch','storm_response','customer_callback'], weight: 2 },
+  { username: 'technician_clark', role: 'technician', region: 'Northeast', journeys: ['scada_investigation','outage_triage','workorder_management'], weight: 1 },
+  { username: 'manager_lewis', role: 'manager', region: 'West Coast', journeys: ['executive_overview','audit_review','customer_callback'], weight: 1 },
+  { username: 'operator_robinson', role: 'operator', region: 'Midwest', journeys: ['routine_monitoring','weather_check','outage_triage'], weight: 1 },
 ];
 
 const JOURNEYS = {
@@ -240,25 +246,83 @@ async function runUtilitySession(browser,slotId){
       await page.fill('#login-password','utility2026');
       await rSleep(0.5,1);await page.click('#login-submit');await rSleep(2,4);
     }
-    // Wait for Dynatrace RUM agent to load, then identify user
+    // Wait for Dynatrace RUM agent to load, then identify user and send rich session properties
     await page.waitForFunction(()=>typeof dtrum!=='undefined'&&typeof dtrum.identifyUser==='function',{timeout:10000}).catch(()=>{});
     await page.evaluate(u=>{if(typeof dtrum!=='undefined'&&dtrum.identifyUser)dtrum.identifyUser(u)},p.username).catch(()=>{});
-    await page.evaluate(r=>{if(typeof dtrum!=='undefined'&&dtrum.sendSessionProperties)dtrum.sendSessionProperties(null,null,{role:r})},p.role).catch(()=>{});
+    const shift=pick(SHIFTS),dept=DEPARTMENTS[p.role]||'Operations';
+    await page.evaluate(({role,region,shift,dept,username})=>{
+      if(typeof dtrum==='undefined'||!dtrum.sendSessionProperties)return;
+      dtrum.sendSessionProperties(
+        {session_number:Math.floor(Math.random()*500)+1, login_hour:new Date().getHours()},
+        {screen_dpi:window.devicePixelRatio||1.0},
+        {role,region,department:dept,shift_type:shift,user_name:username,app_version:'2.4.0',browser_lang:navigator.language||'en-US'}
+      );
+    },{role:p.role,region:p.region,shift,dept,username:p.username}).catch(()=>{});
+    let journeyCount=0;
     const nj=2+Math.floor(Math.random()*2);
     for(let j=0;j<nj&&timeLeft(start);j++){
       const jn=pick(p.journeys),journey=JOURNEYS[jn];
       if(!journey)continue;
       console.log(`[${slotId}] journey:${jn}(${journey.length}steps)`);
+      // Start a custom user action for this journey
+      const jActionId=await page.evaluate(n=>{
+        if(typeof dtrum!=='undefined'&&dtrum.enterAction)return dtrum.enterAction('Journey - '+n);return null;
+      },jn).catch(()=>null);
+      let stepCount=0;
       for(const a of journey){
         if(!timeLeft(start))break;
+        // Wrap significant steps in their own custom user actions
+        let stepActionId=null;
+        if(['nav','row','search','kpi','map','mapstate','fsel'].includes(a.t)){
+          const stepName=a.t==='nav'?'Navigate to '+a.s:a.t==='search'?'Search "'+a.q+'"':a.t==='row'?'View Detail Row':a.t==='kpi'?'KPI Drill-down':a.t==='map'?'Map Interaction':a.t==='mapstate'?'Map State Drill':'Filter Select';
+          stepActionId=await page.evaluate(n=>{
+            if(typeof dtrum!=='undefined'&&dtrum.enterAction)return dtrum.enterAction(n);return null;
+          },stepName).catch(()=>null);
+        }
         const ok=await exec(page,a,slotId,start);
-        if(a.t!=='w')actions++;
+        if(stepActionId){
+          await page.evaluate(id=>{if(typeof dtrum!=='undefined'&&dtrum.leaveAction&&id)dtrum.leaveAction(id)},stepActionId).catch(()=>{});
+        }
+        if(a.t!=='w'){actions++;stepCount++;}
+        // Simulate occasional errors (~5% per non-wait step) for realistic RUM error data
+        if(a.t!=='w'&&Math.random()<0.05){
+          const errSections=['overview','outages','scada','crew','weather','metering','grid'];
+          const errSection=a.s||pick(errSections);
+          await page.evaluate(s=>{
+            if(typeof dtrum!=='undefined'&&dtrum.reportError)dtrum.reportError('Slow response on #'+s);
+          },errSection).catch(()=>{});
+        }
         if(!ok)break;
       }
+      // Close the journey custom action
+      if(jActionId){
+        await page.evaluate(id=>{if(typeof dtrum!=='undefined'&&dtrum.leaveAction&&id)dtrum.leaveAction(id)},jActionId).catch(()=>{});
+      }
+      journeyCount++;
+      // Send journey completion metrics as session properties
+      const elapsed=Math.round((Date.now()-start)/1000);
+      await page.evaluate(({jc,ac,dur,jn})=>{
+        if(typeof dtrum==='undefined'||!dtrum.sendSessionProperties)return;
+        dtrum.sendSessionProperties(
+          {journeys_completed:jc,total_actions:ac,session_duration_sec:dur},
+          {avg_actions_per_journey:ac/Math.max(jc,1)},
+          {last_journey:jn}
+        );
+      },{jc:journeyCount,ac:actions,dur:elapsed,jn}).catch(()=>{});
       if(timeLeft(start))await rSleep(3,8);
     }
     const lb=page.locator('.user-menu');
     if(await lb.first().isVisible().catch(()=>false))await lb.first().click().catch(()=>{});
+    // Send final session summary properties before ending
+    const totalDuration=Math.round((Date.now()-start)/1000);
+    await page.evaluate(({jc,ac,dur})=>{
+      if(typeof dtrum==='undefined'||!dtrum.sendSessionProperties)return;
+      dtrum.sendSessionProperties(
+        {journeys_completed:jc,total_actions:ac,session_duration_sec:dur},
+        {actions_per_minute:dur>0?(ac/(dur/60)):0},
+        {session_outcome:ac>15?'productive':ac>5?'moderate':'brief'}
+      );
+    },{jc:journeyCount,ac:actions,dur:totalDuration}).catch(()=>{});
     // End Dynatrace RUM session explicitly before closing context
     await page.evaluate(()=>{if(typeof dtrum!=='undefined'&&dtrum.endSession)dtrum.endSession()}).catch(()=>{});
     await rSleep(1,2);
