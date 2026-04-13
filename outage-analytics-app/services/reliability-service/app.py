@@ -13,15 +13,27 @@ log = logging.getLogger('reliability-service')
 calculation_count = 0
 error_count = 0
 
-DB_CONFIG = {
-    'host': os.getenv('DB_HOST', 'timescaledb'),
-    'port': int(os.getenv('DB_PORT', '5432')),
-    'dbname': os.getenv('DB_NAME', 'utilitydb'),
-    'user': os.getenv('DB_USER', 'utilityuser'),
-    'password': os.getenv('DB_PASSWORD', os.getenv('DB_PASSWORD'))
-}
-KAFKA_BROKER = os.getenv('KAFKA_BROKER', 'kafka:9092')
-TOTAL_CUSTOMERS = 30
+import urllib.parse as _urlparse
+_db_url = os.getenv('DATABASE_URL', '')
+if _db_url:
+    _p = _urlparse.urlparse(_db_url)
+    DB_CONFIG = {
+        'host': _p.hostname or os.getenv('DB_HOST', 'timescaledb'),
+        'port': _p.port or int(os.getenv('DB_PORT', '5432')),
+        'dbname': (_p.path or '').lstrip('/') or os.getenv('DB_NAME', 'utilitydb'),
+        'user': _p.username or os.getenv('DB_USER', 'utilityuser'),
+        'password': _p.password or os.getenv('DB_PASSWORD', '')
+    }
+else:
+    DB_CONFIG = {
+        'host': os.getenv('DB_HOST', 'timescaledb'),
+        'port': int(os.getenv('DB_PORT', '5432')),
+        'dbname': os.getenv('DB_NAME', 'utilitydb'),
+        'user': os.getenv('DB_USER', 'utilityuser'),
+        'password': os.getenv('DB_PASSWORD', '')
+    }
+KAFKA_BROKER = os.getenv('KAFKA_BROKERS', os.getenv('KAFKA_BROKER', 'kafka:9092'))
+TOTAL_CUSTOMERS = 2_400_000  # ~2.4M customers served across 17 service territory states
 
 # In-memory state
 current_indices = {

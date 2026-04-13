@@ -26,7 +26,7 @@ spec:
           value: "https://utraffic.vptesttools.my"
         - name: CONCURRENT_USERS
           value: "3"
-        - name: NAVIGATIONS_PER_SESSION
+        - name: MAX_SESSION_MINUTES
           value: "10"
         - name: SESSION_INTERVAL
           value: "60"

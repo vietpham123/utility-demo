@@ -106,7 +106,7 @@ CREATE TABLE reliability.indices_daily (
     saifi NUMERIC(10,4) DEFAULT 0,
     caidi NUMERIC(10,4) DEFAULT 0,
     maifi NUMERIC(10,4) DEFAULT 0,
-    total_customers INT DEFAULT 30,
+    total_customers INT DEFAULT 2400000,
     total_interruptions INT DEFAULT 0,
     total_customer_minutes NUMERIC(12,2) DEFAULT 0,
     created_at TIMESTAMPTZ DEFAULT NOW()
@@ -118,7 +118,7 @@ CREATE TABLE reliability.indices_monthly (
     saifi NUMERIC(10,4) DEFAULT 0,
     caidi NUMERIC(10,4) DEFAULT 0,
     maifi NUMERIC(10,4) DEFAULT 0,
-    total_customers INT DEFAULT 30,
+    total_customers INT DEFAULT 2400000,
     outage_count INT DEFAULT 0,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -321,16 +321,19 @@ INSERT INTO grid.service_points (transformer_id, customer_id, meter_id, address,
 -- ============================================================
 -- SEED: Reliability baseline (last 30 days)
 -- ============================================================
+-- IEEE 1366 realistic daily indices for a ~2.4M customer utility
+-- Annual benchmarks: SAIDI ~120-200 min, SAIFI ~1.0-1.3, CAIDI ~90-140 min, MAIFI ~4-8
+-- Daily values = annual / 365, with variance for weather events
 INSERT INTO reliability.indices_daily (date, saidi, saifi, caidi, maifi, total_customers, total_interruptions, total_customer_minutes)
 SELECT 
     d::date,
-    ROUND((0.5 + random() * 2.5)::numeric, 4) as saidi,
-    ROUND((0.05 + random() * 0.3)::numeric, 4) as saifi,
-    ROUND((30 + random() * 120)::numeric, 4) as caidi,
-    ROUND((0.01 + random() * 0.1)::numeric, 4) as maifi,
-    30,
-    floor(random() * 4)::int,
-    ROUND((10 + random() * 200)::numeric, 2)
+    ROUND((0.15 + random() * 0.65)::numeric, 4) as saidi,       -- daily: 0.15-0.80 min/cust (annual ~55-290)
+    ROUND((0.001 + random() * 0.006)::numeric, 4) as saifi,     -- daily: 0.001-0.007 (annual ~0.4-2.6)
+    ROUND((70 + random() * 90)::numeric, 4) as caidi,           -- 70-160 min per interruption
+    ROUND((0.005 + random() * 0.03)::numeric, 4) as maifi,      -- daily: 0.005-0.035 (annual ~1.8-12.8)
+    2400000,                                                      -- 2.4M customers served
+    floor(2 + random() * 8)::int,                                 -- 2-9 interruptions/day
+    ROUND((360000 + random() * 1560000)::numeric, 2)              -- 360K-1.92M customer-minutes/day
 FROM generate_series(NOW() - INTERVAL '30 days', NOW() - INTERVAL '1 day', '1 day') AS d;
 
 GRANT ALL ON ALL TABLES IN SCHEMA grid TO utilityuser;

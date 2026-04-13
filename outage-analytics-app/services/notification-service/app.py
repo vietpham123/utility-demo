@@ -257,6 +257,8 @@ def create_notification(event_type, outage_data, extra=None):
                 elif channel == 'push':
                     send_push.delay(notif)
                 notif['status'] = 'sent'
+                delivery_stats[channel]['sent'] += 1
+                delivery_stats[channel]['delivered'] += 1
             except Exception as e:
                 # Celery not available — simulate inline
                 notif['status'] = 'sent'

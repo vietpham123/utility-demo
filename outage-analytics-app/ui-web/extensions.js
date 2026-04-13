@@ -18,23 +18,33 @@ function initRouter() {
 }
 
 function handleRoute() {
-    const hash = window.location.hash.replace('#', '').replace('/', '');
-    if (!hash) return;
+    const raw = window.location.hash.replace('#', '');
+    if (!raw) return;
+    const [section, entityId] = raw.split('/');
+    const sectionClean = section.replace('/', '');
+    if (sectionClean === 'state' && entityId && typeof drillToState === 'function') {
+        drillToState(decodeURIComponent(entityId));
+        return;
+    }
     const validSections = ['overview','scada','outages','metering','grid','reliability','forecast',
         'crew','notifications','weather','health','featureflags','customers','pricing',
         'workorders','auditlog','alertcorrelation','settings','livefeed'];
-    if (validSections.includes(hash)) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        const el = document.getElementById(hash);
-        if (el) {
-            el.classList.add('active');
-            document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.nav button').forEach(b => {
-                if (b.getAttribute('data-section') === hash) b.classList.add('active');
-            });
-            if (typeof currentSection !== 'undefined') currentSection = hash;
-            if (typeof fetchData === 'function') fetchData();
-            fetchExtendedData(hash);
+    if (validSections.includes(sectionClean)) {
+        if (entityId && typeof showDetailView === 'function') {
+            showDetailView(sectionClean, decodeURIComponent(entityId));
+        } else {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            const el = document.getElementById(sectionClean);
+            if (el) {
+                el.classList.add('active');
+                document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.nav button').forEach(b => {
+                    if (b.getAttribute('data-section') === sectionClean) b.classList.add('active');
+                });
+                if (typeof currentSection !== 'undefined') currentSection = sectionClean;
+                if (typeof fetchData === 'function') fetchData();
+                fetchExtendedData(sectionClean);
+            }
         }
     }
 }
@@ -86,7 +96,7 @@ async function loadUserDropdown() {
 window.selectDemoUser = function(username) {
     if (!username) return;
     document.getElementById('login-username').value = username;
-    document.getElementById('login-password').value = 'demo';
+    document.getElementById('login-password').value = 'utility2026';
 }
 
 window.doLogin = async function() {
@@ -133,6 +143,8 @@ function showApp() {
     const avatarEl = document.getElementById('user-avatar-letter');
     if (nameEl && currentUser) nameEl.textContent = currentUser.name;
     if (avatarEl && currentUser) avatarEl.textContent = (currentUser.name || 'U')[0].toUpperCase();
+    // Start WebSocket only after login so live event toasts don't appear on login page
+    if (!wsConnection || wsConnection.readyState === WebSocket.CLOSED) initWebSocket();
 }
 
 // --- Search ---
@@ -343,7 +355,7 @@ async function fetchCustomers(page) {
             <button class="export-btn" onclick="exportCSV(window._customerData,'customers.csv')">📥 Export CSV</button>
         </div>
         <table><tr><th>ID</th><th>Name</th><th>Account</th><th>Region</th><th>Type</th><th>Status</th></tr>
-        ${cList.map(c => `<tr><td>${c.id || ''}</td><td>${escHtml(c.name || '')}</td><td>${c.accountNumber || ''}</td>
+        ${cList.map(c => `<tr class="clickable-row" onclick="showDetailView('customers','${c.id}','${escHtml(c.name||'Customer '+c.id)}')"><td>${c.id || ''}</td><td>${escHtml(c.name || '')}</td><td>${c.accountNumber || ''}</td>
             <td>${c.region || ''}</td><td>${c.type || c.customerType || ''}</td><td>${c.status || 'active'}</td></tr>`).join('')}
         </table>`;
         if (customers.totalPages > 1) {
@@ -364,7 +376,7 @@ window.filterCustomers = async function(region) {
         const cList = data.customers || data || [];
         window._customerData = cList;
         container.innerHTML = `<table><tr><th>ID</th><th>Name</th><th>Account</th><th>Region</th><th>Type</th><th>Status</th></tr>
-        ${cList.map(c => `<tr><td>${c.id||''}</td><td>${escHtml(c.name||'')}</td><td>${c.accountNumber||''}</td>
+        ${cList.map(c => `<tr class="clickable-row" onclick="showDetailView('customers','${c.id||''}','${escHtml(c.name||'Customer')}')"><td>${c.id||''}</td><td>${escHtml(c.name||'')}</td><td>${c.accountNumber||''}</td>
             <td>${c.region||''}</td><td>${c.type||c.customerType||''}</td><td>${c.status||'active'}</td></tr>`).join('')}
         </table>`;
     } catch(e) { renderError('customer-table', e.message, 'fetchCustomers()'); }
@@ -375,6 +387,9 @@ async function fetchPricing() {
     const container = document.getElementById('pricing-detail');
     const kpiContainer = document.getElementById('pricing-kpis');
     if (!container) return;
+    // Skip full re-render if user has interacted with the calculator
+    const calcResult = document.getElementById('calc-result');
+    if (calcResult && calcResult.style.display !== 'none') return;
     container.innerHTML = '<div class="loading">Loading pricing...</div>';
     try {
         const [current, rates, regions] = await Promise.all([
@@ -430,9 +445,15 @@ window.calculateRate = async function() {
     try {
         const data = await fetchJ(`/api/pricing/calculate?rateClass=${rateClass}&region=${region}&kwh=${kwh}`);
         result.style.display = 'block';
-        result.innerHTML = `<div style="font-size:20px;font-weight:700;color:#3fb950;">$${(data.totalCost || data.total || 0).toFixed(2)}</div>
-            <div style="font-size:11px;color:#8b949e;margin-top:4px;">Estimated monthly cost for ${kwh} kWh</div>
-            ${data.breakdown ? `<div style="margin-top:8px;font-size:11px;color:#8b949e;">${Object.entries(data.breakdown).map(([k,v]) => `${k}: $${v.toFixed(2)}`).join(' · ')}</div>` : ''}`;
+        const total = data.totalEstimate || data.totalCost || data.total || 0;
+        const bkParts = [];
+        if (data.energyCharge) bkParts.push(`Energy: $${data.energyCharge.toFixed(2)}`);
+        if (data.demandCharge) bkParts.push(`Demand: $${data.demandCharge.toFixed(2)}`);
+        if (data.fixedCharge) bkParts.push(`Fixed: $${data.fixedCharge.toFixed(2)}`);
+        result.innerHTML = `<div style="font-size:20px;font-weight:700;color:#3fb950;">$${total.toFixed(2)}</div>
+            <div style="font-size:11px;color:#8b949e;margin-top:4px;">Estimated monthly cost for ${kwh} kWh (${data.rateClassName || rateClass})</div>
+            <div style="margin-top:6px;font-size:11px;color:#8b949e;">${bkParts.join(' · ')}</div>
+            <div style="margin-top:4px;font-size:11px;color:#8b949e;">Rate: $${(data.totalRatePerKwh||0).toFixed(4)}/kWh ${data.isPeakPeriod ? '(Peak)' : '(Off-Peak)'}</div>`;
     } catch(e) { result.style.display = 'block'; result.innerHTML = `<span style="color:#f85149">Calculation failed: ${e.message}</span>`; }
 };
 
@@ -464,7 +485,7 @@ async function fetchWorkOrders(page) {
             <button class="export-btn" onclick="exportCSV(window._workOrderData,'work-orders.csv')">📥 Export CSV</button>
         </div>
         <table><tr><th>ID</th><th>Type</th><th>Priority</th><th>Status</th><th>Location</th><th>Assigned</th><th>Created</th></tr>
-        ${woList.map(w => `<tr class="wo-${(w.priority||'medium').toLowerCase()}"><td>${w.id||''}</td><td>${w.type||w.workType||''}</td>
+        ${woList.map(w => `<tr class="clickable-row wo-${(w.priority||'medium').toLowerCase()}" onclick="showDetailView('workorders','${w.id||''}','WO ${w.id||''}')"><td>${w.id||''}</td><td>${w.type||w.workType||''}</td>
             <td><span class="severity-${(w.priority||'medium').toLowerCase()}">${w.priority||''}</span></td>
             <td>${w.status||''}</td><td>${escHtml(w.location||'')}</td><td>${w.assignedTo||w.assigned||'-'}</td>
             <td>${w.createdAt ? new Date(w.createdAt).toLocaleDateString() : ''}</td></tr>`).join('')}
@@ -651,7 +672,6 @@ function loadSettings() {
 document.addEventListener('DOMContentLoaded', () => {
     initLogin();
     initRouter();
-    initWebSocket();
     loadSettings();
 
     // Enter key on login form

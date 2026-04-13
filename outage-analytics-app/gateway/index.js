@@ -294,7 +294,11 @@ function proxy(targetUrl) {
     } catch (err) {
       const status = err.response ? err.response.status : 502;
       logger.error(`Gateway error: ${req.originalUrl}`, { error: err.message, status });
-      res.status(status).json({ error: `Service unavailable: ${err.message}` });
+      if (err.response && err.response.data) {
+        res.status(status).json(err.response.data);
+      } else {
+        res.status(status).json({ error: `Service unavailable: ${err.message}` });
+      }
     }
   };
 }
@@ -720,6 +724,93 @@ app.post('/api/simulate/cycle', async (req, res) => {
       'risk.score': ac.riskScore || 0,
       timestamp: new Date().toISOString()
     }});
+  }
+
+  // ---- Dashboard-specific business events (utility operations) ----
+  // Sanitized generic utility company names for the Business Observability dashboard
+  const UTILITIES = ['NorthernElectric', 'MetroEnergy', 'ValleyPower', 'CapitalGrid', 'CoastalElectric', 'PeninsulaPower'];
+  const ENERGY_SOURCES = ['Solar', 'Wind', 'Natural Gas', 'Nuclear', 'Hydroelectric', 'Coal'];
+  const OUTAGE_CAUSES = ['Equipment Failure', 'Storm Damage', 'Tree Contact', 'Animal Contact', 'Planned Maintenance', 'Vehicle Accident'];
+  const WORK_TYPES = ['Repair', 'Inspection', 'Replacement', 'Emergency', 'Preventive'];
+  const PRIORITIES = ['Critical', 'High', 'Medium', 'Low'];
+
+  // Generate dashboard bizevent batches for each utility
+  for (const utility of UTILITIES) {
+    // Smart Meter Reading
+    bizEvents.push({ type: 'smart.meter.reading', data: {
+      'event.provider': EVENT_PROVIDER,
+      utility,
+      'meter.id': `MTR-${utility}-${Math.floor(Math.random() * 99999)}`,
+      'reading.kwh': +(50 + Math.random() * 950).toFixed(2),
+      'reading.quality': Math.random() > 0.05 ? 'valid' : 'estimated',
+      timestamp: new Date().toISOString()
+    }});
+
+    // Customer Billing
+    bizEvents.push({ type: 'customer.billing', data: {
+      'event.provider': EVENT_PROVIDER,
+      utility,
+      'customer.id': `CUST-${utility}-${Math.floor(Math.random() * 99999)}`,
+      'billing.amount': +(80 + Math.random() * 320).toFixed(2),
+      'billing.type': Math.random() > 0.3 ? 'monthly' : 'final',
+      timestamp: new Date().toISOString()
+    }});
+
+    // Grid Status
+    bizEvents.push({ type: 'grid.status', data: {
+      'event.provider': EVENT_PROVIDER,
+      utility,
+      'load.percent': +(40 + Math.random() * 55).toFixed(1),
+      'frequency.hz': +(59.95 + Math.random() * 0.1).toFixed(3),
+      'capacity.mw': Math.floor(2000 + Math.random() * 8000),
+      'demand.mw': Math.floor(1500 + Math.random() * 6000),
+      timestamp: new Date().toISOString()
+    }});
+
+    // Energy Delivered
+    const source = ENERGY_SOURCES[Math.floor(Math.random() * ENERGY_SOURCES.length)];
+    bizEvents.push({ type: 'energy.delivered', data: {
+      'event.provider': EVENT_PROVIDER,
+      utility,
+      'energy.source': source,
+      'energy.mwh': +(100 + Math.random() * 2000).toFixed(1),
+      timestamp: new Date().toISOString()
+    }});
+
+    // Work Order Completed (probabilistic)
+    if (Math.random() > 0.3) {
+      bizEvents.push({ type: 'work.order.completed', data: {
+        'event.provider': EVENT_PROVIDER,
+        utility,
+        'work.type': WORK_TYPES[Math.floor(Math.random() * WORK_TYPES.length)],
+        priority: PRIORITIES[Math.floor(Math.random() * PRIORITIES.length)],
+        'duration.minutes': Math.floor(30 + Math.random() * 480),
+        timestamp: new Date().toISOString()
+      }});
+    }
+
+    // Outage Reported (probabilistic)
+    if (Math.random() > 0.5) {
+      bizEvents.push({ type: 'outage.reported', data: {
+        'event.provider': EVENT_PROVIDER,
+        utility,
+        'outage.cause': OUTAGE_CAUSES[Math.floor(Math.random() * OUTAGE_CAUSES.length)],
+        'customers.affected': Math.floor(10 + Math.random() * 5000),
+        priority: PRIORITIES[Math.floor(Math.random() * PRIORITIES.length)],
+        timestamp: new Date().toISOString()
+      }});
+    }
+
+    // Outage Resolved (probabilistic)
+    if (Math.random() > 0.6) {
+      bizEvents.push({ type: 'outage.resolved', data: {
+        'event.provider': EVENT_PROVIDER,
+        utility,
+        'resolution.minutes': Math.floor(15 + Math.random() * 360),
+        'customers.restored': Math.floor(10 + Math.random() * 5000),
+        timestamp: new Date().toISOString()
+      }});
+    }
   }
 
   // Fire all business events (non-blocking)

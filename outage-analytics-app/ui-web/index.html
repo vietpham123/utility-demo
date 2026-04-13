@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GenericUtility Analytics Platform</title>
+    <script type="text/javascript" src="/ruxitagentjs_ICA15789NPQRTUVXfqrux_10337260403043834.js" data-dtconfig="app=9796f941ce3eb608|owasp=1|featureHash=ICA15789NPQRTUVXfqrux|msl=153600|rdnt=1|uxrgce=1|cuc=22vjj8kj|srms=2,1,0,0%2Ftextarea%2Cinput%2Cselect%2Coption;0%2Fdatalist;0%2Fform%20button;0%2F%5Bdata-dtrum-input%5D;0%2F.data-dtrum-input;1%2F%5Edata%28%28%5C-.%2B%24%29%7C%24%29|mel=100000|expw=1|dpvc=1|srad=0|lastModification=1775907970995|postfix=22vjj8kj|tp=500,50,0|srbbv=2"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/topojson-client@3/dist/topojson-client.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0e17; color: #e0e6ed; }
@@ -101,7 +105,36 @@
 
         /* Service Territory Map */
         .map-container { position: relative; width: 100%; background: #0d1117; border-radius: 8px; overflow: hidden; }
-        .map-svg { width: 100%; height: auto; display: block; }
+        .map-controls { display: none; }
+
+        /* Leaflet dark theme overrides */
+        .leaflet-container { background: #0d1117; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .leaflet-control-zoom a { background: #161b22 !important; color: #c9d1d9 !important; border-color: #30363d !important; }
+        .leaflet-control-zoom a:hover { background: #1c2128 !important; color: #58a6ff !important; border-color: #58a6ff !important; }
+        .leaflet-control-zoom a:focus { outline: 2px solid #58a6ff; outline-offset: 2px; }
+        .leaflet-control-attribution { background: rgba(13,17,23,0.85) !important; color: #8b949e !important; font-size: 10px; }
+        .leaflet-control-attribution a { color: #58a6ff !important; }
+
+        /* Leaflet dark tooltip */
+        .leaflet-dark-tooltip { background: #1c2128 !important; border: 1px solid #30363d !important; border-radius: 8px !important; color: #c9d1d9 !important; box-shadow: 0 8px 24px rgba(0,0,0,0.4) !important; padding: 10px 12px !important; font-size: 12px; max-width: 280px; }
+        .leaflet-dark-tooltip .leaflet-tooltip-tip { display: none; }
+        .leaflet-dark-tooltip::before { display: none !important; }
+
+        /* Leaflet map legend */
+        .leaflet-map-legend { background: rgba(13,17,23,0.92); border: 1px solid #21262d; border-radius: 8px; padding: 10px 14px; font-size: 10px; color: #8b949e; line-height: 1.8; }
+        .leaflet-map-legend .legend-item { display: flex; align-items: center; white-space: nowrap; }
+
+        /* Leaflet WCAG focus indicators */
+        .leaflet-interactive:focus { outline: 2px solid #58a6ff !important; outline-offset: 1px; }
+        .leaflet-marker-icon:focus { outline: 2px solid #58a6ff !important; outline-offset: 2px; border-radius: 4px; }
+
+        /* Animated traffic lines */
+        .traffic-flow-line { animation: traffic-dash 1.8s linear infinite; }
+        @keyframes traffic-dash { to { stroke-dashoffset: -28; } }
+
+        /* Pulsing outage rings */
+        .pulse-ring { animation: leaflet-pulse 2s ease-in-out infinite; }
+        @keyframes leaflet-pulse { 0%,100% { stroke-opacity: 0.6; } 50% { stroke-opacity: 0; } }
         .map-region { cursor: pointer; transition: all 0.3s ease; }
         .map-region:hover .region-glow { opacity: 0.4; }
         .map-tooltip { position: absolute; background: #1c2128; border: 1px solid #30363d; border-radius: 8px; padding: 12px; font-size: 11px; pointer-events: none; z-index: 100; min-width: 200px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); display: none; }
@@ -168,6 +201,35 @@
         /* Clickable table rows highlight */
         tr.clickable-row { cursor: pointer; transition: background 0.15s; }
         tr.clickable-row:hover td { background: #1f6feb15; }
+
+        /* Sortable table headers */
+        th.sortable { cursor: pointer; user-select: none; }
+        th.sortable:hover { color: #58a6ff; }
+        th.sortable::after { content: ' ⇅'; font-size: 9px; color: #30363d; }
+        th.sortable.asc::after { content: ' ▲'; color: #58a6ff; }
+        th.sortable.desc::after { content: ' ▼'; color: #58a6ff; }
+
+        /* Filter bar */
+        .filter-controls { display: flex; gap: 8px; align-items: center; padding: 8px 0; flex-wrap: wrap; }
+        .filter-controls select, .filter-controls input { background: #0d1117; border: 1px solid #30363d; color: #c9d1d9; padding: 5px 10px; border-radius: 6px; font-size: 12px; }
+        .filter-controls select:hover, .filter-controls input:hover { border-color: #58a6ff; }
+        .filter-controls select:focus, .filter-controls input:focus { outline: 2px solid #58a6ff; outline-offset: 1px; }
+        .filter-controls label { font-size: 11px; color: #8b949e; }
+
+        /* Cross-section links */
+        .cross-link { color: #58a6ff; cursor: pointer; text-decoration: none; font-weight: 500; }
+        .cross-link:hover { text-decoration: underline; color: #79c0ff; }
+
+        /* Detail view panels */
+        .detail-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 900px) { .detail-panels { grid-template-columns: 1fr; } }
+        .detail-hero { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; padding: 16px; background: #161b22; border: 1px solid #21262d; border-radius: 8px; }
+        .detail-hero h2 { font-size: 18px; color: #f0f6fc; margin: 0; }
+        .detail-hero .detail-meta { font-size: 12px; color: #8b949e; }
+        .detail-actions { display: flex; gap: 8px; margin-bottom: 16px; }
+        .detail-actions .btn { padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; border: 1px solid #30363d; background: #21262d; color: #c9d1d9; transition: all 0.15s; }
+        .detail-actions .btn:hover { border-color: #58a6ff; color: #58a6ff; }
+        .detail-actions .btn.primary { background: #1f6feb; border-color: #1f6feb; color: #fff; }
 
         /* Timeline in modal */
         .timeline { position: relative; padding-left: 20px; }
@@ -579,6 +641,43 @@
                 </div>
             </div>
         </div>
+
+        <!-- ENTITY DETAIL VIEW (dynamic) -->
+        <div id="detail-view" class="section">
+            <div id="detail-content"><div class="loading">Loading...</div></div>
+        </div>
+
+        <!-- STATE DETAIL DASHBOARD -->
+        <div id="state-detail" class="section">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+                <button class="btn" onclick="showSection('overview')">← Back to Map</button>
+                <h2 style="margin:0;color:#f0f6fc;" id="state-detail-title">State Dashboard</h2>
+                <span class="badge badge-blue" id="state-detail-badge"></span>
+            </div>
+            <div id="state-detail-kpis" class="kpi-grid" style="margin-bottom:16px;"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                <div class="panel">
+                    <div class="panel-header"><h3>Active Outages</h3><span class="badge badge-red" id="sd-outage-count">0</span></div>
+                    <div id="sd-outages" class="panel-body"><div class="loading">Loading...</div></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header"><h3>Crew Status</h3><span class="badge badge-blue" id="sd-crew-count">0</span></div>
+                    <div id="sd-crews" class="panel-body"><div class="loading">Loading...</div></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header"><h3>Weather Conditions</h3></div>
+                    <div id="sd-weather" class="panel-body"><div class="loading">Loading...</div></div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header"><h3>SCADA Substations</h3></div>
+                    <div id="sd-scada" class="panel-body"><div class="loading">Loading...</div></div>
+                </div>
+                <div class="panel" style="grid-column:1/-1;">
+                    <div class="panel-header"><h3>Recent Notifications</h3><span class="badge badge-green" id="sd-notif-count">0</span></div>
+                    <div id="sd-notifications" class="panel-body"><div class="loading">Loading...</div></div>
+                </div>
+            </div>
+        </div>
     </div>
 
 <script>
@@ -593,8 +692,13 @@ const SECTION_LABELS = {
     overview: 'Overview', scada: 'SCADA Telemetry', outages: 'Outage Management',
     metering: 'Meter Data (MDMS)', grid: 'Grid Topology', reliability: 'Reliability Indices',
     forecast: 'Demand Forecast', crew: 'Crew Dispatch', notifications: 'Notifications',
-    weather: 'Weather', health: 'Service Health', featureflags: 'Feature Flags'
+    weather: 'Weather', health: 'Service Health', featureflags: 'Feature Flags',
+    'state-detail': 'State Dashboard'
 };
+
+// --- Detail view state ---
+let detailState = { section: null, entityId: null };
+let sortState = {}; // table sorting state keyed by tableId
 
 function showSection(name) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -603,32 +707,71 @@ function showSection(name) {
         b.classList.toggle('active', b.getAttribute('data-section') === name);
     });
     currentSection = name;
-    drillStack = [];
+    detailState = { section: null, entityId: null };
+    drillStack = [{ section: name, label: SECTION_LABELS[name] || name }];
+    window.location.hash = name;
     updateBreadcrumb();
     if (window.fetchData) window.fetchData(); else fetchData();
 }
 
 function drillTo(target, from) {
-    drillStack = [from, target];
+    drillStack = [
+        { section: from, label: SECTION_LABELS[from] || from },
+        { section: target, label: SECTION_LABELS[target] || target }
+    ];
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.getElementById(target).classList.add('active');
     document.querySelectorAll('.nav button').forEach(b => {
-        b.classList.toggle('active', b.textContent.toLowerCase().includes(target.substring(0,4)));
+        b.classList.toggle('active', b.getAttribute('data-section') === target);
     });
     currentSection = target;
+    window.location.hash = target;
     updateBreadcrumb();
     fetchData();
+}
+
+function showDetailView(section, entityId, label) {
+    detailState = { section, entityId };
+    const displayLabel = label || (section + ' ' + entityId);
+    drillStack.push({ section: 'detail-view', entityId, label: displayLabel });
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById('detail-view').classList.add('active');
+    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+    currentSection = 'detail-view';
+    window.location.hash = section + '/' + encodeURIComponent(entityId);
+    updateBreadcrumb();
+    const renderers = {
+        outages: renderOutageDetailView,
+        crew: renderCrewDetailView,
+        customers: renderCustomerDetailView,
+        workorders: renderWorkOrderDetailView,
+        scada: renderSensorDetailView,
+        metering: renderMeterDetailView,
+    };
+    const renderer = renderers[section];
+    if (renderer) renderer(entityId);
+    else document.getElementById('detail-content').innerHTML = '<div class="loading">Detail view not available for ' + section + '</div>';
+}
+
+function navigateBack(index) {
+    drillStack = drillStack.slice(0, index + 1);
+    const target = drillStack[index];
+    if (target.entityId) {
+        showDetailView(target.section === 'detail-view' ? detailState.section : target.section, target.entityId, target.label);
+    } else {
+        showSection(target.section);
+    }
 }
 
 function updateBreadcrumb() {
     const bc = document.getElementById('breadcrumb');
     if (drillStack.length < 2) { bc.classList.remove('show'); return; }
     bc.classList.add('show');
-    bc.innerHTML = drillStack.map((s, i) => {
+    bc.innerHTML = drillStack.map((item, i) => {
         if (i < drillStack.length - 1) {
-            return `<a onclick="showSection('${s}')">${SECTION_LABELS[s] || s}</a><span class="sep">›</span>`;
+            return `<a onclick="navigateBack(${i})">${item.label}</a><span class="sep">›</span>`;
         }
-        return `<span style="color:#c9d1d9">${SECTION_LABELS[s] || s}</span>`;
+        return `<span style="color:#c9d1d9">${item.label}</span>`;
     }).join('');
 }
 
@@ -771,8 +914,8 @@ async function fetchOverview() {
         el.innerHTML = [
             kpi('Active Outages', o.activeOutages ?? '-', `${o.totalAffectedCustomers ?? 0} customers affected`, (o.activeOutages||0)>3?'critical':'warning', 'outages'),
             kpi('System Load', f.currentLoadMw ? f.currentLoadMw+' MW' : '-', f.currentUtilizationPct ? f.currentUtilizationPct+'% capacity' : '', f.currentUtilizationPct>80?'warning':'good', 'forecast'),
-            kpi('SAIDI Today', r.saidi ?? '-', 'minutes per customer', (r.saidi||0)>5?'critical':'good', 'reliability'),
-            kpi('SAIFI Today', r.saifi ?? '-', 'interruptions per customer', 'info', 'reliability'),
+            kpi('SAIDI Today', r.saidi != null ? Number(r.saidi).toFixed(2) : '-', 'min/customer', (r.saidi||0)>1.0?'critical':(r.saidi||0)>0.5?'warning':'good', 'reliability'),
+            kpi('SAIFI Today', r.saifi != null ? Number(r.saifi).toFixed(4) : '-', 'int/customer', (r.saifi||0)>0.008?'critical':(r.saifi||0)>0.004?'warning':'good', 'reliability'),
             kpi('SCADA Sensors', s.sensorCount ?? '-', `${s.warningCount ?? 0} warnings`, (s.warningCount||0)>2?'warning':'good', 'scada'),
             kpi('Meter Readings', m.totalReadings ?? '-', `${m.anomalyCount ?? 0} anomalies`, 'info', 'metering'),
             kpi('Total Power', s.totalActivePowerMw ? s.totalActivePowerMw+' MW' : '-', 'grid active power', 'info', 'scada'),
@@ -803,10 +946,10 @@ async function fetchOverview() {
         const r = dashboard.reliability;
         document.getElementById('overview-reliability').innerHTML = `
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-                ${kpi('SAIDI', (r.saidi||0).toFixed(2), 'min/customer', (r.saidi||0)>5?'critical':'good')}
-                ${kpi('SAIFI', (r.saifi||0).toFixed(2), 'int/customer', 'info')}
-                ${kpi('CAIDI', (r.caidi||0).toFixed(2), 'min/interruption', 'info')}
-                ${kpi('MAIFI', (r.maifi||0).toFixed(4), 'momentary', 'info')}
+                ${kpi('SAIDI', (r.saidi||0).toFixed(2), 'min/customer', (r.saidi||0)>1.0?'critical':(r.saidi||0)>0.5?'warning':'good')}
+                ${kpi('SAIFI', (r.saifi||0).toFixed(4), 'int/customer', (r.saifi||0)>0.008?'critical':(r.saifi||0)>0.004?'warning':'good')}
+                ${kpi('CAIDI', (r.caidi||0).toFixed(1), 'min/interruption', (r.caidi||0)>150?'critical':(r.caidi||0)>120?'warning':'good')}
+                ${kpi('MAIFI', (r.maifi||0).toFixed(4), 'momentary/customer', (r.maifi||0)>0.04?'warning':'good')}
             </div>`;
     }
 
@@ -904,9 +1047,22 @@ async function fetchScada() {
     }
 
     if (readings && Array.isArray(readings)) {
-        document.getElementById('scada-readings').innerHTML = `<table><tr><th>Sensor</th><th>Type</th><th>Voltage (kV)</th><th>Current (A)</th><th>Freq (Hz)</th><th>PF</th><th>Temp (°C)</th><th>Power (kW)</th><th>Status</th></tr>${
-            readings.map(r => `<tr><td>${r.SensorId||r.sensorId}</td><td>${r.EquipmentType||r.equipmentType}</td><td>${(r.VoltageKv||r.voltageKv||0).toFixed(2)}</td><td>${(r.CurrentA||r.currentA||0).toFixed(1)}</td><td>${(r.FrequencyHz||r.frequencyHz||0).toFixed(3)}</td><td>${(r.PowerFactor||r.powerFactor||0).toFixed(3)}</td><td>${(r.TemperatureC||r.temperatureC||0).toFixed(1)}</td><td>${(r.ActivePowerKw||r.activePowerKw||0).toFixed(0)}</td><td>${statusBadge((r.Status||r.status||'Normal').toLowerCase())}</td></tr>`
-        ).join('')}</table>`;
+        document.getElementById('scada-readings').innerHTML = clickableTable({
+            id: 'scada-readings-tbl',
+            columns: [
+                { key: 'SensorId', label: 'Sensor', render: r => r.SensorId||r.sensorId },
+                { key: 'EquipmentType', label: 'Type', render: r => r.EquipmentType||r.equipmentType },
+                { key: 'VoltageKv', label: 'Voltage (kV)', render: r => (r.VoltageKv||r.voltageKv||0).toFixed(2), sortable: true },
+                { key: 'CurrentA', label: 'Current (A)', render: r => (r.CurrentA||r.currentA||0).toFixed(1) },
+                { key: 'FrequencyHz', label: 'Freq (Hz)', render: r => (r.FrequencyHz||r.frequencyHz||0).toFixed(3) },
+                { key: 'PowerFactor', label: 'PF', render: r => (r.PowerFactor||r.powerFactor||0).toFixed(3) },
+                { key: 'TemperatureC', label: 'Temp (°C)', render: r => (r.TemperatureC||r.temperatureC||0).toFixed(1) },
+                { key: 'ActivePowerKw', label: 'Power (kW)', render: r => (r.ActivePowerKw||r.activePowerKw||0).toFixed(0) },
+                { key: 'Status', label: 'Status', render: r => statusBadge((r.Status||r.status||'Normal').toLowerCase()) }
+            ],
+            rows: readings.map(r => ({ ...r, _id: r.SensorId||r.sensorId })),
+            onRowClick: `showDetailView.bind(null,'scada')`,
+        });
     }
 
     if (alerts && Array.isArray(alerts)) {
@@ -950,27 +1106,60 @@ async function fetchOutages() {
     if (outages) {
         cachedOutages = outages;
         const sorted = outages.sort((a,b) => new Date(b.startTime) - new Date(a.startTime));
-        document.getElementById('outage-table').innerHTML = `<table><tr><th>ID</th><th>Location</th><th>Status</th><th>Priority</th><th>Cause</th><th>Equipment</th><th>Affected</th><th>Started</th><th>Crew</th><th>Source</th></tr>${
-            sorted.map(o => {
-                const elapsed = o.startTime ? Math.round((Date.now() - new Date(o.startTime).getTime()) / 60000) : 0;
-                return `<tr class="expandable" onclick="toggleRowDetail(this)"><td>${o.id}</td><td>${o.location}</td><td>${statusBadge(o.status)}</td><td>${statusBadge(o.priority)}</td><td style="max-width:140px;overflow:hidden;text-overflow:ellipsis">${o.cause}</td><td>${o.equipmentType||'-'} #${o.equipmentId||'-'}</td><td>${(o.affectedCustomers||0).toLocaleString()}</td><td>${new Date(o.startTime).toLocaleString()}</td><td>${o.crewAssigned||'-'}</td><td><span class="badge ${o.source==='SCADA-Auto-Detect'?'badge-blue':'badge-green'}">${o.source||'OMS'}</span></td></tr>
-                <tr class="row-detail"><td colspan="10">
-                    <div class="detail-grid">
-                        <div class="detail-item"><div class="detail-label">Duration</div><div class="detail-value">${elapsed} min</div></div>
-                        <div class="detail-item"><div class="detail-label">Affected Customers</div><div class="detail-value" style="color:#f85149">${(o.affectedCustomers||0).toLocaleString()}</div></div>
-                        <div class="detail-item"><div class="detail-label">Equipment</div><div class="detail-value">${o.equipmentType||'-'} #${o.equipmentId||'-'}</div></div>
-                        <div class="detail-item"><div class="detail-label">Detection Source</div><div class="detail-value">${o.source||'OMS'}</div></div>
-                        <div class="detail-item"><div class="detail-label">Crew Assigned</div><div class="detail-value" style="color:${o.crewAssigned?'#3fb950':'#8b949e'}">${o.crewAssigned||'Unassigned'}</div></div>
-                        <div class="detail-item"><div class="detail-label">Full Cause</div><div class="detail-value">${o.cause||'-'}</div></div>
-                    </div>
-                    <div style="margin-top:10px;display:flex;gap:8px;">
-                        <button class="modal-btn primary" onclick="event.stopPropagation();showOutageDetail('${o.id}')">Full Detail</button>
-                        ${o.crewAssigned ? `<button class="modal-btn" onclick="event.stopPropagation();drillTo('crew','outages')">View Crew</button>` : ''}
-                    </div>
-                </td></tr>`;
-            }).join('')}</table>`;
+        // Apply sort from filter controls
+        const ss = sortState['outage-tbl'];
+        if (ss) { sorted.sort((a,b) => { const av = a[ss.col]||'', bv = b[ss.col]||''; return ss.dir==='asc' ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av)); }); }
+        document.getElementById('outage-table').innerHTML = `${filterBar({
+            filters: [
+                { key: 'status', type: 'select', label: 'Status', options: ['Active','Resolved','Investigating'] },
+                { key: 'priority', type: 'select', label: 'Priority', options: ['Critical','High','Medium','Low'] },
+                { key: 'search', type: 'search', label: 'Search' }
+            ], onFilter: 'applyOutageFilters'
+        })}${clickableTable({
+            id: 'outage-tbl',
+            columns: [
+                { key: 'id', label: 'ID' },
+                { key: 'location', label: 'Location', sortable: true },
+                { key: 'status', label: 'Status', render: o => statusBadge(o.status), sortable: true },
+                { key: 'priority', label: 'Priority', render: o => statusBadge(o.priority), sortable: true },
+                { key: 'cause', label: 'Cause', render: o => `<span style="max-width:140px;overflow:hidden;text-overflow:ellipsis;display:inline-block">${o.cause||'-'}</span>` },
+                { key: 'affectedCustomers', label: 'Affected', render: o => (o.affectedCustomers||0).toLocaleString(), sortable: true },
+                { key: 'startTime', label: 'Started', render: o => new Date(o.startTime).toLocaleString() },
+                { key: 'crewAssigned', label: 'Crew', render: o => o.crewAssigned ? `<a class="cross-link" onclick="event.stopPropagation();showSection('crew')">${o.crewAssigned}</a>` : '-' },
+                { key: 'source', label: 'Source', render: o => `<span class="badge ${o.source==='SCADA-Auto-Detect'?'badge-blue':'badge-green'}">${o.source||'OMS'}</span>` }
+            ],
+            rows: sorted,
+            onRowClick: `showDetailView.bind(null,'outages')`,
+            tableClass: ''
+        })}`;
     }
 }
+window.applyOutageFilters = function() {
+    const vals = getFilterValues(['status','priority','search']);
+    if (!cachedOutages) return;
+    let filtered = cachedOutages;
+    if (vals.status) filtered = filtered.filter(o => (o.status||'').toLowerCase() === vals.status);
+    if (vals.priority) filtered = filtered.filter(o => (o.priority||'').toLowerCase() === vals.priority);
+    if (vals.search) filtered = filtered.filter(o => JSON.stringify(o).toLowerCase().includes(vals.search));
+    const container = document.getElementById('outage-table');
+    const filterHtml = container.querySelector('.filter-controls')?.outerHTML || '';
+    container.innerHTML = filterHtml + clickableTable({
+        id: 'outage-tbl',
+        columns: [
+            { key: 'id', label: 'ID' },
+            { key: 'location', label: 'Location', sortable: true },
+            { key: 'status', label: 'Status', render: o => statusBadge(o.status), sortable: true },
+            { key: 'priority', label: 'Priority', render: o => statusBadge(o.priority), sortable: true },
+            { key: 'cause', label: 'Cause', render: o => `<span style="max-width:140px;overflow:hidden;text-overflow:ellipsis;display:inline-block">${o.cause||'-'}</span>` },
+            { key: 'affectedCustomers', label: 'Affected', render: o => (o.affectedCustomers||0).toLocaleString(), sortable: true },
+            { key: 'startTime', label: 'Started', render: o => new Date(o.startTime).toLocaleString() },
+            { key: 'crewAssigned', label: 'Crew' },
+            { key: 'source', label: 'Source', render: o => `<span class="badge ${o.source==='SCADA-Auto-Detect'?'badge-blue':'badge-green'}">${o.source||'OMS'}</span>` }
+        ],
+        rows: filtered,
+        onRowClick: `showDetailView.bind(null,'outages')`,
+    });
+};
 
 async function fetchMetering() {
     const [summary, readings, anomalies] = await Promise.all([
@@ -991,9 +1180,21 @@ async function fetchMetering() {
     }
 
     if (readings && Array.isArray(readings)) {
-        document.getElementById('meter-readings').innerHTML = `<table><tr><th>Time</th><th>Meter</th><th>Customer</th><th>kWh</th><th>kW</th><th>Voltage</th><th>PF</th><th>Quality</th></tr>${
-            readings.slice(0,50).map(r => `<tr><td>${new Date(r.time).toLocaleTimeString()}</td><td>${r.meterId}</td><td>${r.customerId}</td><td>${r.readingKwh}</td><td>${r.demandKw}</td><td>${(r.voltageV||0).toFixed(1)}V</td><td>${(r.powerFactor||0).toFixed(3)}</td><td>${statusBadge((r.qualityFlag||'Valid').toLowerCase()==='valid'?'normal':r.qualityFlag)}</td></tr>`
-        ).join('')}</table>`;
+        document.getElementById('meter-readings').innerHTML = clickableTable({
+            id: 'meter-readings-tbl',
+            columns: [
+                { key: 'time', label: 'Time', render: r => new Date(r.time).toLocaleTimeString() },
+                { key: 'meterId', label: 'Meter' },
+                { key: 'customerId', label: 'Customer' },
+                { key: 'readingKwh', label: 'kWh', sortable: true },
+                { key: 'demandKw', label: 'kW' },
+                { key: 'voltageV', label: 'Voltage', render: r => (r.voltageV||0).toFixed(1)+'V' },
+                { key: 'powerFactor', label: 'PF', render: r => (r.powerFactor||0).toFixed(3) },
+                { key: 'qualityFlag', label: 'Quality', render: r => statusBadge((r.qualityFlag||'Valid').toLowerCase()==='valid'?'normal':r.qualityFlag) }
+            ],
+            rows: readings.slice(0,50).map(r => ({ ...r, _id: r.meterId })),
+            onRowClick: `showDetailView.bind(null,'metering')`,
+        });
     }
 
     if (anomalies && Array.isArray(anomalies)) {
@@ -1060,10 +1261,10 @@ async function fetchReliability() {
 
     if (indices) {
         document.getElementById('rel-kpis').innerHTML = [
-            kpi('SAIDI', (indices.saidi||0).toFixed(2), 'System Avg Interruption Duration', (indices.saidi||0)>5?'critical':'good'),
-            kpi('SAIFI', (indices.saifi||0).toFixed(2), 'System Avg Interruption Frequency', 'info'),
-            kpi('CAIDI', (indices.caidi||0).toFixed(2), 'Customer Avg Interruption Duration', 'info'),
-            kpi('MAIFI', (indices.maifi||0).toFixed(4), 'Momentary Avg Int Frequency', 'info'),
+            kpi('SAIDI', (indices.saidi||0).toFixed(2), 'System Avg Interruption Duration (min/cust)', (indices.saidi||0)>1.0?'critical':(indices.saidi||0)>0.5?'warning':'good'),
+            kpi('SAIFI', (indices.saifi||0).toFixed(4), 'System Avg Interruption Frequency', (indices.saifi||0)>0.008?'critical':(indices.saifi||0)>0.004?'warning':'good'),
+            kpi('CAIDI', (indices.caidi||0).toFixed(1), 'Customer Avg Interruption Duration (min)', (indices.caidi||0)>150?'critical':(indices.caidi||0)>120?'warning':'good'),
+            kpi('MAIFI', (indices.maifi||0).toFixed(4), 'Momentary Avg Int Frequency', (indices.maifi||0)>0.04?'warning':'good'),
             kpi('Interruptions', indices.total_interruptions_today||0, 'today', (indices.total_interruptions_today||0)>5?'warning':'good'),
             kpi('Cust-Minutes', Math.round(indices.total_customer_minutes_today||0), 'today', 'info')
         ].join('');
@@ -1071,7 +1272,7 @@ async function fetchReliability() {
 
     if (history && Array.isArray(history)) {
         document.getElementById('rel-history').innerHTML = `<table><tr><th>Date</th><th>SAIDI</th><th>SAIFI</th><th>CAIDI</th><th>MAIFI</th><th>Interruptions</th><th>Cust-Minutes</th></tr>${
-            history.map(h => `<tr><td>${h.date}</td><td>${(h.saidi||0).toFixed(2)}</td><td>${(h.saifi||0).toFixed(2)}</td><td>${(h.caidi||0).toFixed(2)}</td><td>${(h.maifi||0).toFixed(4)}</td><td>${h.total_interruptions||0}</td><td>${Math.round(h.total_customer_minutes||0)}</td></tr>`
+            history.map(h => `<tr><td>${h.date}</td><td>${(h.saidi||0).toFixed(2)}</td><td>${(h.saifi||0).toFixed(4)}</td><td>${(h.caidi||0).toFixed(1)}</td><td>${(h.maifi||0).toFixed(4)}</td><td>${h.total_interruptions||0}</td><td>${Math.round(h.total_customer_minutes||0).toLocaleString()}</td></tr>`
         ).join('')}</table>`;
     }
 }
@@ -1138,20 +1339,21 @@ async function fetchCrew() {
 
     if (crews && Array.isArray(crews)) {
         cachedCrews = crews;
-        document.getElementById('crew-list').innerHTML = `<table><tr><th>ID</th><th>Name</th><th>Lead</th><th>Members</th><th>Vehicle</th><th>Region</th><th>Status</th><th>Assignment</th></tr>${
-            crews.map((c, ci) => `<tr class="expandable" onclick="toggleRowDetail(this)"><td>${c.id}</td><td>${c.name}</td><td>${c.lead}</td><td>${c.members}</td><td>${c.vehicle}</td><td>${c.region}</td><td>${statusBadge(c.status==='Available'?'normal':c.status==='On-Site'?'warning':'active')}</td><td>${c.currentAssignment||'-'}</td></tr>
-                <tr class="row-detail"><td colspan="8">
-                    <div class="detail-grid">
-                        <div class="detail-item"><div class="detail-label">Crew Name</div><div class="detail-value">${c.name}</div></div>
-                        <div class="detail-item"><div class="detail-label">Team Lead</div><div class="detail-value">${c.lead}</div></div>
-                        <div class="detail-item"><div class="detail-label">Team Size</div><div class="detail-value">${c.members} personnel</div></div>
-                        <div class="detail-item"><div class="detail-label">Vehicle</div><div class="detail-value">${c.vehicle}</div></div>
-                        <div class="detail-item"><div class="detail-label">Region</div><div class="detail-value">${c.region}</div></div>
-                        <div class="detail-item"><div class="detail-label">Current Status</div><div class="detail-value">${c.status}</div></div>
-                    </div>
-                    <div style="margin-top:10px"><button class="modal-btn primary" onclick="event.stopPropagation();showCrewDetail(${ci})">Full Detail</button></div>
-                </td></tr>`
-        ).join('')}</table>`;
+        document.getElementById('crew-list').innerHTML = clickableTable({
+            id: 'crew-list-tbl',
+            columns: [
+                { key: 'id', label: 'ID' },
+                { key: 'name', label: 'Name', sortable: true },
+                { key: 'lead', label: 'Lead' },
+                { key: 'members', label: 'Members' },
+                { key: 'vehicle', label: 'Vehicle' },
+                { key: 'region', label: 'Region', sortable: true },
+                { key: 'status', label: 'Status', render: c => statusBadge(c.status==='Available'?'normal':c.status==='On-Site'?'warning':'active'), sortable: true },
+                { key: 'currentAssignment', label: 'Assignment', render: c => c.currentAssignment||'-' }
+            ],
+            rows: crews,
+            onRowClick: `showDetailView.bind(null,'crew')`,
+        });
     }
 
     if (dispatches && Array.isArray(dispatches)) {
@@ -1267,56 +1469,49 @@ const CONDITION_ICONS = {
     'Thunderstorm':'⛈️','Ice/Sleet':'🧊','Snow':'❄️','Fog':'🌫️','High Winds':'💨'
 };
 
-// Geographic bounds: covers eastern US from TX/MN to the coast, south to FL
-const MAP_BOUNDS = { minLng: -100, maxLng: -67, minLat: 24, maxLat: 48 };
+// Leaflet replaces manual projection — no MAP_BOUNDS/geoToSVG needed
+let leafletMap = null;
+let mapLayerGroups = {};
 
-function geoToSVG(lat, lng, W, H) {
-    const { minLng, maxLng, minLat, maxLat } = MAP_BOUNDS;
-    const x = ((lng - minLng) / (maxLng - minLng)) * W;
-    const y = ((maxLat - lat) / (maxLat - minLat)) * H;
-    return { x, y };
-}
-
-// Simplified US state outlines as arrays of [lng, lat] boundary points
 // Service territory states: east of the Rockies
 const SERVICE_STATES = ['IL','PA','NJ','MD','DE','DC','MO','MN','MI','OH','NY','MA','GA','FL','TX','TN','NC'];
-const US_STATES_GEO = {
-    // Service territory states
-    'IL': [[-91.5,42.5],[-91.2,42.0],[-91.1,41.7],[-91.0,41.2],[-91.1,40.7],[-90.9,40.2],[-90.6,39.7],[-90.3,39.3],[-90.1,39.0],[-89.7,38.2],[-89.4,37.9],[-89.1,37.6],[-89.0,37.0],[-88.7,37.1],[-88.3,37.1],[-88.1,37.5],[-88.0,38.0],[-87.8,38.2],[-87.7,38.6],[-87.5,38.9],[-87.5,39.4],[-87.5,39.9],[-87.5,40.5],[-87.5,41.0],[-87.5,41.5],[-87.5,41.8],[-87.8,42.5],[-88.2,42.5],[-89.0,42.5],[-90.0,42.5],[-90.6,42.5],[-91.5,42.5]],
-    'PA': [[-80.5,42.0],[-80.5,41.0],[-80.5,40.6],[-80.1,40.3],[-79.8,40.0],[-79.5,39.7],[-78.0,39.7],[-76.5,39.7],[-75.7,39.7],[-75.5,39.8],[-75.2,39.9],[-75.0,40.2],[-74.8,40.4],[-74.7,41.1],[-74.7,41.4],[-75.0,41.8],[-75.3,42.0],[-76.0,42.0],[-77.0,42.0],[-78.0,42.0],[-79.0,42.0],[-79.8,42.0],[-80.5,42.0]],
-    'NJ': [[-75.5,39.5],[-75.2,39.5],[-75.0,39.7],[-74.9,39.9],[-74.7,40.2],[-74.7,40.5],[-74.5,40.6],[-74.3,40.7],[-74.1,40.9],[-74.0,41.1],[-74.7,41.4],[-75.0,41.1],[-75.2,40.5],[-75.2,40.2],[-75.3,39.9],[-75.5,39.7],[-75.5,39.5]],
-    'MD': [[-79.5,39.7],[-79.5,39.3],[-79.1,39.3],[-78.5,39.5],[-77.8,39.3],[-77.3,39.3],[-77.0,39.0],[-76.8,38.8],[-76.5,38.5],[-76.2,38.3],[-76.0,38.0],[-75.7,38.0],[-75.6,38.2],[-75.4,38.5],[-75.4,38.8],[-75.3,39.1],[-75.5,39.4],[-75.6,39.5],[-75.7,39.7],[-76.0,39.7],[-77.0,39.7],[-78.0,39.7],[-79.0,39.7],[-79.5,39.7]],
-    'DE': [[-75.8,39.7],[-75.6,39.5],[-75.4,39.2],[-75.4,38.8],[-75.4,38.5],[-75.6,38.5],[-75.7,38.8],[-75.8,39.0],[-75.8,39.3],[-75.8,39.7]],
-    'DC': [[-77.12,38.99],[-77.04,38.99],[-76.91,38.85],[-77.04,38.79],[-77.12,38.85],[-77.12,38.99]],
-    // Non-service surrounding states
-    'OH': [[-84.8,41.7],[-84.8,41.0],[-84.8,40.5],[-84.5,39.8],[-84.3,39.3],[-84.0,39.0],[-83.5,38.6],[-83.0,38.5],[-82.5,38.4],[-82.0,38.4],[-81.5,38.5],[-81.0,38.8],[-80.6,39.0],[-80.5,39.7],[-80.5,40.6],[-80.5,41.0],[-80.5,41.5],[-80.5,42.0],[-81.0,42.0],[-81.5,41.8],[-82.0,41.5],[-82.5,41.5],[-83.0,41.6],[-83.5,41.7],[-84.0,41.7],[-84.8,41.7]],
-    'IN': [[-88.1,41.8],[-87.5,41.8],[-87.5,41.5],[-87.5,41.0],[-87.5,40.5],[-87.5,39.9],[-87.5,39.4],[-87.5,38.9],[-87.7,38.6],[-87.8,38.2],[-88.0,38.0],[-87.8,37.8],[-87.5,37.9],[-87.1,37.8],[-86.5,37.9],[-86.0,38.0],[-85.5,38.0],[-85.0,38.3],[-84.8,38.5],[-84.8,39.0],[-84.8,39.5],[-84.8,40.0],[-84.8,40.5],[-84.8,41.0],[-84.8,41.7],[-85.5,41.8],[-86.5,41.8],[-87.5,41.8],[-88.1,41.8]],
-    'WV': [[-82.5,38.4],[-82.0,38.4],[-81.5,38.5],[-81.0,38.8],[-80.6,39.0],[-80.5,39.7],[-79.5,39.7],[-79.5,39.3],[-79.1,39.3],[-78.5,39.5],[-77.8,39.3],[-77.7,39.3],[-77.8,39.0],[-78.5,38.5],[-79.0,38.0],[-79.5,37.7],[-80.0,37.5],[-80.5,37.5],[-81.0,37.5],[-81.5,37.3],[-82.0,37.5],[-82.3,37.7],[-82.5,38.0],[-82.5,38.4]],
-    'VA': [[-83.5,36.6],[-83.0,36.6],[-82.0,36.6],[-81.5,36.6],[-80.5,36.5],[-79.5,36.5],[-78.5,36.5],[-77.5,36.5],[-76.5,36.6],[-76.0,36.9],[-75.6,37.2],[-75.6,37.6],[-76.0,37.8],[-76.3,38.0],[-76.5,38.3],[-76.8,38.5],[-77.0,38.7],[-77.0,39.0],[-77.3,39.3],[-77.7,39.3],[-77.8,39.0],[-78.5,38.5],[-79.0,38.0],[-79.5,37.7],[-80.0,37.5],[-80.5,37.5],[-81.0,37.5],[-81.5,37.3],[-82.0,37.5],[-82.5,37.5],[-83.0,37.0],[-83.5,36.6]],
-    'NY': [[-79.8,42.0],[-79.5,42.5],[-79.0,43.0],[-78.0,43.3],[-77.0,43.3],[-76.0,43.5],[-75.5,43.8],[-75.0,44.0],[-74.5,44.5],[-73.7,45.0],[-73.3,44.0],[-73.3,43.0],[-73.3,42.3],[-73.3,42.0],[-73.5,41.2],[-74.0,41.1],[-74.7,41.4],[-74.7,41.1],[-75.0,41.1],[-75.3,42.0],[-76.0,42.0],[-77.0,42.0],[-78.0,42.0],[-79.0,42.0],[-79.8,42.0]],
-    'CT': [[-73.7,41.1],[-73.7,41.3],[-73.3,41.5],[-72.5,41.4],[-72.0,41.3],[-71.8,41.3],[-71.8,41.0],[-72.5,41.0],[-73.0,41.0],[-73.5,41.0],[-73.7,41.1]],
-    'MA': [[-73.3,42.0],[-73.3,42.3],[-72.5,42.3],[-72.0,42.3],[-71.5,42.3],[-71.0,42.3],[-70.5,42.0],[-70.5,41.7],[-71.0,41.7],[-71.5,41.8],[-71.8,41.3],[-72.0,41.3],[-72.5,41.4],[-73.3,41.5],[-73.3,42.0]],
-    'KY': [[-89.5,36.5],[-89.0,36.5],[-88.5,36.5],[-87.5,36.5],[-86.5,36.5],[-85.5,36.5],[-84.5,36.5],[-84.0,36.5],[-83.5,36.6],[-83.0,37.0],[-82.5,37.5],[-82.3,37.7],[-82.5,38.0],[-82.5,38.4],[-83.0,38.5],[-83.5,38.6],[-84.0,39.0],[-84.3,39.0],[-84.5,39.1],[-84.8,39.0],[-85.0,38.3],[-85.5,38.0],[-86.0,38.0],[-86.5,37.9],[-87.1,37.8],[-87.5,37.9],[-87.8,37.8],[-88.0,37.5],[-88.3,37.1],[-88.7,37.1],[-89.0,37.0],[-89.3,37.0],[-89.5,36.8],[-89.5,36.5]],
-    'NC': [[-84.3,35.2],[-83.5,35.0],[-82.5,35.2],[-81.5,35.2],[-80.5,35.2],[-80.0,35.0],[-79.0,35.0],[-78.0,35.2],[-77.0,35.5],[-76.0,35.6],[-75.5,35.8],[-75.5,36.2],[-76.0,36.5],[-76.5,36.6],[-77.5,36.5],[-78.5,36.5],[-79.5,36.5],[-80.5,36.5],[-81.5,36.6],[-82.0,36.6],[-83.0,36.6],[-83.5,36.6],[-84.3,36.5],[-84.3,35.8],[-84.3,35.2]],
-    'TN': [[-90.3,35.0],[-90.0,35.0],[-89.5,35.0],[-89.0,35.0],[-88.0,35.0],[-87.0,35.0],[-86.0,35.0],[-85.5,35.0],[-84.3,35.2],[-84.3,35.8],[-84.3,36.5],[-84.5,36.5],[-85.5,36.5],[-86.5,36.5],[-87.5,36.5],[-88.5,36.5],[-89.0,36.5],[-89.5,36.5],[-90.3,36.5],[-90.3,35.8],[-90.3,35.0]],
-    'SC': [[-83.1,35.0],[-82.5,35.2],[-81.5,35.2],[-80.5,35.2],[-80.0,35.0],[-79.5,34.4],[-79.0,34.0],[-79.0,33.5],[-79.5,33.2],[-80.0,32.8],[-80.8,32.1],[-81.5,32.5],[-82.0,33.0],[-82.5,33.5],[-83.0,34.0],[-83.3,34.5],[-83.1,35.0]],
-    'GA': [[-85.5,35.0],[-84.3,35.0],[-83.1,35.0],[-83.3,34.5],[-83.0,34.0],[-82.5,33.5],[-82.0,33.0],[-81.5,32.5],[-81.0,31.5],[-81.5,31.0],[-82.0,30.5],[-83.0,30.5],[-84.0,30.5],[-85.0,31.0],[-85.0,31.5],[-85.0,32.0],[-85.0,32.5],[-85.0,33.0],[-85.0,33.5],[-85.0,34.0],[-85.0,34.5],[-85.5,35.0]],
-    'MI': [[-86.5,41.8],[-86.0,41.8],[-85.5,41.8],[-84.8,41.7],[-84.0,41.7],[-83.5,41.7],[-83.0,42.0],[-82.5,42.3],[-82.5,43.0],[-82.5,43.5],[-83.0,44.0],[-83.5,44.0],[-84.0,43.5],[-84.5,43.8],[-84.5,44.2],[-84.8,44.5],[-85.0,45.0],[-85.5,44.8],[-86.0,44.5],[-86.5,44.0],[-86.5,43.5],[-86.5,43.0],[-86.2,42.5],[-86.5,41.8]],
-    'WI': [[-92.0,42.5],[-91.5,42.5],[-90.6,42.5],[-90.0,42.5],[-89.0,42.5],[-88.2,42.5],[-87.8,42.5],[-87.8,43.0],[-87.8,43.5],[-87.8,44.0],[-87.5,44.5],[-87.5,45.0],[-88.0,45.5],[-88.5,46.0],[-89.0,46.3],[-90.0,46.5],[-90.5,46.5],[-91.0,46.5],[-92.0,46.0],[-92.5,45.5],[-92.5,45.0],[-92.5,44.5],[-92.0,44.0],[-91.5,43.5],[-91.5,43.0],[-92.0,42.5]],
-    'VT': [[-73.3,42.7],[-73.3,43.0],[-73.3,44.0],[-73.3,44.5],[-72.5,45.0],[-72.0,45.0],[-71.5,45.0],[-71.5,44.5],[-71.5,44.0],[-72.0,43.5],[-72.5,43.0],[-72.5,42.7],[-73.3,42.7]],
-    'NH': [[-72.5,42.7],[-72.5,43.0],[-72.0,43.5],[-71.5,44.0],[-71.5,44.5],[-71.5,45.0],[-71.0,45.0],[-71.0,44.0],[-71.0,43.5],[-71.0,43.0],[-71.0,42.7],[-71.5,42.7],[-72.0,42.7],[-72.5,42.7]],
-    'ME': [[-71.0,43.5],[-70.5,43.2],[-70.0,43.5],[-69.0,44.0],[-68.0,44.5],[-67.5,44.5],[-67.0,45.0],[-67.0,45.5],[-67.5,47.0],[-68.5,47.3],[-69.0,47.3],[-69.5,47.0],[-70.0,46.5],[-70.5,46.0],[-71.0,45.5],[-71.0,45.0],[-71.5,45.0],[-71.5,44.5],[-71.5,44.0],[-71.0,43.5]],
-    'RI': [[-71.8,41.3],[-71.8,41.7],[-71.5,41.8],[-71.2,41.5],[-71.2,41.2],[-71.5,41.2],[-71.8,41.3]],
-    'FL': [[-87.6,30.9],[-87.0,30.5],[-85.5,30.0],[-84.0,30.0],[-83.0,29.5],[-82.5,29.0],[-82.0,28.5],[-82.0,27.5],[-82.0,26.5],[-81.5,25.5],[-80.5,25.0],[-80.0,25.5],[-80.0,26.5],[-80.5,27.5],[-80.5,28.5],[-80.5,29.5],[-81.0,30.0],[-81.5,30.5],[-81.5,31.0],[-82.0,30.5],[-83.0,30.5],[-84.0,30.5],[-85.0,30.5],[-86.0,30.5],[-87.0,30.5],[-87.6,30.9]],
-    'TX': [[-100.0,36.5],[-100.0,35.0],[-100.0,33.0],[-99.5,31.5],[-99.0,30.0],[-98.5,29.0],[-97.5,26.0],[-97.0,25.8],[-96.5,26.5],[-95.5,28.5],[-94.5,29.5],[-94.0,29.8],[-93.8,30.0],[-94.0,31.0],[-94.0,32.0],[-94.0,33.5],[-94.5,34.0],[-95.0,34.0],[-96.0,34.0],[-97.0,34.0],[-98.0,34.5],[-99.0,35.0],[-100.0,36.5]],
-    'MN': [[-97.2,48.5],[-96.0,48.0],[-95.5,47.5],[-95.0,46.5],[-94.0,46.0],[-93.5,45.5],[-93.0,45.0],[-92.5,44.5],[-92.0,44.0],[-91.5,43.5],[-91.5,43.0],[-92.0,42.5],[-93.0,43.5],[-93.5,43.5],[-94.0,43.5],[-95.0,43.5],[-96.0,43.5],[-96.5,44.0],[-96.5,45.0],[-96.5,46.0],[-97.0,47.0],[-97.0,48.0],[-97.2,48.5]],
-    'MO': [[-95.8,40.6],[-95.0,40.5],[-94.6,40.0],[-94.6,39.0],[-94.6,38.0],[-94.6,37.0],[-94.3,36.5],[-93.5,36.5],[-92.5,36.5],[-91.5,36.5],[-90.5,36.5],[-90.1,36.3],[-89.7,36.5],[-89.5,36.8],[-89.5,37.5],[-89.7,38.2],[-89.8,38.5],[-90.1,38.8],[-90.3,39.0],[-90.6,39.3],[-90.9,39.7],[-91.0,40.0],[-91.1,40.5],[-91.5,40.6],[-92.0,40.6],[-93.0,40.6],[-94.0,40.6],[-95.0,40.6],[-95.8,40.6]],
-    'AL': [[-88.5,35.0],[-87.0,35.0],[-86.0,35.0],[-85.5,35.0],[-85.0,34.5],[-85.0,34.0],[-85.0,33.0],[-85.0,32.0],[-85.0,31.0],[-85.0,30.5],[-87.0,30.5],[-87.6,30.9],[-88.0,30.5],[-88.3,30.2],[-88.5,30.5],[-88.5,31.0],[-88.5,32.0],[-88.5,33.0],[-88.5,34.0],[-88.5,35.0]],
-    'MS': [[-91.6,35.0],[-90.3,35.0],[-89.5,35.0],[-88.5,35.0],[-88.5,34.0],[-88.5,33.0],[-88.5,32.0],[-88.5,31.0],[-88.5,30.5],[-89.0,30.2],[-89.5,30.2],[-89.5,30.5],[-89.5,31.0],[-90.0,31.5],[-91.0,31.5],[-91.5,31.5],[-91.5,32.0],[-91.0,32.5],[-91.0,33.0],[-91.0,33.5],[-91.0,34.0],[-91.0,34.5],[-91.6,35.0]],
-    'LA': [[-94.0,33.0],[-93.5,33.0],[-93.0,33.0],[-92.0,33.0],[-91.5,31.5],[-91.0,31.5],[-90.0,31.5],[-89.5,31.0],[-89.5,30.5],[-89.5,30.0],[-90.0,29.5],[-90.5,29.2],[-91.0,29.0],[-91.5,29.5],[-92.5,29.5],[-93.5,29.8],[-93.8,30.0],[-94.0,31.0],[-94.0,32.0],[-94.0,33.0]],
-    'AR': [[-94.5,36.5],[-93.5,36.5],[-92.5,36.5],[-91.5,36.5],[-90.5,36.5],[-90.3,36.5],[-90.3,35.8],[-90.3,35.0],[-91.6,35.0],[-92.5,33.5],[-93.0,33.5],[-93.5,33.5],[-94.0,33.5],[-94.5,33.5],[-94.5,34.0],[-94.5,35.0],[-94.5,36.0],[-94.5,36.5]],
-    'IA': [[-96.5,43.5],[-95.0,43.5],[-94.0,43.5],[-93.5,43.5],[-93.0,43.5],[-92.0,43.5],[-91.5,43.0],[-91.5,42.5],[-91.2,42.0],[-90.6,41.5],[-90.3,41.0],[-90.1,40.6],[-91.1,40.5],[-92.0,40.6],[-93.0,40.6],[-94.0,40.6],[-95.0,40.6],[-95.8,40.6],[-96.5,41.0],[-96.5,42.0],[-96.5,43.0],[-96.5,43.5]],
+
+// FIPS code → state abbreviation mapping for US Census TopoJSON
+const FIPS_TO_STATE = {
+    '01':'AL','05':'AR','09':'CT','10':'DE','11':'DC','12':'FL','13':'GA',
+    '17':'IL','18':'IN','19':'IA','20':'KS','21':'KY','22':'LA','23':'ME',
+    '24':'MD','25':'MA','26':'MI','27':'MN','28':'MS','29':'MO','31':'NE',
+    '33':'NH','34':'NJ','36':'NY','37':'NC','38':'ND','39':'OH','40':'OK',
+    '42':'PA','44':'RI','45':'SC','46':'SD','47':'TN','48':'TX','50':'VT',
+    '51':'VA','54':'WV','55':'WI'
 };
+let stateGeoFeatures = null;
+
+async function loadStateGeoData() {
+    try {
+        const resp = await fetch('https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json');
+        const topology = await resp.json();
+        const allStates = topojson.feature(topology, topology.objects.states);
+        stateGeoFeatures = allStates.features
+            .filter(f => {
+                const fips = String(f.id).padStart(2, '0');
+                return FIPS_TO_STATE[fips];
+            })
+            .map(f => {
+                const fips = String(f.id).padStart(2, '0');
+                const code = FIPS_TO_STATE[fips];
+                f.properties = {
+                    code,
+                    name: STATE_NAMES[code] || code,
+                    isService: SERVICE_STATES.includes(code)
+                };
+                return f;
+            });
+    } catch (e) {
+        console.error('Failed to load state boundaries:', e);
+        stateGeoFeatures = [];
+    }
+}
 
 // Outage location keyword to approximate lat/lng
 const OUTAGE_LOCATION_COORDS = {
@@ -1371,7 +1566,6 @@ function severityColor(severity, stormMode) {
 
 function renderTerritoryMap(weatherData, forecastData, outageData, crewData, dispatchData) {
     const container = document.getElementById('territory-map');
-    const W = 960, H = 550;
 
     // Build forecast lookup
     const forecastMap = {};
@@ -1393,7 +1587,7 @@ function renderTerritoryMap(weatherData, forecastData, outageData, crewData, dis
         });
     }
 
-    // Resolve outage positions with jitter to avoid overlap
+    // Resolve outage positions with jitter
     const outagePositions = [];
     if (outageData && Array.isArray(outageData)) {
         outageData.forEach((o, oi) => {
@@ -1403,91 +1597,115 @@ function renderTerritoryMap(weatherData, forecastData, outageData, crewData, dis
                 if (loc.includes(key)) { coord = val; break; }
             }
             if (!coord) coord = { lat: 39.5 + (oi % 5) * 0.3, lng: -76.5 + (oi % 3) * 0.4 };
-            // Add jitter so markers don't stack
             const jLat = coord.lat + (Math.sin(oi * 2.1) * 0.25);
             const jLng = coord.lng + (Math.cos(oi * 1.7) * 0.3);
             outagePositions.push({ ...o, _lat: jLat, _lng: jLng });
         });
     }
 
-    // Build SVG
-    let svg = `<svg class="map-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
-    svg += `<defs>
-        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#21262d" stroke-width="0.3"/>
-        </pattern>
-        <filter id="glow"><feGaussianBlur stdDeviation="6" result="coloredBlur"/>
-            <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-        <filter id="crew-shadow"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000" flood-opacity="0.5"/></filter>
-        <radialGradient id="radarGreen" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#3fb950" stop-opacity="0.2"/><stop offset="100%" stop-color="#3fb950" stop-opacity="0"/></radialGradient>
-        <radialGradient id="radarYellow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#d29922" stop-opacity="0.2"/><stop offset="100%" stop-color="#d29922" stop-opacity="0"/></radialGradient>
-        <radialGradient id="radarRed" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#f85149" stop-opacity="0.25"/><stop offset="100%" stop-color="#f85149" stop-opacity="0"/></radialGradient>
-        <radialGradient id="radarPurple" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#a371f7" stop-opacity="0.25"/><stop offset="100%" stop-color="#a371f7" stop-opacity="0"/></radialGradient>
-    </defs>`;
-    svg += `<rect width="${W}" height="${H}" fill="#0d1117"/>`;
-    svg += `<rect width="${W}" height="${H}" fill="url(#grid)"/>`;
-
-    // ---- Render all US state outlines ----
-    Object.entries(US_STATES_GEO).forEach(([stName, coords]) => {
-        const isService = SERVICE_STATES.includes(stName);
-        const fillColor = isService ? '#161b22' : '#0e1116';
-        const strokeColor = isService ? '#30363d' : '#1b2028';
-        const strokeW = isService ? 1.2 : 0.6;
-        const pts = coords.map(([lng, lat]) => {
-            const p = geoToSVG(lat, lng, W, H);
-            return `${p.x},${p.y}`;
-        }).join(' ');
-        svg += `<polygon points="${pts}" fill="${fillColor}" stroke="${strokeColor}" stroke-width="${strokeW}" opacity="${isService ? 0.9 : 0.5}"/>`;
-        // State label
-        const cx = coords.reduce((a, c) => a + c[0], 0) / coords.length;
-        const cy = coords.reduce((a, c) => a + c[1], 0) / coords.length;
-        const lp = geoToSVG(cy, cx, W, H);
-        const labelColor = isService ? '#484f58' : '#21262d';
-        const labelSize = isService ? 12 : 9;
-        svg += `<text x="${lp.x}" y="${lp.y}" fill="${labelColor}" font-size="${labelSize}" font-weight="${isService?700:400}" text-anchor="middle" dominant-baseline="middle">${stName}</text>`;
-    });
-
-    // ---- Service territory border highlight ----
-    SERVICE_STATES.forEach(stName => {
-        if (!US_STATES_GEO[stName]) return;
-        const pts = US_STATES_GEO[stName].map(([lng, lat]) => {
-            const p = geoToSVG(lat, lng, W, H);
-            return `${p.x},${p.y}`;
-        }).join(' ');
-        svg += `<polygon points="${pts}" fill="none" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.4"/>`;
-    });
-
-    // ---- Connection lines between service regions ----
-    const connections = [[0,2],[2,5],[5,3],[2,4],[1,3],[1,5]];
-    MAP_REGIONS.forEach((r, i) => { r._pos = geoToSVG(r.lat, r.lng, W, H); });
-    connections.forEach(([a,b]) => {
-        const pa = MAP_REGIONS[a]._pos, pb = MAP_REGIONS[b]._pos;
-        svg += `<line x1="${pa.x}" y1="${pa.y}" x2="${pb.x}" y2="${pb.y}" stroke="#21262d" stroke-width="1" stroke-dasharray="4,3"/>`;
-    });
-
-    // ---- Individual outage markers ----
-    outagePositions.forEach((o, oi) => {
-        const pos = geoToSVG(o._lat, o._lng, W, H);
-        const pri = (o.priority || '').toLowerCase();
-        let oColor = '#d29922'; // Medium default
-        if (pri === 'critical') oColor = '#f85149';
-        else if (pri === 'high') oColor = '#f0883e';
-        else if (pri === 'low') oColor = '#58a6ff';
-        // Pulsing ring for critical outages
-        if (pri === 'critical') {
-            svg += `<circle cx="${pos.x}" cy="${pos.y}" r="8" fill="none" stroke="${oColor}" stroke-width="1" opacity="0.4">
-                <animate attributeName="r" values="8;14;8" dur="2s" repeatCount="indefinite"/>
-                <animate attributeName="opacity" values="0.4;0;0.4" dur="2s" repeatCount="indefinite"/>
-            </circle>`;
+    // Initialize Leaflet map (once)
+    if (!leafletMap) {
+        if (!stateGeoFeatures) {
+            setTimeout(() => renderTerritoryMap(weatherData, forecastData, outageData, crewData, dispatchData), 500);
+            return;
         }
-        svg += `<circle cx="${pos.x}" cy="${pos.y}" r="4" fill="${oColor}" stroke="#0d1117" stroke-width="1" class="outage-marker" data-oidx="${oi}"/>`;
-        svg += `<text x="${pos.x}" y="${pos.y + 1}" text-anchor="middle" dominant-baseline="middle" fill="#0d1117" font-size="5" font-weight="700">⚡</text>`;
-    });
+        container.innerHTML = '<div id="leaflet-map" style="width:100%;height:550px;background:#0d1117;"></div>';
 
-    // ---- Weather overlay per region ----
+        leafletMap = L.map('leaflet-map', {
+            center: [38.0, -83.5],
+            zoom: 5,
+            minZoom: 4,
+            maxZoom: 12,
+            keyboard: true,
+            keyboardPanDelta: 80,
+            zoomControl: false
+        });
+
+        // CartoDB dark_matter tiles — free, no API key required
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(leafletMap);
+
+        // Zoom control on right side
+        L.control.zoom({ position: 'topright' }).addTo(leafletMap);
+
+        // WCAG: ARIA labels and keyboard support
+        const mapEl = document.getElementById('leaflet-map');
+        mapEl.setAttribute('role', 'application');
+        mapEl.setAttribute('aria-label', 'Interactive service territory map showing weather, outages, and crew positions. Use arrow keys to pan, plus and minus keys to zoom. Click a state to view its dashboard.');
+        mapEl.setAttribute('tabindex', '0');
+
+        // ---- State boundaries from US Census TopoJSON (geo-accurate) ----
+        const statesLayer = L.geoJSON({ type: 'FeatureCollection', features: stateGeoFeatures }, {
+            style: feature => {
+                const s = feature.properties.isService;
+                return {
+                    fillColor: s ? '#1a2332' : '#0e1116',
+                    color: s ? '#58a6ff' : '#21262d',
+                    weight: s ? 2 : 1,
+                    fillOpacity: s ? 0.35 : 0.15,
+                    dashArray: s ? '6,3' : null,
+                };
+            },
+            onEachFeature: (feature, layer) => {
+                const { code, name, isService } = feature.properties;
+                const stRegions = MAP_REGIONS.filter(r => r.state === code);
+                layer.bindTooltip(
+                    `<div style="font-weight:700;font-size:13px;margin-bottom:4px;">${name} (${code})</div>` +
+                    `<div style="font-size:11px;color:#8b949e;">${stRegions.length} region${stRegions.length !== 1 ? 's' : ''}: ${stRegions.map(r => r.city).join(', ') || 'No active regions'}</div>` +
+                    `<div style="font-size:10px;color:#58a6ff;margin-top:4px;">Click to view state dashboard →</div>`,
+                    { className: 'leaflet-dark-tooltip', sticky: true }
+                );
+                layer.on('click', () => drillToState(code));
+                layer.on('mouseover', e => {
+                    e.target.setStyle({ fillOpacity: isService ? 0.55 : 0.25, weight: isService ? 3 : 2, color: '#58a6ff' });
+                    e.target.bringToFront();
+                });
+                layer.on('mouseout', e => statesLayer.resetStyle(e.target));
+                // WCAG: keyboard accessibility for state polygons
+                layer.on('add', () => {
+                    if (layer._path) {
+                        layer._path.setAttribute('tabindex', '0');
+                        layer._path.setAttribute('role', 'button');
+                        layer._path.setAttribute('aria-label', name + '. ' + stRegions.length + ' regions. Press Enter to view dashboard.');
+                        layer._path.addEventListener('keydown', e => {
+                            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); drillToState(code); }
+                        });
+                    }
+                });
+            }
+        }).addTo(leafletMap);
+        mapLayerGroups.states = statesLayer;
+    }
+
+    // Clear dynamic layers from previous render
+    ['traffic', 'weather', 'outages', 'crews'].forEach(key => {
+        if (mapLayerGroups[key]) { leafletMap.removeLayer(mapLayerGroups[key]); mapLayerGroups[key] = null; }
+    });
+    if (mapLayerGroups.legendControl) { leafletMap.removeControl(mapLayerGroups.legendControl); mapLayerGroups.legendControl = null; }
+
+    // ---- Traffic flow connections ----
+    const trafficGroup = L.layerGroup();
+    const connections = [
+        [0,2],[0,6],[2,5],[5,3],[2,4],[1,3],[1,5],
+        [6,7],[7,8],[8,9],[9,10],[10,11],
+        [11,12],[12,13],[13,14],[14,15],[15,16],
+        [3,8],[4,10],[6,9],[7,15],[0,5]
+    ];
+    connections.forEach(([a,b]) => {
+        if (!MAP_REGIONS[a] || !MAP_REGIONS[b]) return;
+        const pa = MAP_REGIONS[a], pb = MAP_REGIONS[b];
+        L.polyline([[pa.lat,pa.lng],[pb.lat,pb.lng]], { color: '#21262d', weight: 2, opacity: 0.5, interactive: false }).addTo(trafficGroup);
+        L.polyline([[pa.lat,pa.lng],[pb.lat,pb.lng]], { color: '#f0883e', weight: 1.5, opacity: 0.5, dashArray: '6,8', className: 'traffic-flow-line', interactive: false }).addTo(trafficGroup);
+    });
+    trafficGroup.addTo(leafletMap);
+    mapLayerGroups.traffic = trafficGroup;
+
+    // ---- Weather overlay + region markers ----
+    const weatherGroup = L.layerGroup();
     MAP_REGIONS.forEach((region, idx) => {
-        const { x, y } = region._pos;
         const wx = weatherData ? weatherData[region.name] : null;
         const fc = forecastMap[region.name];
         const outages = outagesByRegion[region.name] || 0;
@@ -1495,237 +1713,199 @@ function renderTerritoryMap(weatherData, forecastData, outageData, crewData, dis
         const severity = wx ? wx.severity : 'None';
         const color = severityColor(severity, stormMode);
 
-        let radarR = 40;
-        let radarFill = 'url(#radarGreen)';
-        if (stormMode) { radarR = 55; radarFill = 'url(#radarPurple)'; }
-        else if (severity === 'High') { radarR = 50; radarFill = 'url(#radarRed)'; }
-        else if (severity === 'Moderate') { radarR = 45; radarFill = 'url(#radarYellow)'; }
+        // Radar circle
+        let radarR = 30000, radarColor = '#3fb950';
+        if (stormMode) { radarR = 45000; radarColor = '#a371f7'; }
+        else if (severity === 'High') { radarR = 40000; radarColor = '#f85149'; }
+        else if (severity === 'Moderate') { radarR = 35000; radarColor = '#d29922'; }
+        L.circle([region.lat, region.lng], { radius: radarR, fillColor: radarColor, fillOpacity: 0.12, color: radarColor, weight: 1, opacity: 0.25, interactive: false }).addTo(weatherGroup);
 
-        // Precipitation rings
+        // Precipitation ring
         if (wx && wx.precipitationIn > 0.1) {
-            const precipR = Math.min(30 + wx.precipitationIn * 15, 55);
-            svg += `<circle cx="${x}" cy="${y}" r="${precipR}" fill="none" stroke="#58a6ff" stroke-width="0.5" stroke-dasharray="3,3" opacity="0.25"/>`;
-            svg += `<circle cx="${x}" cy="${y}" r="${precipR*0.6}" fill="none" stroke="#58a6ff" stroke-width="0.5" stroke-dasharray="2,4" opacity="0.15"/>`;
+            L.circle([region.lat, region.lng], { radius: 20000 + wx.precipitationIn * 10000, fillColor: 'transparent', color: '#58a6ff', weight: 0.8, opacity: 0.3, dashArray: '3,3', interactive: false }).addTo(weatherGroup);
         }
 
-        svg += `<circle cx="${x}" cy="${y}" r="${radarR}" fill="${radarFill}" class="region-glow"/>`;
-
-        // Wind arrow
-        if (wx && wx.windSpeedMph > 5) {
-            const angle = WIND_DIR_ANGLES[wx.windDirection] || 0;
-            const arrowLen = Math.min(12 + wx.windSpeedMph * 0.4, 30);
-            const rad = (angle - 90) * Math.PI / 180;
-            const ax = x + Math.cos(rad) * arrowLen;
-            const ay = y + Math.sin(rad) * arrowLen;
-            const windColor = wx.windSpeedMph > 30 ? '#f85149' : wx.windSpeedMph > 20 ? '#d29922' : '#8b949e';
-            svg += `<line x1="${x}" y1="${y}" x2="${ax}" y2="${ay}" stroke="${windColor}" stroke-width="1.5" opacity="0.6"/>`;
-            const headLen = 5, headAng = 0.4;
-            svg += `<polygon points="${ax},${ay} ${ax - headLen * Math.cos(rad - headAng)},${ay - headLen * Math.sin(rad - headAng)} ${ax - headLen * Math.cos(rad + headAng)},${ay - headLen * Math.sin(rad + headAng)}" fill="${windColor}" opacity="0.6"/>`;
-        }
-
-        // Center marker
-        svg += `<circle cx="${x}" cy="${y}" r="6" fill="${color}" stroke="#0d1117" stroke-width="1.5" filter="url(#glow)" class="map-region" data-idx="${idx}"/>`;
-        if (stormMode) {
-            svg += `<circle cx="${x}" cy="${y}" r="10" fill="none" stroke="${color}" stroke-width="1.5" opacity="0.6">
-                <animate attributeName="r" values="10;18;10" dur="2s" repeatCount="indefinite"/>
-                <animate attributeName="opacity" values="0.6;0.1;0.6" dur="2s" repeatCount="indefinite"/>
-            </circle>`;
-        }
-
-        // Weather icon + city label
+        // Region DivIcon marker with weather info
         const icon = wx ? (CONDITION_ICONS[wx.condition] || '☀️') : '—';
-        svg += `<text x="${x}" y="${y - 14}" text-anchor="middle" font-size="13">${icon}</text>`;
-        svg += `<text x="${x}" y="${y + 18}" text-anchor="middle" fill="#c9d1d9" font-size="9" font-weight="600">${region.city}</text>`;
+        const tempStr = wx ? wx.temperatureF + '°F' : '';
+        const windStr = wx ? wx.windSpeedMph + 'mph' : '';
+        const stormBadge = stormMode ? '<div style="background:#a371f720;border:1px solid #a371f7;color:#a371f7;font-size:7px;font-weight:700;text-align:center;border-radius:3px;padding:1px 4px;margin-top:2px;">STORM MODE</div>' : '';
+        const outageBadge = outages > 0 ? '<div style="position:absolute;top:-6px;right:-6px;background:#f85149;color:#fff;font-size:8px;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid #0d1117;">' + outages + '</div>' : '';
+        const ariaText = region.city + ', ' + region.state + ': ' + (wx ? wx.condition + ', ' + wx.temperatureF + ' degrees F' : 'No data') + '. ' + outages + ' active outages.';
+        const regionIcon = L.divIcon({
+            className: 'region-marker-icon',
+            html: '<div style="position:relative;text-align:center;" role="img" aria-label="' + ariaText + '">' +
+                outageBadge +
+                '<div style="font-size:16px;line-height:1;">' + icon + '</div>' +
+                '<div style="width:12px;height:12px;border-radius:50%;background:' + color + ';border:2px solid #0d1117;margin:2px auto;box-shadow:0 0 8px ' + color + '40;"></div>' +
+                '<div style="font-size:9px;font-weight:600;color:#c9d1d9;white-space:nowrap;">' + region.city + '</div>' +
+                '<div style="font-size:8px;color:#8b949e;white-space:nowrap;">' + tempStr + (tempStr && windStr ? ' · ' : '') + windStr + '</div>' +
+                stormBadge +
+            '</div>',
+            iconSize: [80, 70],
+            iconAnchor: [40, 35]
+        });
+
+        const regionMarker = L.marker([region.lat, region.lng], { icon: regionIcon, keyboard: true });
+
+        // Tooltip with full weather details
+        let ttHtml = '<div style="font-weight:700;font-size:13px;margin-bottom:4px;">' + region.city + ', ' + region.state + '</div>';
         if (wx) {
-            svg += `<text x="${x}" y="${y + 28}" text-anchor="middle" fill="#8b949e" font-size="8">${wx.temperatureF}°F · ${wx.windSpeedMph}mph</text>`;
+            ttHtml += '<div style="display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:11px;">' +
+                '<span style="color:#8b949e;">Condition</span><span style="color:#f0f6fc;font-weight:500;">' + wx.condition + '</span>' +
+                '<span style="color:#8b949e;">Temp</span><span style="color:#f0f6fc;font-weight:500;">' + wx.temperatureF + '°F</span>' +
+                '<span style="color:#8b949e;">Wind</span><span style="color:#f0f6fc;font-weight:500;">' + wx.windSpeedMph + ' mph ' + wx.windDirection + '</span>' +
+                '<span style="color:#8b949e;">Precip</span><span style="color:#f0f6fc;font-weight:500;">' + wx.precipitationIn + ' in</span>' +
+                '<span style="color:#8b949e;">Lightning</span><span style="color:#f0f6fc;font-weight:500;">' + wx.lightningDensity + ' /km²</span>' +
+            '</div>';
         }
-
-        // Outage count badge
-        if (outages > 0) {
-            svg += `<circle cx="${x + 12}" cy="${y - 12}" r="7" fill="#f85149" stroke="#0d1117" stroke-width="1"/>`;
-            svg += `<text x="${x + 12}" y="${y - 9}" text-anchor="middle" fill="#fff" font-size="7" font-weight="700">${outages}</text>`;
+        if (fc) {
+            ttHtml += '<div style="border-top:1px solid #30363d;margin-top:6px;padding-top:6px;font-size:11px;">' +
+                '<div><span style="color:#8b949e;">Storm</span> <span style="color:#f0f6fc;font-weight:500;">' + fc.stormType + ' (' + fc.probabilityPct + '%)</span></div>' +
+                '<div><span style="color:#8b949e;">Est. Outages</span> <span style="color:#f0f6fc;font-weight:500;">' + fc.estimatedOutages + '</span></div>' +
+                '<div><span style="color:#8b949e;">Storm Mode</span> <span style="color:' + (fc.stormModeActive ? '#a371f7' : '#3fb950') + ';font-weight:500;">' + (fc.stormModeActive ? 'ACTIVE' : 'Off') + '</span></div>' +
+            '</div>';
         }
-
-        // Storm mode badge
-        if (stormMode) {
-            svg += `<rect x="${x - 24}" y="${y + 32}" width="48" height="13" rx="3" fill="#a371f720" stroke="#a371f7" stroke-width="0.5"/>`;
-            svg += `<text x="${x}" y="${y + 41}" text-anchor="middle" fill="#a371f7" font-size="7" font-weight="700">STORM MODE</text>`;
-        }
+        ttHtml += '<div style="border-top:1px solid #30363d;margin-top:6px;padding-top:6px;font-size:11px;">' +
+            '<span style="color:#8b949e;">Active Outages</span> <span style="color:' + (outages > 0 ? '#f85149' : '#3fb950') + ';font-weight:700;">' + outages + '</span></div>';
+        regionMarker.bindTooltip(ttHtml, { className: 'leaflet-dark-tooltip', sticky: false, direction: 'right', offset: [20, 0] });
+        regionMarker.on('click', () => drillTo('weather', 'overview'));
+        regionMarker.addTo(weatherGroup);
     });
+    weatherGroup.addTo(leafletMap);
+    mapLayerGroups.weather = weatherGroup;
+
+    // ---- Outage markers ----
+    const outageGroup = L.layerGroup();
+    outagePositions.forEach((o, oi) => {
+        const pri = (o.priority || '').toLowerCase();
+        let oColor = '#d29922';
+        if (pri === 'critical') oColor = '#f85149';
+        else if (pri === 'high') oColor = '#f0883e';
+        else if (pri === 'low') oColor = '#58a6ff';
+
+        // Pulsing ring for critical outages
+        if (pri === 'critical') {
+            L.circleMarker([o._lat, o._lng], { radius: 12, fillColor: 'transparent', color: oColor, weight: 1.5, opacity: 0.6, className: 'pulse-ring', interactive: false }).addTo(outageGroup);
+        }
+
+        const outageMarker = L.circleMarker([o._lat, o._lng], { radius: 6, fillColor: oColor, color: '#0d1117', weight: 1.5, fillOpacity: 1 });
+        let oTT = '<div style="font-weight:700;font-size:13px;margin-bottom:4px;">⚡ Outage ' + (o.id || '') + '</div>' +
+            '<div style="display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:11px;">' +
+            '<span style="color:#8b949e;">Location</span><span style="color:#f0f6fc;">' + (o.location||'-') + '</span>' +
+            '<span style="color:#8b949e;">Priority</span><span style="color:' + oColor + ';font-weight:600;">' + (o.priority||'-') + '</span>' +
+            '<span style="color:#8b949e;">Cause</span><span style="color:#f0f6fc;">' + (o.cause||'-') + '</span>' +
+            '<span style="color:#8b949e;">Affected</span><span style="color:#f0f6fc;">' + (o.affectedCustomers||0) + ' customers</span>' +
+            '<span style="color:#8b949e;">Equipment</span><span style="color:#f0f6fc;">' + (o.equipmentType||'-') + '</span>' +
+            '<span style="color:#8b949e;">Crew</span><span style="color:#f0f6fc;">' + (o.crewAssigned||'None') + '</span>' +
+            '<span style="color:#8b949e;">Status</span><span style="color:#f0f6fc;">' + (o.status||'-') + '</span></div>';
+        outageMarker.bindTooltip(oTT, { className: 'leaflet-dark-tooltip', direction: 'right', offset: [10, 0] });
+        outageMarker.on('click', () => { if (o.id) showOutageDetail(o.id); });
+        // WCAG: keyboard accessible outage markers
+        outageMarker.on('add', () => {
+            if (outageMarker._path) {
+                outageMarker._path.setAttribute('tabindex', '0');
+                outageMarker._path.setAttribute('role', 'button');
+                outageMarker._path.setAttribute('aria-label', 'Outage ' + (o.id||'') + ' at ' + (o.location||'unknown') + ', priority ' + (o.priority||'unknown') + ', ' + (o.affectedCustomers||0) + ' customers affected');
+            }
+        });
+        outageMarker.addTo(outageGroup);
+    });
+    outageGroup.addTo(leafletMap);
+    mapLayerGroups.outages = outageGroup;
 
     // ---- Crew markers ----
+    const crewGroup = L.layerGroup();
     const crews = crewData && Array.isArray(crewData) ? crewData : [];
     const dispatches = dispatchData && Array.isArray(dispatchData) ? dispatchData : [];
-    // Build dispatch lookup by crew name
     const crewDispatchMap = {};
     dispatches.forEach(d => { crewDispatchMap[d.crewName] = d; });
 
     crews.forEach((crew, ci) => {
         const regionCoords = CREW_REGION_COORDS[crew.region];
         if (!regionCoords) return;
-        // Slight offset per crew so they don't stack
         const offsetLat = regionCoords.lat + (ci % 2 === 0 ? 0.12 : -0.12);
         const offsetLng = regionCoords.lng + (ci % 3 === 0 ? 0.15 : ci % 3 === 1 ? -0.15 : 0);
-        const pos = geoToSVG(offsetLat, offsetLng, W, H);
-
         const status = (crew.status || 'Available').toLowerCase();
-        let crewColor = '#3fb950'; // Available = green
-        let crewIcon = '🚐';
+        let crewColor = '#3fb950', crewIcon = '🚐';
         if (status === 'dispatched' || status === 'en-route') { crewColor = '#f0883e'; crewIcon = '🚨'; }
         else if (status === 'on-site') { crewColor = '#d29922'; crewIcon = '🔧'; }
 
-        // Crew marker background
-        svg += `<rect x="${pos.x - 10}" y="${pos.y - 10}" width="20" height="20" rx="4" fill="#161b22" stroke="${crewColor}" stroke-width="1.2" filter="url(#crew-shadow)" class="crew-marker" data-cidx="${ci}"/>`;
-        svg += `<text x="${pos.x}" y="${pos.y + 2}" text-anchor="middle" dominant-baseline="middle" font-size="11">${crewIcon}</text>`;
-        // Status dot
-        svg += `<circle cx="${pos.x + 8}" cy="${pos.y - 8}" r="3" fill="${crewColor}" stroke="#0d1117" stroke-width="0.8"/>`;
+        const cIcon = L.divIcon({
+            className: 'crew-map-icon',
+            html: '<div style="background:#161b22;border:1.5px solid ' + crewColor + ';border-radius:5px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;position:relative;box-shadow:0 2px 6px rgba(0,0,0,0.5);" role="img" aria-label="Crew ' + crew.name + ', status ' + (crew.status||'Available') + '">' +
+                crewIcon +
+                '<div style="position:absolute;top:-3px;right:-3px;width:7px;height:7px;border-radius:50%;background:' + crewColor + ';border:1px solid #0d1117;"></div>' +
+            '</div>',
+            iconSize: [22, 22],
+            iconAnchor: [11, 11]
+        });
+        const crewMarker = L.marker([offsetLat, offsetLng], { icon: cIcon, keyboard: true });
 
-        // For dispatched crews, draw line to outage
+        // Crew tooltip
         const dispatch = crewDispatchMap[crew.name];
+        let cTT = '<div style="font-weight:700;font-size:13px;margin-bottom:4px;">' + crewIcon + ' ' + crew.name + '</div>' +
+            '<div style="display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:11px;">' +
+            '<span style="color:#8b949e;">Lead</span><span style="color:#f0f6fc;">' + (crew.lead||'-') + '</span>' +
+            '<span style="color:#8b949e;">Region</span><span style="color:#f0f6fc;">' + (crew.region||'-') + '</span>' +
+            '<span style="color:#8b949e;">Status</span><span style="color:' + crewColor + ';font-weight:600;">' + (crew.status||'Available') + '</span>' +
+            '<span style="color:#8b949e;">Type</span><span style="color:#f0f6fc;">' + (crew.type||'-') + '</span>' +
+            '<span style="color:#8b949e;">Members</span><span style="color:#f0f6fc;">' + (crew.members||'-') + '</span>' +
+            '<span style="color:#8b949e;">Vehicle</span><span style="color:#f0f6fc;">' + (crew.vehicle||'-') + '</span></div>';
+        if (dispatch) {
+            cTT += '<div style="border-top:1px solid #30363d;margin-top:6px;padding-top:6px;font-size:11px;">' +
+                '<div><span style="color:#8b949e;">Dispatch</span> <span style="color:#f0f6fc;">' + (dispatch.dispatchId||'-') + '</span></div>' +
+                '<div><span style="color:#8b949e;">Outage</span> <span style="color:#f0f6fc;">' + (dispatch.outageId||'-') + '</span></div>' +
+                '<div><span style="color:#8b949e;">Location</span> <span style="color:#f0f6fc;">' + (dispatch.location||'-') + '</span></div>' +
+                '<div><span style="color:#8b949e;">ETR</span> <span style="color:#f0f6fc;">' + (dispatch.etr||'-') + '</span></div>' +
+            '</div>';
+        }
+        crewMarker.bindTooltip(cTT, { className: 'leaflet-dark-tooltip', direction: 'right', offset: [15, 0] });
+        crewMarker.on('click', () => showCrewDetail(ci));
+        crewMarker.addTo(crewGroup);
+
+        // Dispatch line to outage
         if (dispatch && dispatch.location) {
             const dloc = dispatch.location.toLowerCase();
             for (const [key, val] of Object.entries(OUTAGE_LOCATION_COORDS)) {
                 if (dloc.includes(key)) {
-                    const target = geoToSVG(val.lat, val.lng, W, H);
-                    svg += `<line x1="${pos.x}" y1="${pos.y}" x2="${target.x}" y2="${target.y}" stroke="${crewColor}" stroke-width="1" stroke-dasharray="3,2" opacity="0.5"/>`;
+                    L.polyline([[offsetLat, offsetLng], [val.lat, val.lng]], { color: crewColor, weight: 1.5, dashArray: '4,3', opacity: 0.5, interactive: false }).addTo(crewGroup);
                     break;
                 }
             }
         }
     });
+    crewGroup.addTo(leafletMap);
+    mapLayerGroups.crews = crewGroup;
 
     // ---- Map Legend ----
-    const lx = 12, ly = H - 130;
-    svg += `<rect x="${lx}" y="${ly}" width="135" height="125" rx="6" fill="#0d1117" stroke="#21262d" stroke-width="1" opacity="0.9"/>`;
-    svg += `<text x="${lx+8}" y="${ly+15}" fill="#c9d1d9" font-size="9" font-weight="700">MAP LEGEND</text>`;
-    // Service territory
-    svg += `<rect x="${lx+8}" y="${ly+22}" width="10" height="10" fill="#161b22" stroke="#58a6ff" stroke-width="1" stroke-dasharray="2,1"/>`;
-    svg += `<text x="${lx+24}" y="${ly+31}" fill="#8b949e" font-size="7.5">Service Territory</text>`;
-    // Outage priorities
-    svg += `<circle cx="${lx+13}" cy="${ly+42}" r="3.5" fill="#f85149"/><text x="${lx+24}" y="${ly+45}" fill="#8b949e" font-size="7.5">Critical Outage</text>`;
-    svg += `<circle cx="${lx+13}" cy="${ly+54}" r="3.5" fill="#f0883e"/><text x="${lx+24}" y="${ly+57}" fill="#8b949e" font-size="7.5">High Priority</text>`;
-    svg += `<circle cx="${lx+13}" cy="${ly+66}" r="3.5" fill="#d29922"/><text x="${lx+24}" y="${ly+69}" fill="#8b949e" font-size="7.5">Medium Priority</text>`;
-    svg += `<circle cx="${lx+13}" cy="${ly+78}" r="3.5" fill="#58a6ff"/><text x="${lx+24}" y="${ly+81}" fill="#8b949e" font-size="7.5">Low Priority</text>`;
-    // Crew statuses
-    svg += `<text x="${lx+8}" y="${ly+95}" fill="#c9d1d9" font-size="8" font-weight="600">Crews</text>`;
-    svg += `<rect x="${lx+8}" y="${ly+100}" width="10" height="10" rx="2" fill="#161b22" stroke="#3fb950" stroke-width="1"/>`;
-    svg += `<text x="${lx+24}" y="${ly+109}" fill="#8b949e" font-size="7.5">Available</text>`;
-    svg += `<rect x="${lx+68}" y="${ly+100}" width="10" height="10" rx="2" fill="#161b22" stroke="#f0883e" stroke-width="1"/>`;
-    svg += `<text x="${lx+84}" y="${ly+109}" fill="#8b949e" font-size="7.5">Dispatched</text>`;
-    svg += `<rect x="${lx+8}" y="${ly+113}" width="10" height="10" rx="2" fill="#161b22" stroke="#d29922" stroke-width="1"/>`;
-    svg += `<text x="${lx+24}" y="${ly+122}" fill="#8b949e" font-size="7.5">On-Site</text>`;
+    const legend = L.control({ position: 'bottomleft' });
+    legend.onAdd = function() {
+        const div = L.DomUtil.create('div', 'leaflet-map-legend');
+        div.setAttribute('role', 'complementary');
+        div.setAttribute('aria-label', 'Map legend');
+        div.innerHTML =
+            '<div style="font-weight:700;font-size:10px;color:#c9d1d9;margin-bottom:6px;">MAP LEGEND</div>' +
+            '<div class="legend-item"><span style="display:inline-block;width:12px;height:12px;border:2px dashed #58a6ff;border-radius:2px;margin-right:6px;"></span>Service Territory</div>' +
+            '<div class="legend-item"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f85149;margin-right:6px;"></span>Critical Outage</div>' +
+            '<div class="legend-item"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f0883e;margin-right:6px;"></span>High Priority</div>' +
+            '<div class="legend-item"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#d29922;margin-right:6px;"></span>Medium Priority</div>' +
+            '<div class="legend-item"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#58a6ff;margin-right:6px;"></span>Low Priority</div>' +
+            '<div style="font-weight:600;font-size:9px;color:#c9d1d9;margin:4px 0 2px;">Crews</div>' +
+            '<div class="legend-item"><span style="display:inline-block;width:12px;height:12px;border:1.5px solid #3fb950;border-radius:3px;background:#161b22;margin-right:6px;font-size:8px;text-align:center;line-height:12px;">🚐</span>Available</div>' +
+            '<div class="legend-item"><span style="display:inline-block;width:12px;height:12px;border:1.5px solid #f0883e;border-radius:3px;background:#161b22;margin-right:6px;font-size:8px;text-align:center;line-height:12px;">🚨</span>Dispatched</div>' +
+            '<div class="legend-item"><span style="display:inline-block;width:12px;height:12px;border:1.5px solid #d29922;border-radius:3px;background:#161b22;margin-right:6px;font-size:8px;text-align:center;line-height:12px;">🔧</span>On-Site</div>' +
+            '<div class="legend-item"><span style="display:inline-block;width:12px;height:3px;background:#f0883e;margin-right:6px;border-radius:1px;"></span>Traffic Flow</div>';
+        return div;
+    };
+    legend.addTo(leafletMap);
+    mapLayerGroups.legendControl = legend;
 
-    svg += `</svg>`;
-    container.innerHTML = svg + '<div class="map-tooltip" id="map-tooltip"></div>';
+    // Update region count badge
+    document.getElementById('map-region-count').textContent = MAP_REGIONS.length + ' regions';
 
-    // ---- Tooltip events ----
-    const tooltipEl = document.getElementById('map-tooltip');
-    function showTooltip(e, html) {
-        tooltipEl.innerHTML = html;
-        tooltipEl.style.display = 'block';
-        const rect = container.getBoundingClientRect();
-        tooltipEl.style.left = (e.clientX - rect.left + 15) + 'px';
-        tooltipEl.style.top = (e.clientY - rect.top - 10) + 'px';
-    }
-
-    // Region tooltips + click to drill to weather
-    container.querySelectorAll('.map-region').forEach(el => {
-        el.style.cursor = 'pointer';
-        el.addEventListener('click', () => {
-            tooltipEl.style.display = 'none';
-            drillTo('weather', 'overview');
-        });
-        el.addEventListener('mouseenter', (e) => {
-            const idx = parseInt(el.getAttribute('data-idx'));
-            const r = MAP_REGIONS[idx];
-            const wx = weatherData ? weatherData[r.name] : null;
-            const fc = forecastMap[r.name];
-            const outages = outagesByRegion[r.name] || 0;
-            let html = `<div class="tt-city">${r.city}, ${r.state}</div>`;
-            if (wx) {
-                html += `<div class="tt-row"><span>Condition</span><span class="tt-val">${wx.condition}</span></div>
-                    <div class="tt-row"><span>Temp</span><span class="tt-val">${wx.temperatureF}°F</span></div>
-                    <div class="tt-row"><span>Wind</span><span class="tt-val">${wx.windSpeedMph} mph ${wx.windDirection}</span></div>
-                    <div class="tt-row"><span>Precip</span><span class="tt-val">${wx.precipitationIn} in</span></div>
-                    <div class="tt-row"><span>Lightning</span><span class="tt-val">${wx.lightningDensity} /km²</span></div>`;
-            }
-            if (fc) {
-                html += `<div style="border-top:1px solid #30363d;margin-top:4px;padding-top:4px;">
-                    <div class="tt-row"><span>Storm</span><span class="tt-val">${fc.stormType} (${fc.probabilityPct}%)</span></div>
-                    <div class="tt-row"><span>Est. Outages</span><span class="tt-val">${fc.estimatedOutages}</span></div>
-                    <div class="tt-row"><span>Storm Mode</span><span class="tt-val" style="color:${fc.stormModeActive?'#a371f7':'#3fb950'}">${fc.stormModeActive?'ACTIVE':'Off'}</span></div>
-                </div>`;
-            }
-            html += `<div style="border-top:1px solid #30363d;margin-top:4px;padding-top:4px;">
-                <div class="tt-row"><span>Active Outages</span><span class="tt-val" style="color:${outages>0?'#f85149':'#3fb950'}">${outages}</span></div>
-            </div>`;
-            showTooltip(e, html);
-        });
-        el.addEventListener('mouseleave', () => { tooltipEl.style.display = 'none'; });
-    });
-
-    // Outage marker tooltips + click to open detail modal
-    container.querySelectorAll('.outage-marker').forEach(el => {
-        el.style.cursor = 'pointer';
-        el.addEventListener('click', () => {
-            tooltipEl.style.display = 'none';
-            const oi = parseInt(el.getAttribute('data-oidx'));
-            const o = outagePositions[oi];
-            if (o && o.id) showOutageDetail(o.id);
-        });
-        el.addEventListener('mouseenter', (e) => {
-            const oi = parseInt(el.getAttribute('data-oidx'));
-            const o = outagePositions[oi];
-            if (!o) return;
-            let html = `<div class="tt-city">⚡ Outage ${o.id || ''}</div>`;
-            html += `<div class="tt-row"><span>Location</span><span class="tt-val">${o.location||'-'}</span></div>`;
-            html += `<div class="tt-row"><span>Priority</span><span class="tt-val" style="color:${(o.priority||'')=='Critical'?'#f85149':'#d29922'}">${o.priority||'-'}</span></div>`;
-            html += `<div class="tt-row"><span>Cause</span><span class="tt-val">${o.cause||'-'}</span></div>`;
-            html += `<div class="tt-row"><span>Affected</span><span class="tt-val">${o.affectedCustomers||0} customers</span></div>`;
-            html += `<div class="tt-row"><span>Equipment</span><span class="tt-val">${o.equipmentType||'-'}</span></div>`;
-            html += `<div class="tt-row"><span>Crew</span><span class="tt-val">${o.crewAssigned||'None'}</span></div>`;
-            html += `<div class="tt-row"><span>Status</span><span class="tt-val">${o.status||'-'}</span></div>`;
-            showTooltip(e, html);
-        });
-        el.addEventListener('mouseleave', () => { tooltipEl.style.display = 'none'; });
-    });
-
-    // Crew marker tooltips + click to open crew detail modal
-    container.querySelectorAll('.crew-marker').forEach(el => {
-        el.style.cursor = 'pointer';
-        el.addEventListener('click', () => {
-            tooltipEl.style.display = 'none';
-            const ci = parseInt(el.getAttribute('data-cidx'));
-            showCrewDetail(ci);
-        });
-        el.addEventListener('mouseenter', (e) => {
-            const ci = parseInt(el.getAttribute('data-cidx'));
-            const crew = crews[ci];
-            if (!crew) return;
-            const dispatch = crewDispatchMap[crew.name];
-            let html = `<div class="tt-city">${crew.name}</div>`;
-            html += `<div class="tt-row"><span>Lead</span><span class="tt-val">${crew.lead}</span></div>`;
-            html += `<div class="tt-row"><span>Members</span><span class="tt-val">${crew.members}</span></div>`;
-            html += `<div class="tt-row"><span>Vehicle</span><span class="tt-val">${crew.vehicle}</span></div>`;
-            html += `<div class="tt-row"><span>Region</span><span class="tt-val">${crew.region}</span></div>`;
-            const sc = (crew.status||'Available');
-            const sColor = sc==='Available'?'#3fb950':sc==='On-Site'?'#d29922':'#f0883e';
-            html += `<div class="tt-row"><span>Status</span><span class="tt-val" style="color:${sColor}">${sc}</span></div>`;
-            if (dispatch) {
-                html += `<div style="border-top:1px solid #30363d;margin-top:4px;padding-top:4px;">
-                    <div class="tt-row"><span>Dispatch</span><span class="tt-val">${dispatch.dispatchId||'-'}</span></div>
-                    <div class="tt-row"><span>Outage</span><span class="tt-val">${dispatch.outageId||'-'}</span></div>
-                    <div class="tt-row"><span>Location</span><span class="tt-val">${dispatch.location||'-'}</span></div>
-                    <div class="tt-row"><span>ETR</span><span class="tt-val">${dispatch.etr||'-'}</span></div>
-                </div>`;
-            }
-            if (crew.currentAssignment) {
-                html += `<div class="tt-row"><span>Assignment</span><span class="tt-val">${crew.currentAssignment}</span></div>`;
-            }
-            showTooltip(e, html);
-        });
-        el.addEventListener('mouseleave', () => { tooltipEl.style.display = 'none'; });
-    });
+    // Ensure Leaflet recalculates container size
+    setTimeout(() => leafletMap.invalidateSize(), 100);
 }
 
 async function fetchWeather() {
@@ -1884,6 +2064,475 @@ async function clearAllFaults() {
     setTimeout(() => fetchFeatureFlags(), 300);
 }
 
+// ============================================================
+// State Detail Dashboard — drilldown from map state clicks
+// ============================================================
+const STATE_NAMES = {
+    'IL':'Illinois','PA':'Pennsylvania','NJ':'New Jersey','MD':'Maryland','DE':'Delaware','DC':'Washington D.C.',
+    'OH':'Ohio','IN':'Indiana','WV':'West Virginia','VA':'Virginia','NY':'New York','CT':'Connecticut',
+    'MA':'Massachusetts','KY':'Kentucky','NC':'North Carolina','TN':'Tennessee','SC':'South Carolina',
+    'GA':'Georgia','MI':'Michigan','WI':'Wisconsin','VT':'Vermont','NH':'New Hampshire','ME':'Maine',
+    'RI':'Rhode Island','FL':'Florida','TX':'Texas','MN':'Minnesota','MO':'Missouri','AL':'Alabama',
+    'MS':'Mississippi','LA':'Louisiana','AR':'Arkansas','IA':'Iowa','ND':'North Dakota','SD':'South Dakota',
+    'NE':'Nebraska','KS':'Kansas','OK':'Oklahoma'
+};
+let selectedState = null;
+
+window.drillToState = function(stateCode) {
+    selectedState = stateCode;
+    drillStack = [
+        { section: 'overview', label: 'Overview' },
+        { section: 'state-detail', label: (STATE_NAMES[stateCode] || stateCode) + ' Dashboard' }
+    ];
+    SECTION_LABELS['state-detail'] = (STATE_NAMES[stateCode] || stateCode) + ' Dashboard';
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById('state-detail').classList.add('active');
+    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+    currentSection = 'state-detail';
+    window.location.hash = 'state/' + stateCode;
+    updateBreadcrumb();
+    fetchStateDetail();
+};
+
+async function fetchStateDetail() {
+    if (!selectedState) return;
+    const st = selectedState;
+    const stName = STATE_NAMES[st] || st;
+    const regions = MAP_REGIONS.filter(r => r.state === st);
+    const regionNames = regions.map(r => r.name);
+
+    document.getElementById('state-detail-title').textContent = `${stName} (${st}) Dashboard`;
+    document.getElementById('state-detail-badge').textContent = `${regions.length} region${regions.length !== 1 ? 's' : ''}`;
+
+    // Fetch all data in parallel
+    const [outages, crewList, dispatches, weatherConds, weatherFc, alerts, notifications] = await Promise.all([
+        fetchJSON(`${API}/outages/active`),
+        fetchJSON(`${API}/crew/crews`),
+        fetchJSON(`${API}/crew/dispatches/active`),
+        fetchJSON(`${API}/weather/conditions`),
+        fetchJSON(`${API}/weather/forecast`),
+        fetchJSON(`${API}/scada/alerts`),
+        fetchJSON(`${API}/notifications/recent`)
+    ]);
+
+    // Filter outages by state
+    const stOutages = (outages || []).filter(o => {
+        const loc = (o.location || '').toLowerCase();
+        return loc.includes(st.toLowerCase()) || regions.some(r => loc.includes(r.city.toLowerCase()));
+    });
+
+    // Filter crews by region
+    const stCrews = (crewList || []).filter(c => regionNames.includes(c.region) ||
+        regions.some(r => (c.region || '').toLowerCase().includes(r.city.toLowerCase())));
+
+    // Filter weather by region
+    const stWeather = {};
+    if (weatherConds) {
+        regionNames.forEach(rn => { if (weatherConds[rn]) stWeather[rn] = weatherConds[rn]; });
+    }
+
+    // Filter forecasts
+    const stForecasts = (weatherFc || []).filter(f => regionNames.includes(f.region));
+
+    // Filter alerts
+    const stAlerts = (Array.isArray(alerts) ? alerts : []).filter(a => {
+        const sub = (a.SubstationName || a.substationName || '').toLowerCase();
+        return regions.some(r => sub.includes(r.city.toLowerCase())) || sub.includes(st.toLowerCase());
+    });
+
+    // Filter notifications
+    const stNotifs = (Array.isArray(notifications) ? notifications : []).filter(n => {
+        const loc = (n.location || n.region || '').toLowerCase();
+        return loc.includes(st.toLowerCase()) || regions.some(r => loc.includes(r.city.toLowerCase()));
+    });
+
+    // KPIs
+    const totalAffected = stOutages.reduce((s, o) => s + (o.affectedCustomers || 0), 0);
+    const availCrews = stCrews.filter(c => (c.status || '').toLowerCase() === 'available').length;
+    const dispCrews = stCrews.filter(c => ['dispatched', 'en-route'].includes((c.status || '').toLowerCase())).length;
+    const activeAlerts = stAlerts.filter(a => !(a.Acknowledged || a.acknowledged));
+    document.getElementById('state-detail-kpis').innerHTML = [
+        kpi('Active Outages', stOutages.length, `${totalAffected.toLocaleString()} customers`, stOutages.length > 0 ? 'critical' : 'good'),
+        kpi('Crews', stCrews.length, `${availCrews} available, ${dispCrews} dispatched`, dispCrews > 0 ? 'warning' : 'good'),
+        kpi('Weather Regions', Object.keys(stWeather).length, regions.map(r => r.city).join(', ') || 'None', 'info'),
+        kpi('SCADA Alerts', activeAlerts.length, `${stAlerts.length} total`, activeAlerts.length > 0 ? 'warning' : 'good'),
+    ].join('');
+
+    // Outages table
+    document.getElementById('sd-outage-count').textContent = stOutages.length;
+    document.getElementById('sd-outages').innerHTML = stOutages.length === 0
+        ? '<div style="color:#3fb950;padding:12px;">No active outages in ' + stName + '</div>'
+        : `<table><tr><th>ID</th><th>Location</th><th>Priority</th><th>Cause</th><th>Affected</th><th>Status</th></tr>${stOutages.map(o =>
+            `<tr class="clickable-row" onclick="showDetailView('outages','${o.id}','Outage ${o.id}')"><td>${o.id}</td><td>${o.location}</td><td>${statusBadge(o.priority)}</td><td style="max-width:150px;overflow:hidden;text-overflow:ellipsis">${o.cause}</td><td>${(o.affectedCustomers||0).toLocaleString()}</td><td>${statusBadge(o.status || 'Active')}</td></tr>`
+        ).join('')}</table>`;
+
+    // Crews table
+    document.getElementById('sd-crew-count').textContent = stCrews.length;
+    document.getElementById('sd-crews').innerHTML = stCrews.length === 0
+        ? '<div style="color:#8b949e;padding:12px;">No crews assigned in ' + stName + '</div>'
+        : `<table><tr><th>Crew</th><th>Region</th><th>Status</th><th>Type</th><th>Members</th></tr>${stCrews.map(c =>
+            `<tr class="clickable-row" onclick="showDetailView('crew','${c.id}','Crew ${c.name}')"><td>${c.name}</td><td>${c.region}</td><td>${statusBadge(c.status || 'Available')}</td><td>${c.type || '-'}</td><td>${c.members || '-'}</td></tr>`
+        ).join('')}</table>`;
+
+    // Weather cards
+    const wxEntries = Object.entries(stWeather);
+    document.getElementById('sd-weather').innerHTML = wxEntries.length === 0
+        ? '<div style="color:#8b949e;padding:12px;">No weather stations in ' + stName + '</div>'
+        : wxEntries.map(([rn, wx]) => {
+            const fc = stForecasts.find(f => f.region === rn);
+            const region = regions.find(r => r.name === rn);
+            return `<div style="padding:8px;border-bottom:1px solid #21262d;">
+                <div style="font-weight:600;color:#f0f6fc;margin-bottom:4px;">${region ? region.city : rn}</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:11px;color:#8b949e;">
+                    <div>🌡 ${wx.temperatureF}°F</div>
+                    <div>💨 ${wx.windSpeedMph} mph ${wx.windDirection}</div>
+                    <div>🌧 ${wx.precipitationIn} in</div>
+                    <div>⚡ Lightning: ${wx.lightningDensity}/km²</div>
+                    <div>☁ ${wx.condition}</div>
+                    <div>Severity: ${statusBadge(wx.severity)}</div>
+                </div>
+                ${fc ? `<div style="margin-top:4px;font-size:11px;color:#a371f7;">Storm: ${fc.stormType} (${fc.probabilityPct}%) — Est. ${fc.estimatedOutages} outages ${fc.stormModeActive ? '<span style="color:#f85149;font-weight:700;">STORM MODE</span>' : ''}</div>` : ''}
+            </div>`;
+        }).join('');
+
+    // SCADA alerts
+    document.getElementById('sd-scada').innerHTML = activeAlerts.length === 0
+        ? '<div style="color:#3fb950;padding:12px;">No SCADA alerts in ' + stName + '</div>'
+        : `<table><tr><th>Sensor</th><th>Substation</th><th>Type</th><th>Severity</th><th>Value</th></tr>${activeAlerts.slice(0, 20).map(a =>
+            `<tr><td>${a.SensorId||a.sensorId}</td><td>${a.SubstationName||a.substationName||'-'}</td><td>${a.AlertType||a.alertType}</td><td>${statusBadge(a.Severity||a.severity)}</td><td>${(a.Value||a.value||0).toFixed(2)}</td></tr>`
+        ).join('')}</table>`;
+
+    // Notifications
+    document.getElementById('sd-notif-count').textContent = stNotifs.length;
+    document.getElementById('sd-notifications').innerHTML = stNotifs.length === 0
+        ? '<div style="color:#8b949e;padding:12px;">No recent notifications in ' + stName + '</div>'
+        : `<table><tr><th>Type</th><th>Channel</th><th>Location</th><th>Message</th><th>Time</th></tr>${stNotifs.slice(0, 15).map(n =>
+            `<tr><td>${statusBadge(n.type || n.notificationType || '-')}</td><td>${n.channel || '-'}</td><td>${n.location || n.region || '-'}</td><td style="max-width:300px;overflow:hidden;text-overflow:ellipsis">${n.message || n.content || '-'}</td><td>${n.sentAt ? new Date(n.sentAt).toLocaleTimeString() : '-'}</td></tr>`
+        ).join('')}</table>`;
+}
+
+// --- Reusable clickable table builder ---
+function clickableTable(config) {
+    const { columns, rows, onRowClick, id, tableClass } = config;
+    const head = `<tr>${columns.map(c =>
+        `<th${c.sortable ? ` class="sortable${sortState[id]?.col === c.key ? (sortState[id].dir === 'asc' ? ' asc' : ' desc') : ''}" onclick="sortTableBy('${id}','${c.key}')"` : ''}>${c.label}</th>`
+    ).join('')}</tr>`;
+    const body = rows.map(row => {
+        const clickAttr = onRowClick ? ` class="clickable-row ${tableClass || ''}" onclick="${onRowClick}('${row._id || row.id || ''}')"` : '';
+        return `<tr${clickAttr}>${columns.map(c => `<td>${c.render ? c.render(row) : (row[c.key] ?? '-')}</td>`).join('')}</tr>`;
+    }).join('');
+    return `<table id="${id}">${head}${body}</table>`;
+}
+
+window.sortTableBy = function(tableId, colKey) {
+    const current = sortState[tableId];
+    if (current && current.col === colKey) {
+        sortState[tableId] = { col: colKey, dir: current.dir === 'asc' ? 'desc' : 'asc' };
+    } else {
+        sortState[tableId] = { col: colKey, dir: 'asc' };
+    }
+    // Re-fetch current section to re-render with sorted data
+    if (window.fetchData) window.fetchData();
+};
+
+// --- Reusable filter bar ---
+function filterBar(config) {
+    const { filters, onFilter } = config;
+    return `<div class="filter-controls">${filters.map(f => {
+        if (f.type === 'select') return `<label>${f.label}</label><select onchange="${onFilter}()" data-key="${f.key}" id="filter-${f.key}">
+            <option value="">All</option>${f.options.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
+        if (f.type === 'search') return `<label>${f.label}</label><input type="text" placeholder="Search..." data-key="${f.key}" id="filter-${f.key}"
+            oninput="clearTimeout(this._t);this._t=setTimeout(()=>${onFilter}(),300)">`;
+        return '';
+    }).join('')}</div>`;
+}
+
+function getFilterValues(keys) {
+    const vals = {};
+    keys.forEach(k => { const el = document.getElementById('filter-' + k); if (el) vals[k] = el.value.trim().toLowerCase(); });
+    return vals;
+}
+
+// ---- Detail View Renderers ----
+
+async function renderOutageDetailView(outageId) {
+    const dc = document.getElementById('detail-content');
+    dc.innerHTML = '<div class="loading">Loading outage details...</div>';
+    const [allOutages, crewList, dispatches, notifications] = await Promise.all([
+        fetchJSON(`${API}/outages`),
+        fetchJSON(`${API}/crew/crews`),
+        fetchJSON(`${API}/crew/dispatches/active`),
+        fetchJSON(`${API}/notifications/log?limit=50`)
+    ]);
+    const o = (allOutages || []).find(x => x.id === outageId);
+    if (!o) { dc.innerHTML = '<div class="error-msg">Outage not found: ' + outageId + '</div>'; return; }
+    const elapsed = o.startTime ? Math.round((Date.now() - new Date(o.startTime).getTime()) / 60000) : '-';
+    const assignedCrew = o.crewAssigned ? (crewList || []).find(c => c.name === o.crewAssigned) : null;
+    const dispatch = (dispatches || []).find(d => d.outageId === outageId);
+    const relatedNotifs = (notifications || []).filter(n => (n.outageId === outageId) || (n.message && n.message.includes(outageId)));
+    dc.innerHTML = `
+        <div class="detail-hero">
+            <div><div style="font-size:28px;">⚡</div></div>
+            <div>
+                <h2>Outage ${o.id}</h2>
+                <div class="detail-meta">${o.location || '-'} · ${statusBadge(o.status)} · ${statusBadge(o.priority)} · ${elapsed} min elapsed</div>
+            </div>
+        </div>
+        <div class="detail-actions">
+            <button class="btn" onclick="showSection('outages')">← All Outages</button>
+            ${assignedCrew ? `<button class="btn" onclick="showDetailView('crew','${assignedCrew.id}','Crew ${assignedCrew.name}')">View Assigned Crew</button>` : ''}
+            ${dispatch ? `<button class="btn" onclick="showSection('crew')">View Dispatches</button>` : ''}
+            <button class="btn" onclick="showSection('weather')">Check Weather</button>
+        </div>
+        <div class="detail-panels">
+            <div class="panel"><div class="panel-header"><h3>Outage Information</h3></div><div class="panel-body">
+                <div class="modal-field"><span class="mf-label">ID</span><span class="mf-value">${o.id}</span></div>
+                <div class="modal-field"><span class="mf-label">Location</span><span class="mf-value">${o.location || '-'}</span></div>
+                <div class="modal-field"><span class="mf-label">Cause</span><span class="mf-value">${o.cause || '-'}</span></div>
+                <div class="modal-field"><span class="mf-label">Equipment</span><span class="mf-value">${o.equipmentType || '-'} #${o.equipmentId || '-'}</span></div>
+                <div class="modal-field"><span class="mf-label">Source</span><span class="mf-value">${o.source || 'OMS'}</span></div>
+                <div class="modal-field"><span class="mf-label">Started</span><span class="mf-value">${o.startTime ? new Date(o.startTime).toLocaleString() : '-'}</span></div>
+            </div></div>
+            <div class="panel"><div class="panel-header"><h3>Impact</h3></div><div class="panel-body">
+                <div class="modal-field"><span class="mf-label">Affected Customers</span><span class="mf-value" style="color:#f85149;font-size:16px">${(o.affectedCustomers||0).toLocaleString()}</span></div>
+                <div class="modal-field"><span class="mf-label">Duration</span><span class="mf-value">${elapsed} minutes</span></div>
+                <div class="modal-field"><span class="mf-label">Customer-Minutes</span><span class="mf-value">${((o.affectedCustomers||0) * (typeof elapsed === 'number' ? elapsed : 0)).toLocaleString()}</span></div>
+                <div class="modal-field"><span class="mf-label">Crew Assigned</span><span class="mf-value">${o.crewAssigned ? `<a class="cross-link" onclick="showDetailView('crew','${assignedCrew?.id || ''}','Crew ${o.crewAssigned}')">${o.crewAssigned}</a>` : 'Unassigned'}</span></div>
+            </div></div>
+            <div class="panel"><div class="panel-header"><h3>Timeline</h3></div><div class="panel-body">
+                <div class="timeline">
+                    <div class="timeline-item completed"><div class="timeline-time">${o.startTime ? new Date(o.startTime).toLocaleString() : '-'}</div><div class="timeline-text">Outage detected · ${o.source||'OMS'}</div></div>
+                    ${o.crewAssigned ? `<div class="timeline-item ${o.status==='Active'?'active':'completed'}"><div class="timeline-time">${elapsed} min</div><div class="timeline-text">Crew assigned: ${o.crewAssigned}</div></div>` : ''}
+                    ${o.status === 'Resolved' ? `<div class="timeline-item completed"><div class="timeline-time">${o.resolvedTime ? new Date(o.resolvedTime).toLocaleString() : '-'}</div><div class="timeline-text">Service restored</div></div>` : `<div class="timeline-item"><div class="timeline-time">Pending</div><div class="timeline-text">Awaiting restoration</div></div>`}
+                </div>
+            </div></div>
+            <div class="panel"><div class="panel-header"><h3>Related Notifications (${relatedNotifs.length})</h3></div><div class="panel-body">
+                ${relatedNotifs.length === 0 ? '<div style="color:#8b949e;padding:8px;">No notifications linked</div>' :
+                `<table><tr><th>Channel</th><th>Customer</th><th>Status</th><th>Time</th></tr>${relatedNotifs.slice(0,10).map(n =>
+                    `<tr><td>${n.channel||'-'}</td><td>${n.customerId||'-'}</td><td>${statusBadge(n.status==='sent'?'normal':'warning')}</td><td>${n.createdAt?new Date(n.createdAt).toLocaleTimeString():'-'}</td></tr>`
+                ).join('')}</table>`}
+            </div></div>
+        </div>`;
+}
+
+async function renderCrewDetailView(crewId) {
+    const dc = document.getElementById('detail-content');
+    dc.innerHTML = '<div class="loading">Loading crew details...</div>';
+    const [crewList, dispatches, history] = await Promise.all([
+        fetchJSON(`${API}/crew/crews`),
+        fetchJSON(`${API}/crew/dispatches/active`),
+        fetchJSON(`${API}/crew/dispatches?limit=30`)
+    ]);
+    const c = (crewList || []).find(x => x.id === crewId);
+    if (!c) { dc.innerHTML = '<div class="error-msg">Crew not found: ' + crewId + '</div>'; return; }
+    const activeDispatch = (dispatches || []).find(d => d.crewName === c.name);
+    const crewHistory = (history || []).filter(d => d.crewName === c.name);
+    dc.innerHTML = `
+        <div class="detail-hero">
+            <div><div style="font-size:28px;">🔧</div></div>
+            <div>
+                <h2>${c.name}</h2>
+                <div class="detail-meta">Lead: ${c.lead} · ${c.members} members · ${c.region} · ${statusBadge(c.status==='Available'?'normal':c.status==='On-Site'?'warning':'active')}</div>
+            </div>
+        </div>
+        <div class="detail-actions">
+            <button class="btn" onclick="showSection('crew')">← All Crews</button>
+            ${activeDispatch ? `<button class="btn" onclick="showDetailView('outages','${activeDispatch.outageId}','Outage ${activeDispatch.outageId}')">View Active Outage</button>` : ''}
+        </div>
+        <div class="detail-panels">
+            <div class="panel"><div class="panel-header"><h3>Crew Information</h3></div><div class="panel-body">
+                <div class="modal-field"><span class="mf-label">Crew ID</span><span class="mf-value">${c.id}</span></div>
+                <div class="modal-field"><span class="mf-label">Name</span><span class="mf-value">${c.name}</span></div>
+                <div class="modal-field"><span class="mf-label">Lead</span><span class="mf-value">${c.lead}</span></div>
+                <div class="modal-field"><span class="mf-label">Members</span><span class="mf-value">${c.members} personnel</span></div>
+                <div class="modal-field"><span class="mf-label">Vehicle</span><span class="mf-value">${c.vehicle}</span></div>
+                <div class="modal-field"><span class="mf-label">Region</span><span class="mf-value">${c.region}</span></div>
+                <div class="modal-field"><span class="mf-label">Type</span><span class="mf-value">${c.type || '-'}</span></div>
+            </div></div>
+            <div class="panel"><div class="panel-header"><h3>Active Dispatch</h3></div><div class="panel-body">
+                ${activeDispatch ? `
+                <div class="modal-field"><span class="mf-label">Dispatch ID</span><span class="mf-value">${activeDispatch.dispatchId}</span></div>
+                <div class="modal-field"><span class="mf-label">Outage</span><span class="mf-value"><a class="cross-link" onclick="showDetailView('outages','${activeDispatch.outageId}','Outage ${activeDispatch.outageId}')">${activeDispatch.outageId}</a></span></div>
+                <div class="modal-field"><span class="mf-label">Priority</span><span class="mf-value">${statusBadge(activeDispatch.priority)}</span></div>
+                <div class="modal-field"><span class="mf-label">Location</span><span class="mf-value">${activeDispatch.location}</span></div>
+                <div class="modal-field"><span class="mf-label">ETR</span><span class="mf-value">${activeDispatch.etr ? new Date(activeDispatch.etr).toLocaleTimeString() : '-'}</span></div>
+                ` : '<div style="color:#3fb950;padding:8px;">No active dispatch — crew is available</div>'}
+            </div></div>
+            <div class="panel" style="grid-column:1/-1;"><div class="panel-header"><h3>Dispatch History (${crewHistory.length})</h3></div><div class="panel-body" style="max-height:300px">
+                ${crewHistory.length === 0 ? '<div style="color:#8b949e;padding:8px;">No dispatch history</div>' :
+                `<table><tr><th>Dispatch</th><th>Outage</th><th>Status</th><th>Priority</th><th>Location</th><th>Dispatched</th><th>Completed</th></tr>${crewHistory.map(d =>
+                    `<tr class="clickable-row" onclick="showDetailView('outages','${d.outageId}','Outage ${d.outageId}')"><td>${d.dispatchId}</td><td>${d.outageId}</td><td>${statusBadge(d.status==='Completed'?'resolved':d.status)}</td><td>${statusBadge(d.priority)}</td><td>${d.location}</td><td>${new Date(d.dispatchedAt).toLocaleTimeString()}</td><td>${d.completedAt?new Date(d.completedAt).toLocaleTimeString():'-'}</td></tr>`
+                ).join('')}</table>`}
+            </div></div>
+        </div>`;
+}
+
+async function renderCustomerDetailView(customerId) {
+    const dc = document.getElementById('detail-content');
+    dc.innerHTML = '<div class="loading">Loading customer details...</div>';
+    const [customers, outages, notifications] = await Promise.all([
+        fetchJSON(`/api/customers`),
+        fetchJSON(`${API}/outages`),
+        fetchJSON(`${API}/notifications/log?limit=50`)
+    ]);
+    const cList = customers?.customers || customers || [];
+    const c = cList.find(x => x.id === customerId || x.accountNumber === customerId);
+    if (!c) { dc.innerHTML = '<div class="error-msg">Customer not found: ' + customerId + '</div>'; return; }
+    const custOutages = (outages || []).filter(o => (o.location||'').toLowerCase().includes((c.region||'').toLowerCase()));
+    const custNotifs = (notifications||[]).filter(n => n.customerId === c.id);
+    dc.innerHTML = `
+        <div class="detail-hero">
+            <div><div style="font-size:28px;">👤</div></div>
+            <div>
+                <h2>${c.name || 'Customer ' + c.id}</h2>
+                <div class="detail-meta">Account: ${c.accountNumber||'-'} · ${c.region||'-'} · ${c.type||c.customerType||'-'} · ${statusBadge(c.status||'active')}</div>
+            </div>
+        </div>
+        <div class="detail-actions">
+            <button class="btn" onclick="showSection('customers')">← All Customers</button>
+            <button class="btn" onclick="showSection('notifications')">View Notifications</button>
+        </div>
+        <div class="detail-panels">
+            <div class="panel"><div class="panel-header"><h3>Customer Information</h3></div><div class="panel-body">
+                <div class="modal-field"><span class="mf-label">ID</span><span class="mf-value">${c.id}</span></div>
+                <div class="modal-field"><span class="mf-label">Name</span><span class="mf-value">${c.name||'-'}</span></div>
+                <div class="modal-field"><span class="mf-label">Account</span><span class="mf-value">${c.accountNumber||'-'}</span></div>
+                <div class="modal-field"><span class="mf-label">Region</span><span class="mf-value">${c.region||'-'}</span></div>
+                <div class="modal-field"><span class="mf-label">Type</span><span class="mf-value">${c.type||c.customerType||'-'}</span></div>
+                <div class="modal-field"><span class="mf-label">Address</span><span class="mf-value">${c.address||'-'}</span></div>
+                <div class="modal-field"><span class="mf-label">Phone</span><span class="mf-value">${c.phone||'-'}</span></div>
+                <div class="modal-field"><span class="mf-label">Email</span><span class="mf-value">${c.email||'-'}</span></div>
+            </div></div>
+            <div class="panel"><div class="panel-header"><h3>Recent Outages in Region (${custOutages.length})</h3></div><div class="panel-body" style="max-height:250px">
+                ${custOutages.length === 0 ? '<div style="color:#3fb950;padding:8px;">No recent outages</div>' :
+                `<table><tr><th>ID</th><th>Location</th><th>Status</th><th>Cause</th></tr>${custOutages.slice(0,10).map(o =>
+                    `<tr class="clickable-row" onclick="showDetailView('outages','${o.id}','Outage ${o.id}')"><td>${o.id}</td><td>${o.location}</td><td>${statusBadge(o.status)}</td><td>${o.cause||'-'}</td></tr>`
+                ).join('')}</table>`}
+            </div></div>
+            <div class="panel" style="grid-column:1/-1;"><div class="panel-header"><h3>Notifications (${custNotifs.length})</h3></div><div class="panel-body" style="max-height:250px">
+                ${custNotifs.length === 0 ? '<div style="color:#8b949e;padding:8px;">No notifications for this customer</div>' :
+                `<table><tr><th>Channel</th><th>Event</th><th>Status</th><th>Time</th></tr>${custNotifs.map(n =>
+                    `<tr><td>${n.channel||'-'}</td><td>${(n.eventType||'').replace(/_/g,' ')}</td><td>${statusBadge(n.status==='sent'?'normal':'warning')}</td><td>${n.createdAt?new Date(n.createdAt).toLocaleTimeString():'-'}</td></tr>`
+                ).join('')}</table>`}
+            </div></div>
+        </div>`;
+}
+
+async function renderWorkOrderDetailView(workOrderId) {
+    const dc = document.getElementById('detail-content');
+    dc.innerHTML = '<div class="loading">Loading work order details...</div>';
+    const orders = await fetchJSON('/api/work-orders');
+    const woList = orders?.workOrders || orders?.work_orders || orders || [];
+    const w = woList.find(x => x.id === workOrderId);
+    if (!w) { dc.innerHTML = '<div class="error-msg">Work order not found: ' + workOrderId + '</div>'; return; }
+    dc.innerHTML = `
+        <div class="detail-hero">
+            <div><div style="font-size:28px;">📋</div></div>
+            <div>
+                <h2>Work Order ${w.id}</h2>
+                <div class="detail-meta">${w.type||w.workType||'-'} · ${statusBadge(w.priority||'medium')} · ${w.status||'-'}</div>
+            </div>
+        </div>
+        <div class="detail-actions">
+            <button class="btn" onclick="showSection('workorders')">← All Work Orders</button>
+        </div>
+        <div class="detail-panels">
+            <div class="panel"><div class="panel-header"><h3>Work Order Details</h3></div><div class="panel-body">
+                <div class="modal-field"><span class="mf-label">ID</span><span class="mf-value">${w.id}</span></div>
+                <div class="modal-field"><span class="mf-label">Type</span><span class="mf-value">${w.type||w.workType||'-'}</span></div>
+                <div class="modal-field"><span class="mf-label">Priority</span><span class="mf-value">${statusBadge(w.priority||'medium')}</span></div>
+                <div class="modal-field"><span class="mf-label">Status</span><span class="mf-value">${w.status||'-'}</span></div>
+                <div class="modal-field"><span class="mf-label">Location</span><span class="mf-value">${w.location||'-'}</span></div>
+                <div class="modal-field"><span class="mf-label">Assigned To</span><span class="mf-value">${w.assignedTo||w.assigned||'-'}</span></div>
+                <div class="modal-field"><span class="mf-label">Description</span><span class="mf-value">${w.description||'-'}</span></div>
+                <div class="modal-field"><span class="mf-label">Created</span><span class="mf-value">${w.createdAt ? new Date(w.createdAt).toLocaleString() : '-'}</span></div>
+            </div></div>
+            <div class="panel"><div class="panel-header"><h3>Location & Assignment</h3></div><div class="panel-body">
+                <div class="modal-field"><span class="mf-label">Location</span><span class="mf-value">${w.location||'-'}</span></div>
+                <div class="modal-field"><span class="mf-label">Assigned</span><span class="mf-value">${w.assignedTo||w.assigned||'Unassigned'}</span></div>
+                <div class="modal-field"><span class="mf-label">Estimated Duration</span><span class="mf-value">${w.estimatedDuration||w.duration||'-'}</span></div>
+                <div class="modal-field"><span class="mf-label">Scheduled</span><span class="mf-value">${w.scheduledDate ? new Date(w.scheduledDate).toLocaleDateString() : '-'}</span></div>
+            </div></div>
+        </div>`;
+}
+
+async function renderSensorDetailView(sensorId) {
+    const dc = document.getElementById('detail-content');
+    dc.innerHTML = '<div class="loading">Loading sensor details...</div>';
+    const [readings, alerts] = await Promise.all([
+        fetchJSON(`${API}/scada/readings/latest`),
+        fetchJSON(`${API}/scada/alerts?limit=50`)
+    ]);
+    const r = (readings || []).find(x => (x.SensorId||x.sensorId) === sensorId);
+    const sensorAlerts = (alerts || []).filter(a => (a.SensorId||a.sensorId) === sensorId);
+    dc.innerHTML = `
+        <div class="detail-hero">
+            <div><div style="font-size:28px;">📡</div></div>
+            <div>
+                <h2>SCADA Sensor ${sensorId}</h2>
+                <div class="detail-meta">${r ? (r.EquipmentType||r.equipmentType||'-') + ' · ' + statusBadge((r.Status||r.status||'Normal').toLowerCase()) : 'No reading data'}</div>
+            </div>
+        </div>
+        <div class="detail-actions">
+            <button class="btn" onclick="showSection('scada')">← All Sensors</button>
+        </div>
+        <div class="detail-panels">
+            <div class="panel"><div class="panel-header"><h3>Current Readings</h3></div><div class="panel-body">
+                ${r ? `
+                <div class="modal-field"><span class="mf-label">Voltage</span><span class="mf-value">${(r.VoltageKv||r.voltageKv||0).toFixed(2)} kV</span></div>
+                <div class="modal-field"><span class="mf-label">Current</span><span class="mf-value">${(r.CurrentA||r.currentA||0).toFixed(1)} A</span></div>
+                <div class="modal-field"><span class="mf-label">Frequency</span><span class="mf-value">${(r.FrequencyHz||r.frequencyHz||0).toFixed(3)} Hz</span></div>
+                <div class="modal-field"><span class="mf-label">Power Factor</span><span class="mf-value">${(r.PowerFactor||r.powerFactor||0).toFixed(3)}</span></div>
+                <div class="modal-field"><span class="mf-label">Temperature</span><span class="mf-value">${(r.TemperatureC||r.temperatureC||0).toFixed(1)} °C</span></div>
+                <div class="modal-field"><span class="mf-label">Active Power</span><span class="mf-value">${(r.ActivePowerKw||r.activePowerKw||0).toFixed(0)} kW</span></div>
+                ` : '<div style="color:#8b949e;padding:8px;">No reading data available</div>'}
+            </div></div>
+            <div class="panel"><div class="panel-header"><h3>Alerts (${sensorAlerts.length})</h3></div><div class="panel-body" style="max-height:300px">
+                ${sensorAlerts.length === 0 ? '<div style="color:#3fb950;padding:8px;">No alerts for this sensor</div>' :
+                `<table><tr><th>Time</th><th>Type</th><th>Severity</th><th>Value</th><th>Message</th></tr>${sensorAlerts.map(a =>
+                    `<tr><td>${new Date(a.Time||a.time).toLocaleTimeString()}</td><td>${a.AlertType||a.alertType}</td><td>${statusBadge(a.Severity||a.severity)}</td><td>${(a.Value||a.value||0).toFixed(2)}</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${a.Message||a.message}</td></tr>`
+                ).join('')}</table>`}
+            </div></div>
+        </div>`;
+}
+
+async function renderMeterDetailView(meterId) {
+    const dc = document.getElementById('detail-content');
+    dc.innerHTML = '<div class="loading">Loading meter details...</div>';
+    const [readings, anomalies] = await Promise.all([
+        fetchJSON(`${API}/meter-data/readings?limit=100`),
+        fetchJSON(`${API}/meter-data/anomalies?limit=50`)
+    ]);
+    const meterReadings = (readings || []).filter(r => r.meterId === meterId);
+    const meterAnomalies = (anomalies || []).filter(a => a.meterId === meterId);
+    const latest = meterReadings[0];
+    dc.innerHTML = `
+        <div class="detail-hero">
+            <div><div style="font-size:28px;">🔌</div></div>
+            <div>
+                <h2>Meter ${meterId}</h2>
+                <div class="detail-meta">Customer: ${latest?.customerId||'-'} · ${meterReadings.length} readings · ${meterAnomalies.length} anomalies</div>
+            </div>
+        </div>
+        <div class="detail-actions">
+            <button class="btn" onclick="showSection('metering')">← All Meters</button>
+        </div>
+        <div class="detail-panels">
+            <div class="panel"><div class="panel-header"><h3>Recent Readings (${meterReadings.length})</h3></div><div class="panel-body" style="max-height:350px">
+                ${meterReadings.length === 0 ? '<div style="color:#8b949e;padding:8px;">No readings</div>' :
+                `<table><tr><th>Time</th><th>kWh</th><th>kW</th><th>Voltage</th><th>PF</th><th>Quality</th></tr>${meterReadings.slice(0,30).map(r =>
+                    `<tr><td>${new Date(r.time).toLocaleTimeString()}</td><td>${r.readingKwh}</td><td>${r.demandKw}</td><td>${(r.voltageV||0).toFixed(1)}V</td><td>${(r.powerFactor||0).toFixed(3)}</td><td>${statusBadge((r.qualityFlag||'Valid').toLowerCase()==='valid'?'normal':r.qualityFlag)}</td></tr>`
+                ).join('')}</table>`}
+            </div></div>
+            <div class="panel"><div class="panel-header"><h3>Anomalies (${meterAnomalies.length})</h3></div><div class="panel-body" style="max-height:350px">
+                ${meterAnomalies.length === 0 ? '<div style="color:#3fb950;padding:8px;">No anomalies</div>' :
+                `<table><tr><th>Time</th><th>Type</th><th>Severity</th><th>Message</th></tr>${meterAnomalies.map(a =>
+                    `<tr><td>${new Date(a.time).toLocaleTimeString()}</td><td>${a.anomalyType}</td><td>${statusBadge(a.severity)}</td><td>${a.message||'-'}</td></tr>`
+                ).join('')}</table>`}
+            </div></div>
+        </div>`;
+}
+
 // Expose fetchData globally so extensions.js can hook into it
 window.fetchData = async function fetchData() {
     document.getElementById('clock').textContent = new Date().toLocaleTimeString();
@@ -1900,13 +2549,37 @@ window.fetchData = async function fetchData() {
         case 'weather': await fetchWeather(); break;
         case 'health': await fetchHealth(); break;
         case 'featureflags': await fetchFeatureFlags(); break;
+        case 'state-detail': await fetchStateDetail(); break;
+        case 'detail-view':
+            if (detailState.section && detailState.entityId) {
+                const renderers = { outages: renderOutageDetailView, crew: renderCrewDetailView, customers: renderCustomerDetailView, workorders: renderWorkOrderDetailView, scada: renderSensorDetailView, metering: renderMeterDetailView };
+                const renderer = renderers[detailState.section];
+                if (renderer) await renderer(detailState.entityId);
+            }
+            break;
     }
 };
 var fetchData = window.fetchData;
 
-// Initial load + auto-refresh
-fetchData();
-setInterval(() => { if (window.fetchData) window.fetchData(); else fetchData(); }, 15000);
+// Load geo-accurate state boundaries, then start
+loadStateGeoData().then(() => fetchData());
+// Auto-refresh: drill-state-aware (preserves detail views)
+setInterval(() => {
+    if (currentSection === 'detail-view' && detailState.section && detailState.entityId) {
+        const scrollPos = document.getElementById('detail-content')?.scrollTop || 0;
+        const renderers = { outages: renderOutageDetailView, crew: renderCrewDetailView, customers: renderCustomerDetailView, workorders: renderWorkOrderDetailView, scada: renderSensorDetailView, metering: renderMeterDetailView };
+        const renderer = renderers[detailState.section];
+        if (renderer) {
+            renderer(detailState.entityId).then(() => {
+                requestAnimationFrame(() => { const el = document.getElementById('detail-content'); if (el) el.scrollTop = scrollPos; });
+            });
+        }
+    } else if (window.fetchData) {
+        window.fetchData();
+    } else {
+        fetchData();
+    }
+}, 15000);
 setInterval(() => { document.getElementById('clock').textContent = new Date().toLocaleTimeString(); }, 1000);
 </script>
 <script src="extensions.js"></script>
