@@ -10,17 +10,23 @@ app.use(express.json());
 
 const SCADA_SERVICE_URL = process.env.SCADA_SERVICE_URL || 'http://scada-service:8080';
 
-const pool = new Pool({
+const pool = new Pool(process.env.DATABASE_URL ? {
+  connectionString: process.env.DATABASE_URL,
+  max: 10,
+  idleTimeoutMillis: 30000
+} : {
   host: process.env.DB_HOST || 'timescaledb',
   port: parseInt(process.env.DB_PORT || '5432'),
   database: process.env.DB_NAME || 'utilitydb',
   user: process.env.DB_USER || 'utilityuser',
-  password: process.env.DB_PASSWORD || process.env.DB_PASSWORD,
+  password: process.env.DB_PASSWORD,
   max: 10,
   idleTimeoutMillis: 30000
 });
 
-const redis = new Redis({
+const redis = process.env.REDIS_URL ? new Redis(process.env.REDIS_URL, {
+  retryStrategy: (times) => Math.min(times * 100, 3000)
+}) : new Redis({
   host: process.env.REDIS_HOST || 'redis',
   port: parseInt(process.env.REDIS_PORT || '6379'),
   retryStrategy: (times) => Math.min(times * 100, 3000)
