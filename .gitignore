@@ -11,3 +11,5 @@ __pycache__/
 .env
 test folder/
 *dashboard*.json
+full-dashboards/
+dashboards-dre63214/
