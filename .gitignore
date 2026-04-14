@@ -13,3 +13,17 @@ test folder/
 *dashboard*.json
 full-dashboards/
 dashboards-dre63214/
+
+# DQL extraction/training pipeline (dev tools & artifacts)
+export_dashboards.sh
+export_one.sh
+parallel_export.sh
+extract_dql.py
+generate_clean_examples.py
+build_leveled_dataset.py
+generate_synopsis.py
+clean_examples.py
+leveled_examples.py
+leveled_golden_dataset.json
+sanitize_dashboards.py
+GenericUtility_Platform_Synopsis.docx
